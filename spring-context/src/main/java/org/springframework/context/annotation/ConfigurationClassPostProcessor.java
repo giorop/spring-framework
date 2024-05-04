@@ -160,7 +160,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	@Nullable
 	private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
-	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();
+	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();//reader=>String->class->metadata
 
 	private boolean setMetadataReaderFactoryCalled = false;
 
@@ -415,7 +415,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			StartupStep processConfig = this.applicationStartup.start("spring.context.config-classes.parse");
 			parser.parse(candidates);
 			parser.validate();
-
+			//得到所有配置类 其中也能包含import的普通bean;递归过程可能引入一些其它的配置类在parse过程中import只是记录了一下
 			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 			configClasses.removeAll(alreadyParsed);
 
@@ -482,7 +482,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			MethodMetadata methodMetadata = null;
 			if (beanDef instanceof AnnotatedBeanDefinition annotatedBeanDefinition) {
 				annotationMetadata = annotatedBeanDefinition.getMetadata();
-				methodMetadata = annotatedBeanDefinition.getFactoryMethodMetadata();
+				methodMetadata = annotatedBeanDefinition.getFactoryMethodMetadata();//通常是@Bean
 			}
 			if ((configClassAttr != null || methodMetadata != null) &&
 					(beanDef instanceof AbstractBeanDefinition abd) && !abd.hasBeanClass()) {
@@ -501,7 +501,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 								"Cannot load configuration class: " + beanDef.getBeanClassName(), ex);
 					}
 				}
-			}
+			}//full 或者@Bean 需要保证其生产的bean是同一个
 			if (ConfigurationClassUtils.CONFIGURATION_CLASS_FULL.equals(configClassAttr)) {
 				if (!(beanDef instanceof AbstractBeanDefinition abd)) {
 					throw new BeanDefinitionStoreException("Cannot enhance @Configuration bean definition '" +

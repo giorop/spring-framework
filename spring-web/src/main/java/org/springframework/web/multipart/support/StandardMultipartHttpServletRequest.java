@@ -58,7 +58,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpServletRequest {
 
 	@Nullable
-	private Set<String> multipartParameterNames;
+	private Set<String> multipartParameterNames;//代表part未绑定 file的部分
 
 
 	/**
@@ -95,14 +95,14 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 			this.multipartParameterNames = CollectionUtils.newLinkedHashSet(parts.size());
 			MultiValueMap<String, MultipartFile> files = new LinkedMultiValueMap<>(parts.size());
 			for (Part part : parts) {
-				String headerValue = part.getHeader(HttpHeaders.CONTENT_DISPOSITION);
-				ContentDisposition disposition = ContentDisposition.parse(headerValue);
-				String filename = disposition.getFilename();
+				String headerValue = part.getHeader(HttpHeaders.CONTENT_DISPOSITION);//拿到分隔符
+				ContentDisposition disposition = ContentDisposition.parse(headerValue);//代表某个part的头部信息
+				String filename = disposition.getFilename();//name表示part的name  fileName代表该part绑定的file name
 				if (filename != null) {
 					files.add(part.getName(), new StandardMultipartFile(part, filename));
 				}
 				else {
-					this.multipartParameterNames.add(part.getName());
+					this.multipartParameterNames.add(part.getName());//当前part未绑定file
 				}
 			}
 			setMultipartFiles(files);

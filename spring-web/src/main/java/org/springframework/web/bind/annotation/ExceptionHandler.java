@@ -110,7 +110,7 @@ import org.springframework.aot.hint.annotation.Reflective;
 @Documented
 @Reflective(ExceptionHandlerReflectiveProcessor.class)
 public @interface ExceptionHandler {
-
+	//用于处理其声明的 异常
 	/**
 	 * Exceptions handled by the annotated method. If empty, will default to any
 	 * exceptions listed in the method argument list.

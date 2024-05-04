@@ -70,7 +70,7 @@ import org.springframework.ui.Model;
 @Documented
 @Reflective
 public @interface ModelAttribute {
-
+	//将某param 或者方法返回值放入 model中
 	/**
 	 * Alias for {@link #name}.
 	 */

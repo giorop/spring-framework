@@ -80,7 +80,9 @@ import org.springframework.util.StringUtils;
  * @see PathContainer
  */
 public class PathPattern implements Comparable<PathPattern> {
-
+	//一个表达式 比如@RequestMapping
+	//将@RequestMapping中的表达式->pathPattern 其中每个部分抽象成element
+	//用于match url中抽象出来的pathContainer
 	private static final PathContainer EMPTY_PATH = PathContainer.parsePath("");
 
 	/**
@@ -96,8 +98,8 @@ public class PathPattern implements Comparable<PathPattern> {
 	public static final Comparator<PathPattern> SPECIFICITY_COMPARATOR =
 			Comparator.nullsLast(
 					Comparator.<PathPattern>
-							comparingInt(p -> p.isCatchAll() ? 1 : 0)
-							.thenComparingInt(p -> p.isCatchAll() ? scoreByNormalizedLength(p) : 0)
+							comparingInt(p -> p.isCatchAll() ? 1 : 0)//**最低
+							.thenComparingInt(p -> p.isCatchAll() ? scoreByNormalizedLength(p) : 0)//有效长度越低 优先度越低
 							.thenComparingInt(PathPattern::getScore)
 							.thenComparingInt(PathPattern::scoreByNormalizedLength)
 			);
@@ -238,6 +240,7 @@ public class PathPattern implements Comparable<PathPattern> {
 				return null;
 			}
 		}
+		//match的同时 并将uriTem占位符填充 如果Match 则返回
 		MatchingContext matchingContext = new MatchingContext(pathContainer, true);
 		return this.head.matches(0, matchingContext) ? matchingContext.getPathMatchResult() : null;
 	}
@@ -648,7 +651,7 @@ public class PathPattern implements Comparable<PathPattern> {
 	 * extracted variables.
 	 */
 	class MatchingContext {
-
+		//代表一个request url
 		final PathContainer candidate;
 
 		final List<Element> pathElements;

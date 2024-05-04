@@ -66,13 +66,13 @@ class DateFormattingTests {
 	}
 
 	private void setup(DateFormatterRegistrar registrar) {
-		DefaultConversionService.addDefaultConverters(conversionService);
-		registrar.registerFormatters(conversionService);
+		DefaultConversionService.addDefaultConverters(conversionService);//注册默认
+		registrar.registerFormatters(conversionService);//注册data相关formatter
 
 		SimpleDateBean bean = new SimpleDateBean();
 		bean.getChildren().add(new SimpleDateBean());
 		binder = new DataBinder(bean);
-		binder.setConversionService(conversionService);
+		binder.setConversionService(conversionService);//绑定
 
 		LocaleContextHolder.setLocale(Locale.US);
 	}

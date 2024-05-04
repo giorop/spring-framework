@@ -52,7 +52,6 @@ import org.springframework.lang.Nullable;
  * @see MimeTypeUtils
  */
 public class MimeType implements Comparable<MimeType>, Serializable {
-
 	private static final long serialVersionUID = 4085923477777865903L;
 
 
@@ -97,7 +96,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		TOKEN.andNot(separators);
 	}
 
-
+	//Type+subType+parameters  可能携带charset信息  不区分大小写
 	private final String type;
 
 	private final String subtype;
@@ -225,7 +224,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		}
 	}
 
-	protected void checkParameters(String parameter, String value) {
+	protected void checkParameters(String parameter, String value) {//value not null
 		Assert.hasLength(parameter, "'parameter' must not be empty");
 		Assert.hasLength(value, "'value' must not be empty");
 		checkToken(parameter);
@@ -234,7 +233,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 				this.resolvedCharset = Charset.forName(unquote(value));
 			}
 		}
-		else if (!isQuotedString(value)) {
+		else if (!isQuotedString(value)) {//如果携带'' 则不需要检查
 			checkToken(value);
 		}
 	}
@@ -272,6 +271,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	}
 
 	/**
+	 * 没有任何*
 	 * Indicates whether this MIME Type is concrete, i.e. whether neither the type
 	 * nor the subtype is a wildcard character <code>&#42;</code>.
 	 * @return whether this MIME Type is concrete
@@ -344,7 +344,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @return {@code true} if this MIME Type includes the given MIME Type;
 	 * {@code false} otherwise
 	 */
-	public boolean includes(@Nullable MimeType other) {
+	public boolean includes(@Nullable MimeType other) {//是否包含后者
 		if (other == null) {
 			return false;
 		}
@@ -388,7 +388,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @return {@code true} if this MIME Type is compatible with the given MIME Type;
 	 * {@code false} otherwise
 	 */
-	public boolean isCompatibleWith(@Nullable MimeType other) {
+	public boolean isCompatibleWith(@Nullable MimeType other) {//任意include
 		if (other == null) {
 			return false;
 		}

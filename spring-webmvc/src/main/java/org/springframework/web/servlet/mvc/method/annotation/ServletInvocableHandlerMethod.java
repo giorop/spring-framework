@@ -157,7 +157,7 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 		if (response != null) {
 			String reason = getResponseStatusReason();
 			if (StringUtils.hasText(reason)) {
-				response.sendError(status.value(), reason);
+				response.sendError(status.value(), reason);//标记error 清空缓存 继续按照流程处理
 			}
 			else {
 				response.setStatus(status.value());
@@ -226,7 +226,7 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 				return result;
 			}, CALLABLE_METHOD);
 
-			if (ServletInvocableHandlerMethod.this.returnValueHandlers != null) {
+			if (ServletInvocableHandlerMethod.this.returnValueHandlers != null) {//returnValueHandler 处理返回结果
 				setHandlerMethodReturnValueHandlers(ServletInvocableHandlerMethod.this.returnValueHandlers);
 			}
 			this.returnType = returnType;

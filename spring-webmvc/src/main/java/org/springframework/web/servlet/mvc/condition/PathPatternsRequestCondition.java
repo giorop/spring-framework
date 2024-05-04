@@ -36,9 +36,10 @@ import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
+ * 路径匹配
  * A logical disjunction (' || ') request condition that matches a request
  * against a set of URL path patterns.
- *
+ * 和PatternsRequestCondition互斥 用于解析 路径pattern
  * <p>In contrast to {@link PatternsRequestCondition}, this condition uses
  * parsed {@link PathPattern}s instead of String pattern matching with
  * {@link org.springframework.util.AntPathMatcher AntPathMatcher}.
@@ -80,7 +81,7 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 		}
 		SortedSet<PathPattern> result = new TreeSet<>();
 		for (String pattern : patterns) {
-			pattern = parser.initFullPathPattern(pattern);
+			pattern = parser.initFullPathPattern(pattern);//即如果写的pattern中没有加/ 自动加上一个
 			result.add(parser.parse(pattern));
 		}
 		return result;
@@ -125,7 +126,7 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 	/**
 	 * Return the mapping paths that are not patterns.
 	 */
-	public Set<String> getDirectPaths() {
+	public Set<String> getDirectPaths() {//没有? *这些符号
 		if (isEmptyPathMapping()) {
 			return EMPTY_PATH;
 		}
@@ -170,7 +171,7 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 		else {
 			SortedSet<PathPattern> combined = new TreeSet<>();
 			for (PathPattern pattern1 : this.patterns) {
-				for (PathPattern pattern2 : other.patterns) {
+				for (PathPattern pattern2 : other.patterns) {//比如class pattern1;method pattern2
 					combined.add(pattern1.combine(pattern2));
 				}
 			}
@@ -189,9 +190,9 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 	@Override
 	@Nullable
 	public PathPatternsRequestCondition getMatchingCondition(HttpServletRequest request) {
-		PathContainer path = ServletRequestPathUtils.getParsedRequestPath(request).pathWithinApplication();
+		PathContainer path = ServletRequestPathUtils.getParsedRequestPath(request).pathWithinApplication();//用于路径匹配的uri
 		SortedSet<PathPattern> matches = getMatchingPatterns(path);
-		return (matches != null ? new PathPatternsRequestCondition(matches) : null);
+		return (matches != null ? new PathPatternsRequestCondition(matches) : null);//过滤掉未被匹配的
 	}
 
 	@Nullable

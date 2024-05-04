@@ -61,7 +61,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * Abstract base class for {@link org.springframework.web.servlet.HandlerMapping}
  * implementations. Supports ordering, a default handler, and handler interceptors,
  * including handler interceptors mapped by path patterns.
- *
+ * interceptors+adaptedInterceptor(filtered) + handler(request->handler)
  * <p>Note: This base class does <i>not</i> support exposure of the
  * {@link #PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE}. Support for this attribute
  * is up to concrete subclasses, typically based on request URL mappings.
@@ -90,20 +90,20 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	private Object defaultHandler;
 
 	@Nullable
-	private PathPatternParser patternParser = new PathPatternParser();
+	private PathPatternParser patternParser = new PathPatternParser();//用于将uriTemp 解析成pathPattern 然后与url match,同时也可以填充pathPattern中的占位符{something}
 
-	private UrlPathHelper urlPathHelper = new UrlPathHelper();
+	private UrlPathHelper urlPathHelper = new UrlPathHelper();//提取request中的url
 
-	private PathMatcher pathMatcher = new AntPathMatcher();
+	private PathMatcher pathMatcher = new AntPathMatcher();//主要用于cors路径匹配
 
-	private final List<Object> interceptors = new ArrayList<>();
+	private final List<Object> interceptors = new ArrayList<>();//普通Object  interceptor 或者web...
 
 	private final List<HandlerInterceptor> adaptedInterceptors = new ArrayList<>();
 
 	@Nullable
 	private CorsConfigurationSource corsConfigurationSource;
 
-	private CorsProcessor corsProcessor = new DefaultCorsProcessor();
+	private CorsProcessor corsProcessor = new DefaultCorsProcessor();//用于处理跨域请求
 
 	private int order = Ordered.LOWEST_PRECEDENCE;  // default: same as non-Ordered
 
@@ -413,7 +413,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	@Override
 	protected void initApplicationContext() throws BeansException {
 		extendInterceptors(this.interceptors);
-		detectMappedInterceptors(this.adaptedInterceptors);
+		detectMappedInterceptors(this.adaptedInterceptors);//扫描容器中的mappedInterceptors
 		initInterceptors();
 	}
 
@@ -504,9 +504,9 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	@Override
 	@Nullable
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
-		Object handler = getHandlerInternal(request);
+		Object handler = getHandlerInternal(request);//request->映射到具体的Object  比如某个方法(某个controller的某个方法)
 		if (handler == null) {
-			handler = getDefaultHandler();
+			handler = getDefaultHandler();//默认没有
 		}
 		if (handler == null) {
 			return null;
@@ -518,7 +518,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 
 		// Ensure presence of cached lookupPath for interceptors and others
 		if (!ServletRequestPathUtils.hasCachedPath(request)) {
-			initLookupPath(request);
+			initLookupPath(request);//将request uri->RequestPath 并缓存供之后match
 		}
 
 		HandlerExecutionChain executionChain = getHandlerExecutionChain(handler, request);
@@ -531,7 +531,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 				logger.debug("Mapped to " + executionChain.getHandler());
 			}
 		}
-
+		//处理cors
 		if (hasCorsConfigurationSource(handler) || CorsUtils.isPreFlightRequest(request)) {
 			CorsConfiguration config = getCorsConfiguration(handler, request);
 			if (getCorsConfigurationSource() != null) {
@@ -590,7 +590,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			return getUrlPathHelper().resolveAndCacheLookupPath(request);
 		}
 	}
-
+	//将request 的uri->RequestPath(PathContainer) 用于match 这里返回的requestPath已经将servletMapping合并到context中 其pathWithinApplication将舍去app+servlet前缀
 	private RequestPath getRequestPath(HttpServletRequest request) {
 		// Expect pre-parsed path with DispatcherServlet,
 		// but otherwise parse per handler lookup + cache for handling

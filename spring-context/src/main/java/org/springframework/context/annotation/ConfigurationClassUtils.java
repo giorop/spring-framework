@@ -96,6 +96,7 @@ public abstract class ConfigurationClassUtils {
 
 
 	/**
+	 * 针对@Configuration proxyBeanMethods:full 其它情况：@Bean method | @ComponentScan | @Import |@ImportResource |@Component
 	 * Check whether the given bean definition is a candidate for a configuration class
 	 * (or a nested component class declared within a configuration/component class,
 	 * to be auto-registered as well), and mark it accordingly.

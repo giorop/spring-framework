@@ -49,7 +49,7 @@ import org.springframework.util.StringUtils;
  * {@link #getSuperType() supertypes}, {@link #getInterfaces() interfaces}, and
  * {@link #getGeneric(int...) generic parameters} along with the ability to ultimately
  * {@link #resolve() resolve} to a {@link java.lang.Class}.
- *
+ * 包装一个type,同时提供接口获取该type的父类以及接口代表的type. 以及可以解析该type中的泛型,以及将该type->Class
  * <p>A {@code ResolvableType} may be obtained from a {@linkplain #forField(Field) field},
  * a {@linkplain #forMethodParameter(Method, int) method parameter},
  * a {@linkplain #forMethodReturnType(Method) method return type}, or a
@@ -99,7 +99,7 @@ public class ResolvableType implements Serializable {
 
 
 	/**
-	 * The underlying Java type being managed.
+	 * The underlying Java type being managed. 这个type是被包装过的，可以序列化
 	 */
 	private final Type type;
 
@@ -936,17 +936,18 @@ public class ResolvableType implements Serializable {
 	@Nullable
 	private Type resolveBounds(Type[] bounds) {
 		if (bounds.length == 0 || bounds[0] == Object.class) {
-			return null;
+			return null;//object得到的解析没意义
 		}
 		return bounds[0];
 	}
 
 	@Nullable
 	private ResolvableType resolveVariable(TypeVariable<?> variable) {
+		//比如List<String> asList->List<E>  其解析泛型E的时候要调用 owner List<String>解析
 		if (this.type instanceof TypeVariable) {
 			return resolveType().resolveVariable(variable);
 		}
-		if (this.type instanceof ParameterizedType parameterizedType) {
+		if (this.type instanceof ParameterizedType parameterizedType) {//List<String> =>resolve:List<E> 解析后得到String
 			Class<?> resolved = resolve();
 			if (resolved == null) {
 				return null;
@@ -958,7 +959,7 @@ public class ResolvableType implements Serializable {
 					return forType(actualType, this.variableResolver);
 				}
 			}
-			Type ownerType = parameterizedType.getOwnerType();
+			Type ownerType = parameterizedType.getOwnerType();//当前解析器没有声明需要的泛型 尝试owner外部声明
 			if (ownerType != null) {
 				return forType(ownerType, this.variableResolver).resolveVariable(variable);
 			}
@@ -1526,7 +1527,7 @@ public class ResolvableType implements Serializable {
 		// Check the cache - we may have a ResolvableType which has been resolved before...
 		ResolvableType resultType = new ResolvableType(type, typeProvider, variableResolver);
 		ResolvableType cachedType = cache.get(resultType);
-		if (cachedType == null) {
+		if (cachedType == null) {//这里会递归 解析泛型信息 并缓存所有涉及到的type类型
 			cachedType = new ResolvableType(type, typeProvider, variableResolver, resultType.hash);
 			cache.put(cachedType, cachedType);
 		}

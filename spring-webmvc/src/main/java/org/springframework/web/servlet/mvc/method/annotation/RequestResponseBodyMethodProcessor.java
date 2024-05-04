@@ -131,9 +131,9 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 
 		parameter = parameter.nestedIfOptional();
-		Object arg = readWithMessageConverters(webRequest, parameter, parameter.getNestedGenericParameterType());
+		Object arg = readWithMessageConverters(webRequest, parameter, parameter.getNestedGenericParameterType());//request+messageConverter=>args
 
-		if (binderFactory != null) {
+		if (binderFactory != null) {//处理验证等后续
 			String name = Conventions.getVariableNameForParameter(parameter);
 			ResolvableType type = ResolvableType.forMethodParameter(parameter);
 			WebDataBinder binder = binderFactory.createBinder(webRequest, arg, name, type);
@@ -174,7 +174,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest)
 			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 
-		mavContainer.setRequestHandled(true);
+		mavContainer.setRequestHandled(true);//标记已经完成流程
 		ServletServerHttpRequest inputMessage = createInputMessage(webRequest);
 		ServletServerHttpResponse outputMessage = createOutputMessage(webRequest);
 

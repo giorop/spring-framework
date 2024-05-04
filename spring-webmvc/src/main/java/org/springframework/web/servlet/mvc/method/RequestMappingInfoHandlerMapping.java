@@ -60,7 +60,7 @@ import org.springframework.web.util.pattern.PathPattern;
 /**
  * Abstract base class for classes for which {@link RequestMappingInfo} defines
  * the mapping between a request and a handler method.
- *
+ * RequestMappingInfoHandlerMapping->request->mappingInfo->handlerMethod mapping
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
  * @since 3.1
@@ -131,6 +131,7 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
 	}
 
 	/**
+	 * match之后做处理 比如request中的uri 解析出info——pattern中声明的占位
 	 * Expose URI template variables, matrix variables, and producible media types in the request.
 	 * @see HandlerMapping#URI_TEMPLATE_VARIABLES_ATTRIBUTE
 	 * @see HandlerMapping#MATRIX_VARIABLES_ATTRIBUTE
@@ -142,7 +143,7 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
 
 		RequestCondition<?> condition = info.getActivePatternsCondition();
 		if (condition instanceof PathPatternsRequestCondition pprc) {
-			extractMatchDetails(pprc, lookupPath, request);
+			extractMatchDetails(pprc, lookupPath, request);//默认使用
 		}
 		else {
 			extractMatchDetails((PatternsRequestCondition) condition, lookupPath, request);
@@ -152,7 +153,7 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
 		if (!producesCondition.isEmpty()) {
 			Set<MediaType> mediaTypes = producesCondition.getProducibleMediaTypes();
 			if (!mediaTypes.isEmpty()) {
-				request.setAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, mediaTypes);
+				request.setAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, mediaTypes);//设置需要的类型
 			}
 		}
 	}
@@ -161,14 +162,14 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
 			PathPatternsRequestCondition condition, String lookupPath, HttpServletRequest request) {
 
 		PathPattern bestPattern;
-		Map<String, String> uriVariables;
+		Map<String, String> uriVariables;//用于设置占位
 		if (condition.isEmptyPathMapping()) {
 			bestPattern = condition.getFirstPattern();
 			uriVariables = Collections.emptyMap();
 		}
 		else {
 			PathContainer path = ServletRequestPathUtils.getParsedRequestPath(request).pathWithinApplication();
-			bestPattern = condition.getFirstPattern();
+			bestPattern = condition.getFirstPattern();//pattern中被选中使用的pattern 解析该占位
 			PathPattern.PathMatchInfo result = bestPattern.matchAndExtract(path);
 			Assert.notNull(result, () ->
 					"Expected bestPattern: " + bestPattern + " to match lookupPath " + path);

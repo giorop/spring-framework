@@ -565,7 +565,7 @@ public abstract class ServletRequestUtils {
 		}
 
 		public int parseInt(String name, String parameter) throws ServletRequestBindingException {
-			return parse(name, parameter);
+			return parse(name, parameter);//拆箱
 		}
 
 		public int[] parseInts(String name, String[] values) throws ServletRequestBindingException {

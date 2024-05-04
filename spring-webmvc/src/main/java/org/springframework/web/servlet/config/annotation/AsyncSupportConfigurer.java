@@ -34,7 +34,7 @@ import org.springframework.web.context.request.async.DeferredResultProcessingInt
  * @since 3.2
  */
 public class AsyncSupportConfigurer {
-
+	//默认是空
 	@Nullable
 	private AsyncTaskExecutor taskExecutor;
 

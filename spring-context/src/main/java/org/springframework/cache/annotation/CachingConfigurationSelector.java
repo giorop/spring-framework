@@ -68,7 +68,7 @@ public class CachingConfigurationSelector extends AdviceModeImportSelector<Enabl
 	 */
 	@Override
 	public String[] selectImports(AdviceMode adviceMode) {
-		return switch (adviceMode) {
+		return switch (adviceMode) {//这语法。。
 			case PROXY -> getProxyImports();
 			case ASPECTJ -> getAspectJImports();
 		};
@@ -80,7 +80,7 @@ public class CachingConfigurationSelector extends AdviceModeImportSelector<Enabl
 	 */
 	private String[] getProxyImports() {
 		List<String> result = new ArrayList<>(3);
-		result.add(AutoProxyRegistrar.class.getName());
+		result.add(AutoProxyRegistrar.class.getName());//添加后置处理器 用于开启代理增强
 		result.add(ProxyCachingConfiguration.class.getName());
 		if (jsr107Present && jcacheImplPresent) {
 			result.add(PROXY_JCACHE_CONFIGURATION_CLASS);

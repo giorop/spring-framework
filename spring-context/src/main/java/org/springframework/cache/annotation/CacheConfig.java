@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface CacheConfig {
-
+	//用于配置某个具体class method中缓存工具
 	/**
 	 * Names of the default caches to consider for caching operations defined
 	 * in the annotated class.

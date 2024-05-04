@@ -56,7 +56,7 @@ import org.springframework.util.ObjectUtils;
  * @see #getHeaders()
  */
 public class HttpEntity<T> {
-
+	//header+ body
 	/**
 	 * The empty {@code HttpEntity}, with no body or headers.
 	 */

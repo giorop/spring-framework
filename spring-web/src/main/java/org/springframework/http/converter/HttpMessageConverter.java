@@ -27,7 +27,7 @@ import org.springframework.lang.Nullable;
 
 /**
  * Strategy interface for converting from and to HTTP requests and responses.
- *
+ * mediaType和class的转化
  * @author Arjen Poutsma
  * @author Juergen Hoeller
  * @author Rossen Stoyanchev
@@ -35,7 +35,7 @@ import org.springframework.lang.Nullable;
  * @param <T> the converted object type
  */
 public interface HttpMessageConverter<T> {
-
+	//class针对要写入和读取的对象 mediaType针对流的contentType
 	/**
 	 * Indicates whether the given class can be read by this converter.
 	 * @param clazz the class to test for readability
@@ -44,7 +44,7 @@ public interface HttpMessageConverter<T> {
 	 * @return {@code true} if readable; {@code false} otherwise
 	 */
 	boolean canRead(Class<?> clazz, @Nullable MediaType mediaType);
-
+	//class表示支持的类型 一般默认true
 	/**
 	 * Indicates whether the given class can be written by this converter.
 	 * @param clazz the class to test for writability

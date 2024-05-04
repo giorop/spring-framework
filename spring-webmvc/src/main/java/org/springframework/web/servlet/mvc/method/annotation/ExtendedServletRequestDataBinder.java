@@ -112,7 +112,7 @@ public class ExtendedServletRequestDataBinder extends ServletRequestDataBinder {
 		}
 
 		@Override
-		protected Object getRequestParameter(String name, Class<?> type) {
+		protected Object getRequestParameter(String name, Class<?> type) {//扩展 同时兼具模板解析得到的uri变量
 			Object value = super.getRequestParameter(name, type);
 			if (value == null) {
 				Map<String, String> uriVars = getUriVars(getRequest());

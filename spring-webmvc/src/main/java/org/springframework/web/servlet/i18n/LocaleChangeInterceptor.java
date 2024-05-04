@@ -41,7 +41,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @see org.springframework.web.servlet.LocaleResolver
  */
 public class LocaleChangeInterceptor implements HandlerInterceptor {
-
+	//LocaleContextHolder LocaleContext  LocaleContextResolver LocaleResolver
+	//LocaleContextHolder保存localeContext 此时通常这个localeContext getLocale和localeContextResolver setLocale之间是可以互通的
+	//比如sessionLocaleResolver 的setLocale 和其创建的LocaleContext getLocale 是通过session中的attribute沟通的
+	//当然localeContextHolder中的LocaleContext通常是和具体request强关联的 故每个request都需要更新LocaleContext
 	/**
 	 * Default name of the locale specification parameter: "locale".
 	 */

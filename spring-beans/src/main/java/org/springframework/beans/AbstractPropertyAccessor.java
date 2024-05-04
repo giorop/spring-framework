@@ -35,7 +35,8 @@ import org.springframework.lang.Nullable;
  * @see #setPropertyValue
  */
 public abstract class AbstractPropertyAccessor extends TypeConverterSupport implements ConfigurablePropertyAccessor {
-
+	//用于读写 某个bean的属性
+	//propertyValue 抽象了 name+value
 	private boolean extractOldValueForEditor = false;
 
 	private boolean autoGrowNestedPaths = false;
@@ -103,7 +104,7 @@ public abstract class AbstractPropertyAccessor extends TypeConverterSupport impl
 				try {
 					setPropertyValue(pv);
 				}
-				catch (NotWritablePropertyException ex) {
+				catch (NotWritablePropertyException ex) {//比如常规通过set注入  但压根没有对应的set方法
 					if (!ignoreUnknown) {
 						throw ex;
 					}

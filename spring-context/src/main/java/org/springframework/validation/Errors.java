@@ -45,7 +45,7 @@ import org.springframework.lang.Nullable;
  * @see BindingResult
  */
 public interface Errors {
-
+	//包含数据绑定或者验证中的错误 提供注册和访问这些error接口
 	/**
 	 * The separator between path elements in a nested path,
 	 * for example in "customer.name" or "customer.address.street".
@@ -136,6 +136,7 @@ public interface Errors {
 	}
 
 	/**
+	 * global error代表的是该bean中的错误 参数用于国际化
 	 * Register a global error for the entire target object,
 	 * using the given error description.
 	 * @param errorCode error code, interpretable as a message key
@@ -180,6 +181,7 @@ public interface Errors {
 	}
 
 	/**
+	 * 表示bean中某个属性对应的error
 	 * Register a field error for the specified field of the current object
 	 * (respecting the current nested path, if any), using the given error
 	 * description.

@@ -98,7 +98,7 @@ public abstract class AbstractRefreshableWebApplicationContext extends AbstractR
 	@Nullable
 	private ThemeSource themeSource;
 
-
+	//root不需要和servlet交互 比如数据库等
 	public AbstractRefreshableWebApplicationContext() {
 		setDisplayName("Root WebApplicationContext");
 	}

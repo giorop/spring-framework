@@ -154,7 +154,7 @@ public final class ParamsRequestCondition extends AbstractRequestCondition<Param
 	static class ParamExpression extends AbstractNameValueExpression<String> {
 
 		private final Set<String> namesToMatch = new HashSet<>(WebUtils.SUBMIT_IMAGE_SUFFIXES.length + 1);
-
+		//额外添加后缀 name.x name.y
 
 		ParamExpression(String expression) {
 			super(expression);
@@ -167,7 +167,7 @@ public final class ParamsRequestCondition extends AbstractRequestCondition<Param
 		@Override
 		protected boolean isCaseSensitiveName() {
 			return true;
-		}
+		}//区分大小写 param区分大小写
 
 		@Override
 		protected String parseValue(String valueExpression) {

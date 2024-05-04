@@ -36,7 +36,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 public class DefaultDataBinderFactory implements WebDataBinderFactory {
 
 	@Nullable
-	private final WebBindingInitializer initializer;
+	private final WebBindingInitializer initializer;//用于配置 @InitBinder
 
 	private boolean methodValidationApplicable;
 
@@ -91,18 +91,18 @@ public class DefaultDataBinderFactory implements WebDataBinderFactory {
 			NativeWebRequest webRequest, @Nullable Object target, String objectName,
 			@Nullable ResolvableType type) throws Exception {
 
-		WebDataBinder dataBinder = createBinderInstance(target, objectName, webRequest);
-		dataBinder.setNameResolver(new BindParamNameResolver());
+		WebDataBinder dataBinder = createBinderInstance(target, objectName, webRequest);//WebRequestDataBinder
+		dataBinder.setNameResolver(new BindParamNameResolver());//@BindParam
 
 		if (target == null && type != null) {
-			dataBinder.setTargetType(type);
+			dataBinder.setTargetType(type);//用于construct
 		}
 
 		if (this.initializer != null) {
-			this.initializer.initBinder(dataBinder);
+			this.initializer.initBinder(dataBinder);//全局配置dataBinder
 		}
 
-		initBinder(dataBinder, webRequest);
+		initBinder(dataBinder, webRequest);//@InitBinder
 
 		if (this.methodValidationApplicable && type != null) {
 			if (type.getSource() instanceof MethodParameter parameter) {

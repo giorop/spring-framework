@@ -52,7 +52,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.web.servlet.support.RequestContextUtils#getLocale
  */
 public interface LocaleResolver {
-
+	//request->locale
 	/**
 	 * Resolve the current locale via the given request.
 	 * <p>Can return a default locale as fallback in any case.

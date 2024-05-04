@@ -89,18 +89,18 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 	private final Object source;
 
 	@Nullable
-	private final Object rootAttributes;
+	private final Object rootAttributes;//annotation 或者一个map等
 
-	private final ValueExtractor valueExtractor;
+	private final ValueExtractor valueExtractor;//如何从rootAttributes中获取值
 
 	private final int aggregateIndex;
 
-	private final boolean useMergedValues;
+	private final boolean useMergedValues;//是否使用底层覆盖
 
 	@Nullable
 	private final Predicate<String> attributeFilter;
 
-	private final int[] resolvedRootMirrors;
+	private final int[] resolvedRootMirrors;//mirrors用于选取 method中的代表 用于提取值
 
 	private final int[] resolvedMirrors;
 
@@ -266,7 +266,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 	public Map<String, Object> asMap(Adapt... adaptations) {
 		return Collections.unmodifiableMap(asMap(mergedAnnotation -> new LinkedHashMap<>(), adaptations));
 	}
-
+	//将MergedAnnotation=>key:methodName value:returnValue
 	@Override
 	public <T extends Map<String, Object>> T asMap(Function<MergedAnnotation<?>, T> factory, Adapt... adaptations) {
 		T map = factory.apply(this);
@@ -283,7 +283,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 		}
 		return map;
 	}
-
+	//根据method返回类型->适配类型
 	private Class<?> getTypeForMapOptions(Method attribute, Adapt[] adaptations) {
 		Class<?> attributeType = attribute.getReturnType();
 		Class<?> componentType = (attributeType.isArray() ? attributeType.componentType() : attributeType);
@@ -292,10 +292,9 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 		}
 		return Object.class;
 	}
-
+	//当value是MergedAnnotation类型的时候 是否递归asMap
 	private <T extends Map<String, Object>> Object adaptValueForMapOptions(Method attribute, Object value,
 			Class<?> mapType, Function<MergedAnnotation<?>, T> factory, Adapt[] adaptations) {
-
 		if (value instanceof MergedAnnotation<?> annotation) {
 			return (Adapt.ANNOTATION_TO_MAP.isIn(adaptations) ?
 					annotation.asMap(factory, adaptations) : annotation.synthesize());
@@ -385,7 +384,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 		Method attribute = this.mapping.getAttributes().get(attributeIndex);
 		Object value = getValue(attributeIndex, true, false);
 		if (value == null) {
-			value = attribute.getDefaultValue();
+			value = attribute.getDefaultValue();//获取本身的default
 		}
 		return adapt(attribute, value, type);
 	}
@@ -393,7 +392,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 	@Nullable
 	private Object getValue(int attributeIndex, boolean useConventionMapping, boolean forMirrorResolution) {
 		AnnotationTypeMapping mapping = this.mapping;
-		if (this.useMergedValues) {
+		if (this.useMergedValues) {//alias 以及同名起作用
 			int mappedIndex = this.mapping.getAliasMapping(attributeIndex);
 			if (mappedIndex == -1 && useConventionMapping) {
 				mappedIndex = this.mapping.getConventionMapping(attributeIndex);
@@ -403,7 +402,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 				attributeIndex = mappedIndex;
 			}
 		}
-		if (!forMirrorResolution) {
+		if (!forMirrorResolution) {//forMirrorResolution表示需要获取method本身的返回值 不整合
 			attributeIndex =
 					(mapping.getDistance() != 0 ? this.resolvedMirrors : this.resolvedRootMirrors)[attributeIndex];
 		}
@@ -424,7 +423,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 		if (this.useMergedValues || forMirrorResolution) {
 			value = this.mapping.getMappedAnnotationValue(attributeIndex, forMirrorResolution);
 		}
-		if (value == null) {
+		if (value == null) {//退一步 返回本身
 			Method attribute = this.mapping.getAttributes().get(attributeIndex);
 			value = AnnotationUtils.invokeAnnotationMethod(attribute, this.mapping.getAnnotation());
 		}
@@ -600,14 +599,14 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 		return null;
 	}
 
-
+	//annotation->
 	static <A extends Annotation> MergedAnnotation<A> from(@Nullable Object source, A annotation) {
 		Assert.notNull(annotation, "Annotation must not be null");
 		AnnotationTypeMappings mappings = AnnotationTypeMappings.forAnnotationType(annotation.annotationType());
 		return new TypeMappedAnnotation<>(
 				mappings.get(0), null, source, annotation, AnnotationUtils::invokeAnnotationMethod, 0);
 	}
-
+	//annotation class +map->
 	static <A extends Annotation> MergedAnnotation<A> of(
 			@Nullable ClassLoader classLoader, @Nullable Object source,
 			Class<A> annotationType, @Nullable Map<String, ?> attributes) {
@@ -631,7 +630,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 		return createIfPossible(mapping, annotation.getSource(), annotation.synthesize(),
 				annotation.getAggregateIndex(), logger);
 	}
-
+	//mapping+annotation->   这里主要是mappings构造的时候直接调用 不像from of等 脱裤子放屁 先生成mapping
 	@Nullable
 	static <A extends Annotation> TypeMappedAnnotation<A> createIfPossible(
 			AnnotationTypeMapping mapping, @Nullable Object source, Annotation annotation,
@@ -640,7 +639,7 @@ final class TypeMappedAnnotation<A extends Annotation> extends AbstractMergedAnn
 		return createIfPossible(mapping, source, annotation,
 				AnnotationUtils::invokeAnnotationMethod, aggregateIndex, logger);
 	}
-
+	//mapping+rootAttribute(数据元 annotation本身 or map 或者其它)+valueExtractor(提取方法)
 	@Nullable
 	private static <A extends Annotation> TypeMappedAnnotation<A> createIfPossible(
 			AnnotationTypeMapping mapping, @Nullable Object source, @Nullable Object rootAttribute,

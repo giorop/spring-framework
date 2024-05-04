@@ -328,7 +328,7 @@ public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 		}
 		postProcessConfiguration(configuration);
 
-		try {
+		try {//以上设置delegent configuration->factory->validator 之后经validator注入sping本身validator逻辑中
 			this.validatorFactory = configuration.buildValidatorFactory();
 			setTargetValidator(this.validatorFactory.getValidator());
 		}

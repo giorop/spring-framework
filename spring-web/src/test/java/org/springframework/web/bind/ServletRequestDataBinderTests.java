@@ -66,7 +66,7 @@ class ServletRequestDataBinderTests {
 		ServletRequestDataBinder binder = new ServletRequestDataBinder(target);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter("_postProcessed", "visible");
+		request.addParameter("_postProcessed", "visible");//default
 		request.addParameter("postProcessed", "on");
 		binder.bind(request);
 		assertThat(target.isPostProcessed()).isTrue();

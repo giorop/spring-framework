@@ -31,7 +31,7 @@ import java.util.Set;
  * @param <A> the annotation type that should trigger formatting
  */
 public interface AnnotationFormatterFactory<A extends Annotation> {
-
+	//将某注解=>解析成format  使用注解的方式是可以提供额外的String 格式等
 	/**
 	 * The types of fields that may be annotated with the &lt;A&gt; annotation.
 	 */

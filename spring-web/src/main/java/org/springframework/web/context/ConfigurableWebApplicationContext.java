@@ -74,6 +74,7 @@ public interface ConfigurableWebApplicationContext extends WebApplicationContext
 	ServletConfig getServletConfig();
 
 	/**
+	 * //主要用于构建默认默认配置文件地址
 	 * Set the namespace for this web application context,
 	 * to be used for building a default context config location.
 	 * The root web application context does not have a namespace.
@@ -95,6 +96,7 @@ public interface ConfigurableWebApplicationContext extends WebApplicationContext
 	void setConfigLocation(String configLocation);
 
 	/**
+	 * 构建配置文件地址 比如annotation中则是class文件地址  比如xml则是配置文件地址。。。
 	 * Set the config locations for this web application context.
 	 * <p>If not set, the implementation is supposed to use a default for the
 	 * given namespace or the root web application context, as appropriate.

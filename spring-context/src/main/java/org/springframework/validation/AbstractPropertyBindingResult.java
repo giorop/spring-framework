@@ -42,7 +42,7 @@ import org.springframework.util.Assert;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractPropertyBindingResult extends AbstractBindingResult {
-
+	//PropertyAccessor 用于特定target
 	@Nullable
 	private transient ConversionService conversionService;
 

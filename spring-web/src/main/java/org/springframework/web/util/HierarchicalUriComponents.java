@@ -343,7 +343,7 @@ final class HierarchicalUriComponents extends UriComponents {
 
 		byte[] bytes = source.getBytes(charset);
 		boolean original = true;
-		for (byte b : bytes) {
+		for (byte b : bytes) {//出现违禁字符 需要转义
 			if (!type.isAllowed(b)) {
 				original = false;
 				break;
@@ -359,7 +359,7 @@ final class HierarchicalUriComponents extends UriComponents {
 				baos.write(b);
 			}
 			else {
-				baos.write('%');
+				baos.write('%');//添加%转义
 				char hex1 = Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16));
 				char hex2 = Character.toUpperCase(Character.forDigit(b & 0xF, 16));
 				baos.write(hex1);

@@ -88,15 +88,15 @@ final class AnnotationTypeMapping {
 
 	private final MirrorSets mirrorSets;
 
-	private final int[] aliasMappings;
+	private final int[] aliasMappings;//->root中的method index
 
-	private final int[] conventionMappings;
+	private final int[] conventionMappings;//root 同名映射
 
-	private final int[] annotationValueMappings;
+	private final int[] annotationValueMappings;//method index->指向上层（alias 或者同名value除外）的mapping index
 
 	private final AnnotationTypeMapping[] annotationValueSource;
 
-	private final Map<Method, List<Method>> aliasedBy;
+	private final Map<Method, List<Method>> aliasedBy;//target(可以是自己类 或者目标类)<- methods
 
 	private final boolean synthesizable;
 
@@ -216,12 +216,12 @@ final class AnnotationTypeMapping {
 	private boolean isAliasPair(Method target) {
 		return (this.annotationType == target.getDeclaringClass());
 	}
-
+	//底部可以用普通的去适配target的array
 	private boolean isCompatibleReturnType(Class<?> attributeType, Class<?> targetType) {
 		return (attributeType == targetType || attributeType == targetType.componentType());
 	}
 
-	private void processAliases() {
+	private void processAliases() {//通过底层Alias多出别名映射 隐式传递(比如底部source.a->当前类b 则当前类中ab互为别名)+显示
 		List<Method> aliases = new ArrayList<>();
 		for (int i = 0; i < this.attributes.size(); i++) {
 			aliases.clear();
@@ -547,6 +547,7 @@ final class AnnotationTypeMapping {
 	}
 
 	/**
+	 * 核心 mapping->具体值
 	 * Get a mapped attribute value from the most suitable
 	 * {@link #getAnnotation() meta-annotation}.
 	 * <p>The resulting value is obtained from the closest meta-annotation,
@@ -674,12 +675,13 @@ final class AnnotationTypeMapping {
 
 
 	/**
+	 * 通过@Alias聚合起来的methods 可以有多组
 	 * A collection of {@link MirrorSet} instances that provides details of all
 	 * defined mirrors.
 	 */
 	class MirrorSets {
 
-		private MirrorSet[] mirrorSets;
+		private MirrorSet[] mirrorSets;//有效聚合 method->assigned->mirrorSet
 
 		private final MirrorSet[] assigned;
 
@@ -688,7 +690,7 @@ final class AnnotationTypeMapping {
 			this.mirrorSets = EMPTY_MIRROR_SETS;
 		}
 
-		void updateFrom(Collection<Method> aliases) {
+		void updateFrom(Collection<Method> aliases) {//聚合一次
 			MirrorSet mirrorSet = null;
 			int size = 0;
 			int last = -1;
@@ -750,7 +752,7 @@ final class AnnotationTypeMapping {
 
 			private int size;
 
-			private final int[] indexes = new int[attributes.size()];
+			private final int[] indexes = new int[attributes.size()];//mirrorSet->method
 
 			void update() {
 				this.size = 0;
@@ -762,7 +764,7 @@ final class AnnotationTypeMapping {
 					}
 				}
 			}
-
+			//indexes中选出代表
 			<A> int resolve(@Nullable Object source, @Nullable A annotation, ValueExtractor valueExtractor) {
 				int result = -1;
 				Object lastValue = null;
@@ -776,7 +778,8 @@ final class AnnotationTypeMapping {
 							result = this.indexes[i];
 						}
 						continue;
-					}
+					}//如果有多个自定义的 且发现不同 则异常 即在同一个注解中 如果互为alias则其必须有相同的声明值 这里已经到具体annotation验证了
+					//default验证在之前的构造中验证
 					if (lastValue != null && !ObjectUtils.nullSafeEquals(lastValue, value)) {
 						String on = (source != null) ? " declared on " + source : "";
 						throw new AnnotationConfigurationException(String.format(

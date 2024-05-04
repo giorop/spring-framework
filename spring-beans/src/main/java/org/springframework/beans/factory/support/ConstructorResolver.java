@@ -160,7 +160,7 @@ class ConstructorResolver {
 			}
 		}
 
-		if (constructorToUse == null || argsToUse == null) {
+		if (constructorToUse == null || argsToUse == null) {//这两个参数都需要适配
 			// Take specified constructors, if any.
 			Constructor<?>[] candidates = chosenCtors;
 			if (candidates == null) {
@@ -178,7 +178,7 @@ class ConstructorResolver {
 
 			if (candidates.length == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
 				Constructor<?> uniqueCandidate = candidates[0];
-				if (uniqueCandidate.getParameterCount() == 0) {
+				if (uniqueCandidate.getParameterCount() == 0) {//特殊情况 直接可以使用唯一无参构造解决情况
 					synchronized (mbd.constructorArgumentLock) {
 						mbd.resolvedConstructorOrFactoryMethod = uniqueCandidate;
 						mbd.constructorArgumentsResolved = true;
@@ -193,7 +193,7 @@ class ConstructorResolver {
 			boolean autowiring = (chosenCtors != null ||
 					mbd.getResolvedAutowireMode() == AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
 			ConstructorArgumentValues resolvedValues = null;
-
+			//对于参数 explicitArgs>mbd中的ConstructorArgumentValues 其中mbd中声明的参数需要解析 比如占位 字符串等
 			int minNrOfArgs;
 			if (explicitArgs != null) {
 				minNrOfArgs = explicitArgs.length;
@@ -204,7 +204,7 @@ class ConstructorResolver {
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
-			AutowireUtils.sortConstructors(candidates);
+			AutowireUtils.sortConstructors(candidates);//public 多参
 			int minTypeDiffWeight = Integer.MAX_VALUE;
 			Set<Constructor<?>> ambiguousConstructors = null;
 			Deque<UnsatisfiedDependencyException> causes = null;
@@ -251,13 +251,13 @@ class ConstructorResolver {
 					}
 				}
 				else {
-					// Explicit arguments given -> arguments length must match exactly.
+					// Explicit arguments given -> arguments length must match exactly. 需要严格匹配
 					if (parameterCount != explicitArgs.length) {
 						continue;
 					}
 					argsHolder = new ArgumentsHolder(explicitArgs);
 				}
-
+				//如果出现类型不一致 直接否
 				int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 						argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
 				// Choose this constructor if it represents the closest match.
@@ -708,6 +708,9 @@ class ConstructorResolver {
 	/**
 	 * Create an array of arguments to invoke a constructor or factory method,
 	 * given the resolved constructor argument values.
+	 * paramTypes 需要的参数类型
+	 * executable 选定的构造方法(or factoryMethod)
+	 * fallback 如果失败 是否强制选择候选
 	 */
 	private ArgumentsHolder createArgumentArray(
 			String beanName, RootBeanDefinition mbd, @Nullable ConstructorArgumentValues resolvedValues,
@@ -771,7 +774,7 @@ class ConstructorResolver {
 				MethodParameter methodParam = MethodParameter.forExecutable(executable, paramIndex);
 				// No explicit match found: we're either supposed to autowire or
 				// have to fail creating an argument array for the given constructor.
-				if (!autowiring) {
+				if (!autowiring) {//表示当前构造是需要autowired 一般这里的逻辑是mbd中直接声明autowired 或者chosen的构造@Autowired 或者唯一构造
 					throw new UnsatisfiedDependencyException(
 							mbd.getResourceDescription(), beanName, new InjectionPoint(methodParam),
 							"Ambiguous argument values for parameter of type [" + paramType.getName() +
@@ -901,7 +904,7 @@ class ConstructorResolver {
 			return injectionPoint;
 		}
 
-		try {
+		try {//代理给beanFactory 遍历通过descriptor删选得到适配的
 			return this.beanFactory.resolveDependency(descriptor, beanName, autowiredBeanNames, typeConverter);
 		}
 		catch (NoUniqueBeanDefinitionException ex) {

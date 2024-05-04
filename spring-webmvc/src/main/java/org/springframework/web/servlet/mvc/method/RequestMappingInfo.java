@@ -47,6 +47,7 @@ import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
+ * 比如将@RequestMapping 中的一些关键词转换为condition 相关
  * Request mapping information. A composite for the following conditions:
  * <ol>
  * <li>{@link PathPatternsRequestCondition} with parsed {@code PathPatterns} or
@@ -441,6 +442,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 				return result;
 			}
 		}
+		//path>params>headers>consumes>produces>methods>custom
 		result = getActivePatternsCondition().compareTo(other.getActivePatternsCondition(), request);
 		if (result != 0) {
 			return result;

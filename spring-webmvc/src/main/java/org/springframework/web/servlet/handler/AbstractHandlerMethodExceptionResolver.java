@@ -47,7 +47,7 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
 			handler = handlerMethod.getBean();
 			return super.shouldApplyTo(request, handler);
 		}
-		else if (hasGlobalExceptionHandlers() && hasHandlerMappings()) {
+		else if (hasGlobalExceptionHandlers() && hasHandlerMappings()) {//@ExceptionHandler
 			return super.shouldApplyTo(request, handler);
 		}
 		else {

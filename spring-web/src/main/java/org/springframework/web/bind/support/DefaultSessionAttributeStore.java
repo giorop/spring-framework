@@ -32,7 +32,7 @@ import org.springframework.web.context.request.WebRequest;
  * @see org.springframework.web.context.request.WebRequest#removeAttribute
  */
 public class DefaultSessionAttributeStore implements SessionAttributeStore {
-
+	//代理给 servlet容器本身
 	private String attributeNamePrefix = "";
 
 

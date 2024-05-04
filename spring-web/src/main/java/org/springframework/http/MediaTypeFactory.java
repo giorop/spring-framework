@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
 public final class MediaTypeFactory {
 
 	private static final String MIME_TYPES_FILE_NAME = "/org/springframework/http/mime.types";
-
+	//表示某后缀 代表某mediaType
 	private static final MultiValueMap<String, MediaType> fileExtensionToMediaTypes = parseMimeTypes();
 
 
@@ -89,6 +89,7 @@ public final class MediaTypeFactory {
 	}
 
 	/**
+	 * resource->fileName->扩展名->mediaType
 	 * Determine a media type for the given resource, if possible.
 	 * @param resource the resource to introspect
 	 * @return the corresponding media type, or {@code null} if none found

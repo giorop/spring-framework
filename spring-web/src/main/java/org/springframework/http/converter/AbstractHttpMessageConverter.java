@@ -55,7 +55,7 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 	private List<MediaType> supportedMediaTypes = Collections.emptyList();
 
 	@Nullable
-	private Charset defaultCharset;
+	private Charset defaultCharset;//默认charSet用于读取和写入 流中字符集
 
 
 	/**
@@ -144,7 +144,7 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 	 * @return {@code true} if the supported media types include the media type,
 	 * or if the media type is {@code null}
 	 */
-	protected boolean canRead(@Nullable MediaType mediaType) {
+	protected boolean canRead(@Nullable MediaType mediaType) {//读取数据 只有当声明的类型 才能处理
 		if (mediaType == null) {
 			return true;
 		}
@@ -175,7 +175,7 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 	 * @return {@code true} if the supported media types are compatible with the media type,
 	 * or if the media type is {@code null}
 	 */
-	protected boolean canWrite(@Nullable MediaType mediaType) {
+	protected boolean canWrite(@Nullable MediaType mediaType) {//没有声明 表示没有限制
 		if (mediaType == null || MediaType.ALL.equalsTypeAndSubtype(mediaType)) {
 			return true;
 		}
@@ -207,10 +207,10 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 			throws IOException, HttpMessageNotWritableException {
 
 		final HttpHeaders headers = outputMessage.getHeaders();
-		addDefaultHeaders(headers, t, contentType);
+		addDefaultHeaders(headers, t, contentType);//写入头部信息
 
 		if (outputMessage instanceof StreamingHttpOutputMessage streamingOutputMessage) {
-			streamingOutputMessage.setBody(new StreamingHttpOutputMessage.Body() {
+			streamingOutputMessage.setBody(new StreamingHttpOutputMessage.Body() {//outputStream不立即使用 等到需要的时候触发body的方法
 				@Override
 				public void writeTo(OutputStream outputStream) throws IOException {
 					writeInternal(t, new HttpOutputMessage() {
@@ -246,6 +246,7 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 	 * @since 4.2
 	 */
 	protected void addDefaultHeaders(HttpHeaders headers, T t, @Nullable MediaType contentType) throws IOException {
+		//写入数据前 配置contentType and contentLength
 		if (headers.getContentType() == null) {
 			MediaType contentTypeToUse = contentType;
 			if (contentType == null || !contentType.isConcrete()) {

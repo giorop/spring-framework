@@ -305,7 +305,7 @@ class ResolvableTypeTests {
 	@Test  // gh-27748
 	void genericMatchesReturnType() throws Exception {
 		Method method = SomeRepository.class.getMethod("someMethod", Class.class, Class.class, Class.class);
-
+		//<T> T someMethod(Class<T> arg0, Class<?> arg1, Class<Object> arg2);
 		ResolvableType returnType = ResolvableType.forMethodReturnType(method, SomeRepository.class);
 
 		ResolvableType arg0 = ResolvableType.forMethodParameter(method, 0, SomeRepository.class); // generic[0]=T

@@ -61,12 +61,12 @@ public class DefaultBindingErrorProcessor implements BindingErrorProcessor {
 		Object[] arguments = getArgumentsForBindError(bindingResult.getObjectName(), fixedField);
 		FieldError error = new FieldError(bindingResult.getObjectName(), fixedField, "", true,
 				codes, arguments, "Field '" + fixedField + "' is required");
-		bindingResult.addError(error);
+		bindingResult.addError(error);//通常表示检查required时没有需要的field
 	}
 
 	@Override
 	public void processPropertyAccessException(PropertyAccessException ex, BindingResult bindingResult) {
-		// Create field error with the exceptions's code, e.g. "typeMismatch".
+		// Create field error with the exceptions's code, e.g. "typeMismatch". 绑定过程中发现绑定异常 此时error中记录当前绑定的值
 		String field = ex.getPropertyName();
 		Assert.state(field != null, "No field in exception");
 		String[] codes = bindingResult.resolveMessageCodes(ex.getErrorCode(), field);

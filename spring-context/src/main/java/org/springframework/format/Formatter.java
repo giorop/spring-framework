@@ -25,5 +25,5 @@ package org.springframework.format;
  * @param <T> the type of object this Formatter formats
  */
 public interface Formatter<T> extends Printer<T>, Parser<T> {
-
+	//String<==>T+locale
 }

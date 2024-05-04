@@ -127,7 +127,7 @@ public abstract class ServletRequestPathUtils {
 	 * @return a String lookupPath or a {@code RequestPath}
 	 * @throws IllegalArgumentException if neither is available
 	 */
-	public static Object getCachedPath(ServletRequest request) {
+	public static Object getCachedPath(ServletRequest request) {//直接pathWithinApplication
 
 		// RequestPath is parsed once and cached in the DispatcherServlet if any HandlerMapping uses PathPatterns.
 		// A String lookupPath is resolved and cached in each HandlerMapping that uses String matching.
@@ -186,9 +186,9 @@ public abstract class ServletRequestPathUtils {
 	 */
 	private static final class ServletRequestPath implements RequestPath {
 
-		private final RequestPath requestPath;
+		private final RequestPath requestPath;//除去 contextPath+servletPath 特定的删去了servlet mapping 一般用于mvc中的路径匹配
 
-		private final PathContainer contextPath;
+		private final PathContainer contextPath;//真正的contextPath
 
 		private ServletRequestPath(String rawPath, @Nullable String contextPath, String servletPathPrefix) {
 			Assert.notNull(servletPathPrefix, "`servletPathPrefix` is required");
@@ -244,7 +244,7 @@ public abstract class ServletRequestPathUtils {
 		}
 
 
-		public static RequestPath parse(HttpServletRequest request) {
+		public static RequestPath parse(HttpServletRequest request) {//当前request uri 如果当前request include 则当前路径保存的是之前的路径
 			String requestUri = (String) request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE);
 			requestUri = (requestUri != null ? requestUri : request.getRequestURI());
 			String servletPathPrefix = getServletPathPrefix(request);
@@ -257,10 +257,10 @@ public abstract class ServletRequestPathUtils {
 		private static String getServletPathPrefix(HttpServletRequest request) {
 			HttpServletMapping mapping = (HttpServletMapping) request.getAttribute(RequestDispatcher.INCLUDE_MAPPING);
 			mapping = (mapping != null ? mapping : request.getHttpServletMapping());
-			if (ObjectUtils.nullSafeEquals(mapping.getMappingMatch(), MappingMatch.PATH)) {
+			if (ObjectUtils.nullSafeEquals(mapping.getMappingMatch(), MappingMatch.PATH)) {//表示当前servlet是通过path mapping得到的
 				String servletPath = (String) request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE);
 				servletPath = (servletPath != null ? servletPath : request.getServletPath());
-				servletPath = (servletPath.endsWith("/") ? servletPath.substring(0, servletPath.length() - 1) : servletPath);
+				servletPath = (servletPath.endsWith("/") ? servletPath.substring(0, servletPath.length() - 1) : servletPath);//排除/ 留给后面部分
 				return UriUtils.encodePath(servletPath, StandardCharsets.UTF_8);
 			}
 			return null;

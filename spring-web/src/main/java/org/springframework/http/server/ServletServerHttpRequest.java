@@ -59,7 +59,7 @@ public class ServletServerHttpRequest implements ServerHttpRequest {
 	protected static final Charset FORM_CHARSET = StandardCharsets.UTF_8;
 
 
-	private final HttpServletRequest servletRequest;
+	private final HttpServletRequest servletRequest;//终端request 将包装类ServletServerHttpRequest的方法代理给request
 
 	@Nullable
 	private URI uri;
@@ -154,7 +154,7 @@ public class ServletServerHttpRequest implements ServerHttpRequest {
 
 			// HttpServletRequest exposes some headers as properties:
 			// we should include those if not already present
-			try {
+			try {//添加额外的一些属性 getHeader可能获取不到 contentType+charSet
 				MediaType contentType = this.headers.getContentType();
 				if (contentType == null) {
 					String requestContentType = this.servletRequest.getContentType();
@@ -208,8 +208,8 @@ public class ServletServerHttpRequest implements ServerHttpRequest {
 	}
 
 	@Override
-	public InputStream getBody() throws IOException {
-		if (isFormPost(this.servletRequest) && this.servletRequest.getQueryString() == null) {
+	public InputStream getBody() throws IOException {//getBody用于读取数据
+		if (isFormPost(this.servletRequest) && this.servletRequest.getQueryString() == null) {//表单 此时所有body的信息就是params
 			return getBodyFromServletRequestParameters(this.servletRequest);
 		}
 		else {
@@ -237,6 +237,7 @@ public class ServletServerHttpRequest implements ServerHttpRequest {
 	}
 
 	/**
+	 * 将params打包成inputStream供使用 这样不消耗原始流
 	 * Use {@link jakarta.servlet.ServletRequest#getParameterMap()} to reconstruct the
 	 * body of a form 'POST' providing a predictable outcome as opposed to reading
 	 * from the body, which can fail if any other code has used the ServletRequest

@@ -47,7 +47,7 @@ import org.springframework.util.Assert;
  * @see org.springframework.web.context.support.WebApplicationObjectSupport
  */
 public abstract class ApplicationObjectSupport implements ApplicationContextAware {
-
+	//用于注入ApplicationContext
 	/** Logger that is available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -67,14 +67,14 @@ public abstract class ApplicationObjectSupport implements ApplicationContextAwar
 			this.applicationContext = null;
 			this.messageSourceAccessor = null;
 		}
-		else if (this.applicationContext == null) {
+		else if (this.applicationContext == null) {//此时需要注入
 			// Initialize with passed-in context.
 			if (!requiredContextClass().isInstance(context)) {
 				throw new ApplicationContextException(
 						"Invalid application context: needs to be of type [" + requiredContextClass().getName() + "]");
 			}
 			this.applicationContext = context;
-			this.messageSourceAccessor = new MessageSourceAccessor(context);
+			this.messageSourceAccessor = new MessageSourceAccessor(context);//代理给applicationContext
 			initApplicationContext(context);
 		}
 		else {

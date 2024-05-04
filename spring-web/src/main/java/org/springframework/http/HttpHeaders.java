@@ -65,7 +65,7 @@ import org.springframework.util.StringUtils;
  * </ul>
  *
  * <p>Note that {@code HttpHeaders} generally treats header names in a case-insensitive manner.
- *
+ * httpHeader 应当是不区分大小写的 表示一个请求头
  * @author Arjen Poutsma
  * @author Sebastien Deleuze
  * @author Brian Clozel

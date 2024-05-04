@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
  *
  * <p>The default scope is "singleton", and the default is to <i>not</i> create
  * scoped-proxies.
- *
+ * 两个维度 一个是singleton|prototype|etc   另一个是代理模式比如cglib,jdk等；通常是scopeObject代替原始bean,其最底层代理给原始bean
  * @author Mark Fisher
  * @author Juergen Hoeller
  * @since 2.5

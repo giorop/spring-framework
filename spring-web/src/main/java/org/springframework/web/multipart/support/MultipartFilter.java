@@ -151,7 +151,7 @@ public class MultipartFilter extends OncePerRequestFilter {
 	 * for example if not using a Spring web application context.
 	 * @return the MultipartResolver instance
 	 */
-	protected MultipartResolver lookupMultipartResolver() {
+	protected MultipartResolver lookupMultipartResolver() {//尝试使用application中设定的multipartResolver(比如dispatcher设定 默认没有)
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 		String beanName = getMultipartResolverBeanName();
 		if (wac != null && wac.containsBean(beanName)) {

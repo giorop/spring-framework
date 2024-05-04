@@ -28,7 +28,8 @@ import org.springframework.util.Assert;
  * Convenient base class for {@link ImportSelector} implementations that select imports
  * based on an {@link AdviceMode} value from an annotation (such as the {@code @Enable*}
  * annotations).
- *
+ * 主要处理@Enable**这些配置注解 这些注解会import AdviceModeImportSelector;同时可以反向获取@Enable**这个注解本身用于解析
+ * 通常引入的是一些代理功能类(mode 选择代理模式) 这些advice增强特定方法
  * @author Chris Beams
  * @since 3.1
  * @param <A> annotation containing {@linkplain #getAdviceModeAttributeName() AdviceMode attribute}
@@ -66,7 +67,7 @@ public abstract class AdviceModeImportSelector<A extends Annotation> implements 
 	public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
 		Class<?> annType = GenericTypeResolver.resolveTypeArgument(getClass(), AdviceModeImportSelector.class);
 		Assert.state(annType != null, "Unresolvable type argument for AdviceModeImportSelector");
-
+		//获取@Enable**上的信息
 		AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);
 		if (attributes == null) {
 			throw new IllegalArgumentException(String.format(

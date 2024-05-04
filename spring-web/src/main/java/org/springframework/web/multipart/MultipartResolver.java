@@ -80,7 +80,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @see org.springframework.web.servlet.DispatcherServlet
  */
 public interface MultipartResolver {
-
+	//HttpServletRequest->MultipartHttpServletRequest
 	/**
 	 * Determine if the given request contains multipart content.
 	 * <p>Will typically check for content type "multipart/form-data", but the actually

@@ -434,7 +434,7 @@ class RequestMappingHandlerMappingTests {
 	private static RequestMappingHandlerMapping createMapping() {
 		RequestMappingHandlerMapping mapping = new RequestMappingHandlerMapping();
 		mapping.setApplicationContext(new StaticWebApplicationContext());
-		mapping.afterPropertiesSet();
+		mapping.afterPropertiesSet();//什么也没有
 		return mapping;
 	}
 

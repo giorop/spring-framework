@@ -55,10 +55,11 @@ public final class RequestMethodsRequestCondition extends AbstractRequestConditi
 	}
 
 
-	private final Set<RequestMethod> methods;
+	private final Set<RequestMethod> methods;//默认支持所有方法
 
 
 	/**
+	 * 如果没有声明 则表示适配所有
 	 * Create a new instance with the given request methods.
 	 * @param requestMethods 0 or more HTTP request methods;
 	 * if, 0 the condition will match to every request
@@ -135,7 +136,7 @@ public final class RequestMethodsRequestCondition extends AbstractRequestConditi
 
 				return null; // We handle OPTIONS transparently, so don't match if no explicit declarations
 			}
-			return this;
+			return this;//适配所有 没有特别声明
 		}
 
 		return matchRequestMethod(request.getMethod());
@@ -159,10 +160,10 @@ public final class RequestMethodsRequestCondition extends AbstractRequestConditi
 	private RequestMethodsRequestCondition matchRequestMethod(String httpMethodValue) {
 		RequestMethod requestMethod = RequestMethod.resolve(httpMethodValue);
 		if (requestMethod != null) {
-			if (getMethods().contains(requestMethod)) {
+			if (getMethods().contains(requestMethod)) {//当前声明了比如getMapping 声明的get
 				return requestMethodConditionCache.get(httpMethodValue);
 			}
-			if (requestMethod.equals(RequestMethod.HEAD) && getMethods().contains(RequestMethod.GET)) {
+			if (requestMethod.equals(RequestMethod.HEAD) && getMethods().contains(RequestMethod.GET)) {//get可以覆盖head
 				return requestMethodConditionCache.get(HttpMethod.GET.name());
 			}
 		}
@@ -183,7 +184,7 @@ public final class RequestMethodsRequestCondition extends AbstractRequestConditi
 	@Override
 	public int compareTo(RequestMethodsRequestCondition other, HttpServletRequest request) {
 		if (other.methods.size() != this.methods.size()) {
-			return other.methods.size() - this.methods.size();
+			return other.methods.size() - this.methods.size();//多的优先
 		}
 		else if (this.methods.size() == 1) {
 			if (this.methods.contains(RequestMethod.HEAD) && other.methods.contains(RequestMethod.GET)) {

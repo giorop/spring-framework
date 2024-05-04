@@ -35,7 +35,7 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @since 3.2
  */
 public class HeaderContentNegotiationStrategy implements ContentNegotiationStrategy {
-
+	//header accept  =>mediaType
 	/**
 	 * {@inheritDoc}
 	 * @throws HttpMediaTypeNotAcceptableException if the 'Accept' header cannot be parsed
@@ -45,7 +45,7 @@ public class HeaderContentNegotiationStrategy implements ContentNegotiationStrat
 			throws HttpMediaTypeNotAcceptableException {
 
 		String[] headerValueArray = request.getHeaderValues(HttpHeaders.ACCEPT);
-		if (headerValueArray == null) {
+		if (headerValueArray == null) {//null->all
 			return MEDIA_TYPE_ALL_LIST;
 		}
 

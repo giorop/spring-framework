@@ -20,7 +20,7 @@ import org.springframework.lang.Nullable;
 
 /**
  * Enumeration of HTTP status codes.
- *
+ * 表示 状态码
  * <p>The HTTP status code series can be retrieved via {@link #series()}.
  *
  * @author Arjen Poutsma

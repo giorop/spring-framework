@@ -88,12 +88,12 @@ public class AcceptHeaderLocaleResolver extends AbstractLocaleResolver {
 		if (defaultLocale != null && request.getHeader("Accept-Language") == null) {
 			return defaultLocale;
 		}
-		Locale requestLocale = request.getLocale();
+		Locale requestLocale = request.getLocale();//getLocale只会返回一个
 		List<Locale> supportedLocales = getSupportedLocales();
 		if (supportedLocales.isEmpty() || supportedLocales.contains(requestLocale)) {
 			return requestLocale;
 		}
-		Locale supportedLocale = findSupportedLocale(request, supportedLocales);
+		Locale supportedLocale = findSupportedLocale(request, supportedLocales);//getLocales会返回更多locale
 		if (supportedLocale != null) {
 			return supportedLocale;
 		}

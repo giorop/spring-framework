@@ -110,7 +110,7 @@ class MimeTypeTests {
 	@Test
 	void withConversionService() {
 		ConversionService conversionService = new DefaultConversionService();
-		assertThat(conversionService.canConvert(String.class, MimeType.class)).isTrue();
+		assertThat(conversionService.canConvert(String.class, MimeType.class)).isTrue();//ObjectToObject
 		MimeType mimeType = MimeType.valueOf("application/xml");
 		assertThat(conversionService.convert("application/xml", MimeType.class)).isEqualTo(mimeType);
 	}
@@ -205,7 +205,7 @@ class MimeTypeTests {
 	@Test
 	void parseMimeTypeTypeRange() {
 		assertThatExceptionOfType(InvalidMimeTypeException.class).isThrownBy(() ->
-				MimeTypeUtils.parseMimeType("*/json"));
+				MimeTypeUtils.parseMimeType("*/json"));//只允许*/*
 	}
 
 	@Test
@@ -235,7 +235,7 @@ class MimeTypeTests {
 	@Test
 	void parseMimeTypeEmptyParameterValue() {
 		assertThatExceptionOfType(InvalidMimeTypeException.class).isThrownBy(() ->
-				MimeTypeUtils.parseMimeType("audio/*;attr="));
+				MimeTypeUtils.parseMimeType("audio/*;attr="));//map不允许放入null subString报错
 	}
 
 	@Test

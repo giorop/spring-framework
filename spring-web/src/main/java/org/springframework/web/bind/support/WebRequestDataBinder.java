@@ -115,7 +115,7 @@ public class WebRequestDataBinder extends WebDataBinder {
 	public void construct(WebRequest request) {
 		if (request instanceof NativeWebRequest nativeRequest) {
 			ServletRequest servletRequest = nativeRequest.getNativeRequest(ServletRequest.class);
-			if (servletRequest != null) {
+			if (servletRequest != null) {//尝试从request中提取值
 				construct(ServletRequestDataBinder.valueResolver(servletRequest, this));
 			}
 		}

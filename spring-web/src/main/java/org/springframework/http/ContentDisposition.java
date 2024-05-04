@@ -49,7 +49,8 @@ import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
  * @see <a href="https://tools.ietf.org/html/rfc6266">RFC 6266</a>
  */
 public final class ContentDisposition {
-
+	//比如一个请求类型为Content-Disposition 那么其中每个part 都可以解析出ContentDisposition
+	//同时也可以构建 最后toString 构成请求头中信息
 	private static final Pattern BASE64_ENCODED_PATTERN =
 			Pattern.compile("=\\?([0-9a-zA-Z-_]+)\\?B\\?([+/0-9a-zA-Z]+=*)\\?=");
 
@@ -83,7 +84,7 @@ public final class ContentDisposition {
 	private final String filename;
 
 	@Nullable
-	private final Charset charset;
+	private final Charset charset;//其关联的实体部分
 
 	@Nullable
 	private final Long size;
@@ -115,7 +116,7 @@ public final class ContentDisposition {
 		this.readDate = readDate;
 	}
 
-
+	//以下几种类型 attachment form-data inline
 	/**
 	 * Return whether the {@link #getType() type} is {@literal "attachment"}.
 	 * @since 5.3
@@ -340,7 +341,7 @@ public final class ContentDisposition {
 	 * @return the parsed content disposition
 	 * @see #toString()
 	 */
-	public static ContentDisposition parse(String contentDisposition) {
+	public static ContentDisposition parse(String contentDisposition) {//request->contentDisposition 上面builder:用于构建请求头
 		List<String> parts = tokenize(contentDisposition);
 		String type = parts.get(0);
 		String name = null;
@@ -361,7 +362,7 @@ public final class ContentDisposition {
 				if (attribute.equals("name") ) {
 					name = value;
 				}
-				else if (attribute.equals("filename*") ) {
+				else if (attribute.equals("filename*") ) {//表示后面携带charset
 					int idx1 = value.indexOf('\'');
 					int idx2 = value.indexOf('\'', idx1 + 1);
 					if (idx1 != -1 && idx2 != -1) {
@@ -450,7 +451,7 @@ public final class ContentDisposition {
 		return new ContentDisposition(type, name, filename, charset, size, creationDate, modificationDate, readDate);
 	}
 
-	private static List<String> tokenize(String headerValue) {
+	private static List<String> tokenize(String headerValue) {//form-data; name="file"; filename="myFile.txt"
 		int index = headerValue.indexOf(';');
 		String type = (index >= 0 ? headerValue.substring(0, index) : headerValue).trim();
 		if (type.isEmpty()) {
@@ -465,7 +466,7 @@ public final class ContentDisposition {
 				boolean escaped = false;
 				while (nextIndex < headerValue.length()) {
 					char ch = headerValue.charAt(nextIndex);
-					if (ch == ';') {
+					if (ch == ';') {//分隔符
 						if (!quoted) {
 							break;
 						}
@@ -499,7 +500,7 @@ public final class ContentDisposition {
 		Assert.notNull(filename, "'filename' must not be null");
 		Assert.notNull(charset, "'charset' must not be null");
 
-		byte[] value = filename.getBytes(charset);
+		byte[] value = filename.getBytes(charset);//解析转义等
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int index = 0;
 		while (index < value.length) {

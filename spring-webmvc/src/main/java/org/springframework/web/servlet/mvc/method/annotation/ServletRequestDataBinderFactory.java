@@ -32,7 +32,7 @@ import org.springframework.web.method.support.InvocableHandlerMethod;
  * @since 3.1
  */
 public class ServletRequestDataBinderFactory extends InitBinderDataBinderFactory {
-
+	//ExtendedServletRequestDataBinder uri var数据绑定
 	/**
 	 * Create a new instance.
 	 * @param binderMethods one or more {@code @InitBinder} methods

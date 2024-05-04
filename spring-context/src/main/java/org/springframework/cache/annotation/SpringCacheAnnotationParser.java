@@ -47,7 +47,7 @@ import org.springframework.util.StringUtils;
  */
 @SuppressWarnings("serial")
 public class SpringCacheAnnotationParser implements CacheAnnotationParser, Serializable {
-
+	//class method->cacheOps 解析
 	private static final Set<Class<? extends Annotation>> CACHE_OPERATION_ANNOTATIONS =
 			Set.of(Cacheable.class, CacheEvict.class, CachePut.class, Caching.class);
 

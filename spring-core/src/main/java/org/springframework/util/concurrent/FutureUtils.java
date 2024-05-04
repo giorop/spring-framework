@@ -28,13 +28,14 @@ import org.springframework.util.Assert;
 /**
  * Convenience utilities for working with {@link java.util.concurrent.Future}
  * and implementations.
- *
+ * CompletableFuture取代ListableFuture(完成时的一些监听)
  * @author Arjen Poutsma
  * @since 6.0
  */
 public abstract class FutureUtils {
 
 	/**
+	 * 提交一个异步任务 这里同时控制了异常
 	 * Return a new {@code CompletableFuture} that is asynchronously completed
 	 * by a task running in the {@link ForkJoinPool#commonPool()} with
 	 * the value obtained by calling the given {@code Callable}.

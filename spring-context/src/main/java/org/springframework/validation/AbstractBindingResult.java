@@ -48,7 +48,7 @@ public abstract class AbstractBindingResult extends AbstractErrors implements Bi
 
 	private final String objectName;
 
-	private MessageCodesResolver messageCodesResolver = new DefaultMessageCodesResolver();
+	private MessageCodesResolver messageCodesResolver = new DefaultMessageCodesResolver();//用于生成messageSource转换的code
 
 	private final List<ObjectError> errors = new ArrayList<>();
 
@@ -113,8 +113,8 @@ public abstract class AbstractBindingResult extends AbstractErrors implements Bi
 			return;
 		}
 
-		String fixedField = fixedField(field);
-		Object newVal = getActualFieldValue(fixedField);
+		String fixedField = fixedField(field);//fullPath
+		Object newVal = getActualFieldValue(fixedField);//当前field实际值
 		FieldError fe = new FieldError(getObjectName(), fixedField, newVal, false,
 				resolveMessageCodes(errorCode, field), errorArgs, defaultMessage);
 		addError(fe);
@@ -217,12 +217,13 @@ public abstract class AbstractBindingResult extends AbstractErrors implements Bi
 		FieldError fieldError = getFieldError(field);
 		// Use rejected value in case of error, current field value otherwise.
 		if (fieldError != null) {
-			Object value = fieldError.getRejectedValue();
+			Object value = fieldError.getRejectedValue();//通常绑定异常 记录提供的值
 			// Do not apply formatting on binding failures like type mismatches.
+			// 其它异常 比如限制异常如string必须长度等 此时value为传入参数，需要转换成实际应该注入的bean，只是被error提前捕捉 没有实现注入这一步骤
 			return (fieldError.isBindingFailure() || getTarget() == null ? value : formatFieldValue(field, value));
 		}
 		else if (getTarget() != null) {
-			Object value = getActualFieldValue(fixedField(field));
+			Object value = getActualFieldValue(fixedField(field));//通常实现已经类型一致
 			return formatFieldValue(field, value);
 		}
 		else {
@@ -270,7 +271,7 @@ public abstract class AbstractBindingResult extends AbstractErrors implements Bi
 		Map<String, Object> model = new LinkedHashMap<>(2);
 		// Mapping from name to target object.
 		model.put(getObjectName(), getTarget());
-		// Errors instance, even if no errors.
+		// Errors instance, even if no errors. 用于访问errors
 		model.put(MODEL_KEY_PREFIX + getObjectName(), this);
 		return model;
 	}

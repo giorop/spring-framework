@@ -41,7 +41,7 @@ public interface SmartValidator extends Validator {
 	 * {@link #validate(Object, Errors)} sibling.
 	 * @param target the object that is to be validated
 	 * @param errors contextual state about the validation process
-	 * @param validationHints one or more hint objects to be passed to the validation engine
+	 * @param validationHints one or more hint objects to be passed to the validation engine 额外参数 辅助
 	 * @see jakarta.validation.Validator#validate(Object, Class[])
 	 */
 	void validate(Object target, Errors errors, Object... validationHints);

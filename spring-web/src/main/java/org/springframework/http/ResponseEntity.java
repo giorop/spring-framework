@@ -78,7 +78,7 @@ import org.springframework.util.ObjectUtils;
  * @see RequestEntity
  */
 public class ResponseEntity<T> extends HttpEntity<T> {
-
+	//添加了一个状态码
 	private final HttpStatusCode status;
 
 

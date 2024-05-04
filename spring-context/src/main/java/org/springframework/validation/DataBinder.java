@@ -165,13 +165,13 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	private int autoGrowCollectionLimit = DEFAULT_AUTO_GROW_COLLECTION_LIMIT;
 
 	@Nullable
-	private String[] allowedFields;
+	private String[] allowedFields;//allowedField disAllowedField用于筛选pvs中属性
 
 	@Nullable
 	private String[] disallowedFields;
 
 	@Nullable
-	private String[] requiredFields;
+	private String[] requiredFields;//声明的属性必须有 否则记录error
 
 	@Nullable
 	private NameResolver nameResolver;
@@ -182,7 +182,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	@Nullable
 	private MessageCodesResolver messageCodesResolver;
 
-	private BindingErrorProcessor bindingErrorProcessor = new DefaultBindingErrorProcessor();
+	private BindingErrorProcessor bindingErrorProcessor = new DefaultBindingErrorProcessor();//代理处理 error注册->resultBiding
 
 	private final List<Validator> validators = new ArrayList<>();
 
@@ -878,6 +878,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 
 
 	/**
+	 * 通过targetType+valueResolver创建出实例
 	 * Create the target with constructor injection of values. It is expected that
 	 * {@link #setTargetType(ResolvableType)} was previously called and that
 	 * {@link #getTarget()} is {@code null}.
@@ -896,7 +897,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	 * @throws BeanInstantiationException in case of constructor failure
 	 * @since 6.1
 	 */
-	public void construct(ValueResolver valueResolver) {
+	public void construct(ValueResolver valueResolver) {//valueResolver用于提取需要的值构建参数
 		Assert.state(this.target == null, "Target instance already available");
 		Assert.state(this.targetType != null, "Target type not set");
 
@@ -921,7 +922,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		}
 
 		Object result = null;
-		Constructor<?> ctor = BeanUtils.getResolvableConstructor(clazz);
+		Constructor<?> ctor = BeanUtils.getResolvableConstructor(clazz);//如果有唯一 则使用 否则无参
 
 		if (ctor.getParameterCount() == 0) {
 			// A single default constructor -> clearly a standard JavaBeans arrangement.
@@ -944,20 +945,20 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 					lookupName = paramNames[i];
 				}
 
-				String paramPath = nestedPath + lookupName;
+				String paramPath = nestedPath + lookupName;//这里为直接name 不用.前缀
 				Class<?> paramType = paramTypes[i];
 				Object value = valueResolver.resolveValue(paramPath, paramType);
-
+				//尝试递归构建
 				if (value == null && shouldConstructArgument(param) && hasValuesFor(paramPath, valueResolver)) {
 					ResolvableType type = ResolvableType.forMethodParameter(param);
 					args[i] = createObject(type, paramPath + ".", valueResolver);
 				}
-				else {
+				else {//value类型转换
 					try {
 						if (value == null && (param.isOptional() || getBindingResult().hasErrors())) {
 							args[i] = (param.getParameterType() == Optional.class ? Optional.empty() : null);
 						}
-						else {
+						else {//类型转换
 							args[i] = convertIfNecessary(value, paramType, param);
 						}
 					}
@@ -966,7 +967,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 						args[i] = null;
 						failedParamNames.add(paramPath);
 						getBindingResult().recordFieldValue(paramPath, paramType, value);
-						getBindingErrorProcessor().processPropertyAccessException(ex, getBindingResult());
+						getBindingErrorProcessor().processPropertyAccessException(ex, getBindingResult());//记录异常
 					}
 				}
 			}
@@ -1034,7 +1035,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	private void validateConstructorArgument(
 			Class<?> constructorClass, String nestedPath, String name, @Nullable Object value) {
 
-		Object[] hints = null;
+		Object[] hints = null;//用于辅助
 		if (this.targetType.getSource() instanceof MethodParameter parameter) {
 			for (Annotation ann : parameter.getParameterAnnotations()) {
 				hints = ValidationAnnotationUtils.determineValidationHints(ann);
@@ -1107,8 +1108,8 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	 * @see #applyPropertyValues
 	 */
 	protected void doBind(MutablePropertyValues mpvs) {
-		checkAllowedFields(mpvs);
-		checkRequiredFields(mpvs);
+		checkAllowedFields(mpvs);//先检查allowed 并记录
+		checkRequiredFields(mpvs);//再检查是required全部拥有 否则记录
 		applyPropertyValues(mpvs);
 	}
 
@@ -1123,7 +1124,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 		PropertyValue[] pvs = mpvs.getPropertyValues();
 		for (PropertyValue pv : pvs) {
 			String field = PropertyAccessorUtils.canonicalPropertyName(pv.getName());
-			if (!isAllowed(field)) {
+			if (!isAllowed(field)) {//筛选出可以被处理的pvs
 				mpvs.removePropertyValue(pv);
 				getBindingResult().recordSuppressedField(field);
 				if (logger.isDebugEnabled()) {
@@ -1161,6 +1162,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	}
 
 	/**
+	 * 如果确实required则记录 error
 	 * Check the given property values against the required fields,
 	 * generating missing field errors where appropriate.
 	 * @param mpvs the property values to be bound (can be modified)
@@ -1220,11 +1222,11 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 			getPropertyAccessor().setPropertyValues(mpvs, isIgnoreUnknownFields(), isIgnoreInvalidFields());
 		}
 		catch (PropertyBatchUpdateException ex) {
-			// Use bind error processor to create FieldErrors.
+			// Use bind error processor to create FieldErrors. 比如类型转换异常 或者访问异常(比如根本没有这个给属性)
 			for (PropertyAccessException pae : ex.getPropertyAccessExceptions()) {
 				getBindingErrorProcessor().processPropertyAccessException(pae, getInternalBindingResult());
 			}
-		}
+		}//其它异常 直接向外抛出
 	}
 
 

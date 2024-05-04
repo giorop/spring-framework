@@ -64,7 +64,7 @@ public abstract class AbstractGenericHttpMessageConverter<T> extends AbstractHtt
 	@Override
 	protected boolean supports(Class<?> clazz) {
 		return true;
-	}
+	}//这里对对象类型没要求 比如json 所有类型适用
 
 	@Override
 	public boolean canRead(Type type, @Nullable Class<?> contextClass, @Nullable MediaType mediaType) {
@@ -85,7 +85,7 @@ public abstract class AbstractGenericHttpMessageConverter<T> extends AbstractHtt
 			HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
 
 		final HttpHeaders headers = outputMessage.getHeaders();
-		addDefaultHeaders(headers, t, contentType);
+		addDefaultHeaders(headers, t, contentType);//配置header
 
 		if (outputMessage instanceof StreamingHttpOutputMessage streamingOutputMessage) {
 			streamingOutputMessage.setBody(new StreamingHttpOutputMessage.Body() {
@@ -111,8 +111,8 @@ public abstract class AbstractGenericHttpMessageConverter<T> extends AbstractHtt
 			});
 		}
 		else {
-			writeInternal(t, type, outputMessage);
-			outputMessage.getBody().flush();
+			writeInternal(t, type, outputMessage);//写入数据
+			outputMessage.getBody().flush();//body flush 通常触发stream flush等
 		}
 	}
 
@@ -124,6 +124,7 @@ public abstract class AbstractGenericHttpMessageConverter<T> extends AbstractHtt
 	}
 
 	/**
+	 * write集中到这
 	 * Abstract template method that writes the actual body. Invoked from {@link #write}.
 	 * @param t the object to write to the output message
 	 * @param type the type of object to write (may be {@code null})

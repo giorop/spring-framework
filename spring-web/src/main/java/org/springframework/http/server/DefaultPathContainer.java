@@ -51,9 +51,9 @@ final class DefaultPathContainer implements PathContainer {
 	}
 
 
-	private final String path;
+	private final String path;//原始path 未解析
 
-	private final List<Element> elements;
+	private final List<Element> elements;//解析后得到的elements
 
 
 	private DefaultPathContainer(String path, List<Element> elements) {
@@ -224,11 +224,11 @@ final class DefaultPathContainer implements PathContainer {
 		private static final MultiValueMap<String, String> EMPTY_PARAMS =
 				CollectionUtils.unmodifiableMultiValueMap(new LinkedMultiValueMap<>());
 
-		private final String value;
+		private final String value;//原始表达式
 
-		private final String valueToMatch;
+		private final String valueToMatch;//转换后的表达式 比如将%2f转换成/  某个segment中的. /需要转义 需要区分分隔符
 
-		private final MultiValueMap<String, String> parameters;
+		private final MultiValueMap<String, String> parameters;//通常是:之后的参数
 
 		/**
 		 * Factory for segments without decoding and parsing.

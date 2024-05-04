@@ -79,7 +79,7 @@ public interface BindingResult extends Errors {
 	Map<String, Object> getModel();
 
 	/**
-	 * Extract the raw field value for the given field.
+	 * Extract the raw field value for the given field.获取当前target 某field实际值
 	 * Typically used for comparison purposes.
 	 * @param field the field to check
 	 * @return the current value of the field in its raw form, or {@code null} if not known

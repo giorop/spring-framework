@@ -211,7 +211,7 @@ class CacheErrorHandlerTests {
 
 	}
 
-	@CacheConfig(cacheNames = "test")
+	@CacheConfig(cacheNames = "test") //集中配置 通常一个类对应一张表 对应一个cache
 	public static class SimpleService {
 		private AtomicLong counter = new AtomicLong();
 

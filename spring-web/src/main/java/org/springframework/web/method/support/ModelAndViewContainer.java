@@ -54,7 +54,7 @@ public class ModelAndViewContainer {
 	@Nullable
 	private Object view;
 
-	private final ModelMap defaultModel = new BindingAwareModelMap();
+	private final ModelMap defaultModel = new BindingAwareModelMap();//每次put的时候会移除前面的bindingResult 是的绑定error的时候只有一个bingingResult
 
 	@Nullable
 	private ModelMap redirectModel;
@@ -155,7 +155,7 @@ public class ModelAndViewContainer {
 	/**
 	 * Whether to use the default model or the redirect model.
 	 */
-	private boolean useDefaultModel() {
+	private boolean useDefaultModel() {//ignoreDefaultModelOnRedirect 如果redirect 是否忽略default model 默认忽略
 		return (!this.redirectModelScenario || (this.redirectModel == null && !this.ignoreDefaultModelOnRedirect));
 	}
 
@@ -253,6 +253,7 @@ public class ModelAndViewContainer {
 	}
 
 	/**
+	 * 当true的时候 一般不再继续处理view response已经写入数据 做出响应
 	 * Whether the request has been handled fully within the handler, e.g.
 	 * {@code @ResponseBody} method, and therefore view resolution is not
 	 * necessary. This flag can also be set when controller methods declare an

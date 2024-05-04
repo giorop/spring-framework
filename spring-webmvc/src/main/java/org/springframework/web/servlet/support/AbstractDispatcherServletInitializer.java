@@ -80,7 +80,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 		String servletName = getServletName();
 		Assert.state(StringUtils.hasLength(servletName), "getServletName() must not return null or empty");
 
-		WebApplicationContext servletAppContext = createServletApplicationContext();
+		WebApplicationContext servletAppContext = createServletApplicationContext();//每个frameworkServlet都可以拥有一个context
 		Assert.state(servletAppContext != null, "createServletApplicationContext() must not return null");
 
 		FrameworkServlet dispatcherServlet = createDispatcherServlet(servletAppContext);
@@ -92,7 +92,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 			throw new IllegalStateException("Failed to register servlet with name '" + servletName + "'. " +
 					"Check if there is another servlet registered under the same name.");
 		}
-
+		//配置启动时机 以及mapping 以及是否支持异步()
 		registration.setLoadOnStartup(1);
 		registration.addMapping(getServletMappings());
 		registration.setAsyncSupported(isAsyncSupported());
@@ -204,7 +204,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 		return registration;
 	}
 
-	private EnumSet<DispatcherType> getDispatcherTypes() {
+	private EnumSet<DispatcherType> getDispatcherTypes() {//一个servlet执行时可能会触发一下分派任务 其中支线任务可以异步执行
 		return (isAsyncSupported() ?
 				EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ASYNC) :
 				EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE));

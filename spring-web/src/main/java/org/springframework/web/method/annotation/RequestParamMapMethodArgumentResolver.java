@@ -107,12 +107,12 @@ public class RequestParamMapMethodArgumentResolver implements HandlerMethodArgum
 
 		else {
 			// Regular Map
-			Class<?> valueType = resolvableType.asMap().getGeneric(1).resolve();
-			if (valueType == MultipartFile.class) {
+			Class<?> valueType = resolvableType.asMap().getGeneric(1).resolve();//获取元素类型
+			if (valueType == MultipartFile.class) {//MultipartFile解析
 				MultipartRequest multipartRequest = MultipartResolutionDelegate.resolveMultipartRequest(webRequest);
 				return (multipartRequest != null ? multipartRequest.getFileMap() : new LinkedHashMap<>(0));
 			}
-			else if (valueType == Part.class) {
+			else if (valueType == Part.class) {//part解析
 				HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
 				if (servletRequest != null && MultipartResolutionDelegate.isMultipartRequest(servletRequest)) {
 					Collection<Part> parts = servletRequest.getParts();
@@ -126,7 +126,7 @@ public class RequestParamMapMethodArgumentResolver implements HandlerMethodArgum
 				}
 				return new LinkedHashMap<>(0);
 			}
-			else {
+			else {//常规 将所有的都放入
 				Map<String, String[]> parameterMap = webRequest.getParameterMap();
 				Map<String, String> result = CollectionUtils.newLinkedHashMap(parameterMap.size());
 				parameterMap.forEach((key, values) -> {

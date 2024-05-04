@@ -288,10 +288,10 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			}
 			ExceptionHandlerMethodResolver resolver = new ExceptionHandlerMethodResolver(beanType);
 			if (resolver.hasExceptionMappings()) {
-				this.exceptionHandlerAdviceCache.put(adviceBean, resolver);
+				this.exceptionHandlerAdviceCache.put(adviceBean, resolver);//adviceBean->resolver  +exception=>method
 			}
 			if (ResponseBodyAdvice.class.isAssignableFrom(beanType)) {
-				this.responseBodyAdvice.add(adviceBean);
+				this.responseBodyAdvice.add(adviceBean);//方法执行前后
 			}
 		}
 

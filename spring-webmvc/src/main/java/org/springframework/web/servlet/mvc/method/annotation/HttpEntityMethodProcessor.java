@@ -150,7 +150,7 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
 	}
 
 	@Nullable
-	private Type getHttpEntityType(MethodParameter parameter) {
+	private Type getHttpEntityType(MethodParameter parameter) {//httpEntity body type
 		Assert.isAssignable(HttpEntity.class, parameter.getParameterType());
 		Type parameterType = parameter.getGenericParameterType();
 		if (parameterType instanceof ParameterizedType type) {
@@ -172,7 +172,7 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
 	public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
 
-		mavContainer.setRequestHandled(true);
+		mavContainer.setRequestHandled(true);//打包成httpEntity ->outputStream
 		if (returnValue == null) {
 			return;
 		}
@@ -217,7 +217,7 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
 					}
 				}
 				else {
-					outputHeaders.put(key, value);
+					outputHeaders.put(key, value);//写入output header
 				}
 			});
 		}
@@ -228,7 +228,7 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
 			if (returnStatus == 200) {
 				HttpMethod method = inputMessage.getMethod();
 				if ((HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method))
-						&& isResourceNotModified(inputMessage, outputMessage)) {
+						&& isResourceNotModified(inputMessage, outputMessage)) {//not modify 直接返回
 					outputMessage.flush();
 					return;
 				}
@@ -236,7 +236,7 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
 			else if (returnStatus / 100 == 3) {
 				String location = outputHeaders.getFirst("location");
 				if (location != null) {
-					saveFlashAttributes(mavContainer, webRequest, location);
+					saveFlashAttributes(mavContainer, webRequest, location);//3XX表示redirect 保存数据
 				}
 			}
 		}
@@ -287,8 +287,8 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
 	private void saveFlashAttributes(ModelAndViewContainer mav, NativeWebRequest request, String location) {
 		mav.setRedirectModelScenario(true);
 		ModelMap model = mav.getModel();
-		if (model instanceof RedirectAttributes redirectAttributes) {
-			Map<String, ?> flashAttributes = redirectAttributes.getFlashAttributes();
+		if (model instanceof RedirectAttributes redirectAttributes) {//args中有解析过RedirectAttributes会将redirect model换成这个
+			Map<String, ?> flashAttributes = redirectAttributes.getFlashAttributes();//得到里面专门用于redirect的数据
 			if (!CollectionUtils.isEmpty(flashAttributes)) {
 				HttpServletRequest req = request.getNativeRequest(HttpServletRequest.class);
 				HttpServletResponse res = request.getNativeResponse(HttpServletResponse.class);

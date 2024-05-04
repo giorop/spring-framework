@@ -73,7 +73,7 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 	protected final Object createAttribute(String attributeName, MethodParameter parameter,
 			WebDataBinderFactory binderFactory, NativeWebRequest request) throws Exception {
 
-		String value = getRequestValueForAttribute(attributeName, request);
+		String value = getRequestValueForAttribute(attributeName, request);//UriTemplateVariables 或者request
 		if (value != null) {
 			Object attribute = createAttributeFromRequestValue(
 					value, attributeName, parameter, binderFactory, request);
@@ -153,7 +153,7 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 		ServletRequest servletRequest = request.getNativeRequest(ServletRequest.class);
 		Assert.state(servletRequest != null, "No ServletRequest");
 		ServletRequestDataBinder servletBinder = (ServletRequestDataBinder) binder;
-		servletBinder.construct(servletRequest);
+		servletBinder.construct(servletRequest);//通过parameter类型创建
 	}
 
 	/**

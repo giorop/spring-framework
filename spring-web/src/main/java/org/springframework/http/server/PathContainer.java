@@ -33,7 +33,7 @@ import org.springframework.util.MultiValueMap;
  * @since 5.0
  */
 public interface PathContainer {
-
+	//path+elements
 	/**
 	 * The original path from which this instance was parsed.
 	 */
@@ -91,7 +91,7 @@ public interface PathContainer {
 	/**
 	 * A path element, either separator or path segment.
 	 */
-	interface Element {
+	interface Element {//path 中的某个元素 通常用/分割
 
 		/**
 		 * The unmodified, original value of this element.
@@ -103,14 +103,14 @@ public interface PathContainer {
 	/**
 	 * Path separator element.
 	 */
-	interface Separator extends Element {
+	interface Separator extends Element {//表示分隔符
 	}
 
 
 	/**
 	 * Path segment element.
 	 */
-	interface PathSegment extends Element {
+	interface PathSegment extends Element {//表示分隔符中的元素
 
 		/**
 		 * Return the path segment value, decoded and sanitized, for path matching.
@@ -150,9 +150,9 @@ public interface PathContainer {
 		 */
 		public static final Options MESSAGE_ROUTE = Options.create('.', false);
 
-		private final char separator;
+		private final char separator;//分隔符
 
-		private final boolean decodeAndParseSegments;
+		private final boolean decodeAndParseSegments;//
 
 		private Options(char separator, boolean decodeAndParseSegments) {
 			this.separator = separator;

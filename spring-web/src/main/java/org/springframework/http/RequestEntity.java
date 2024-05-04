@@ -65,7 +65,7 @@ import org.springframework.util.ObjectUtils;
  * @see ResponseEntity
  */
 public class RequestEntity<T> extends HttpEntity<T> {
-
+	//额外添加了httpMethod+url
 	@Nullable
 	private final HttpMethod method;
 
@@ -548,18 +548,18 @@ public class RequestEntity<T> extends HttpEntity<T> {
 
 	private static class DefaultBodyBuilder implements BodyBuilder {
 
-		private final HttpMethod method;
+		private final HttpMethod method;//方法
 
-		private final HttpHeaders headers = new HttpHeaders();
-
-		@Nullable
-		private final URI uri;
+		private final HttpHeaders headers = new HttpHeaders();//header
 
 		@Nullable
-		private final String uriTemplate;
+		private final URI uri;//uri
 
 		@Nullable
-		private final Object[] uriVarsArray;
+		private final String uriTemplate;//模板 原始String
+
+		@Nullable
+		private final Object[] uriVarsArray;//用于解析模板
 
 		@Nullable
 		private final Map<String, ?> uriVarsMap;
@@ -677,7 +677,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 			if (this.uri != null) {
 				return new RequestEntity<>(body, this.headers, this.method, this.uri, type);
 			}
-			else if (this.uriTemplate != null){
+			else if (this.uriTemplate != null){//解析参数
 				return new UriTemplateRequestEntity<>(body, this.headers, this.method, type,
 						this.uriTemplate, this.uriVarsArray, this.uriVarsMap);
 			}

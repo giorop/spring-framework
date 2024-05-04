@@ -72,6 +72,7 @@ abstract class AbstractStreamingClientHttpRequest extends AbstractClientHttpRequ
 
 
 	/**
+	 * 实际写入流
 	 * Abstract template method that writes the given headers and content to the HTTP request.
 	 * @param headers the HTTP headers
 	 * @param body the HTTP body, may be {@code null} if no body was {@linkplain #setBody(Body) set}

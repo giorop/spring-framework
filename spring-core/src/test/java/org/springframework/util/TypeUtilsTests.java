@@ -54,8 +54,6 @@ class TypeUtilsTests {
 	public static List<Number>[] array;
 
 	public static List<? extends Number>[] openArray;
-
-
 	@Test
 	void withClasses() {
 		assertThat(TypeUtils.isAssignable(Object.class, Object.class)).isTrue();
@@ -123,5 +121,7 @@ class TypeUtilsTests {
 		assertThat(TypeUtils.isAssignable(openArrayType, openArrayType)).isTrue();
 		assertThat(TypeUtils.isAssignable(openArrayType, arrayType)).isTrue();
 	}
-
+	@Test
+	void newTest(){
+	}
 }

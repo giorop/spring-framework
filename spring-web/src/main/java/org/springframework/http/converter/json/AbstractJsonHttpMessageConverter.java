@@ -100,13 +100,13 @@ public abstract class AbstractJsonHttpMessageConverter extends AbstractGenericHt
 
 		return readResolved(clazz, inputMessage);
 	}
-
+	//集中到这
 	private Object readResolved(Type resolvedType, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 
 		Reader reader = getReader(inputMessage);
 		try {
-			return readInternal(resolvedType, reader);
+			return readInternal(resolvedType, reader);//使用reader
 		}
 		catch (Exception ex) {
 			throw new HttpMessageNotReadableException("Could not read JSON: " + ex.getMessage(), ex, inputMessage);
@@ -130,7 +130,7 @@ public abstract class AbstractJsonHttpMessageConverter extends AbstractGenericHt
 		writer.flush();
 	}
 
-
+	//集中到reade(type,reader) write(Obj,type,writer)
 	/**
 	 * Template method that reads the JSON-bound object from the given {@link Reader}.
 	 * @param resolvedType the resolved generic type

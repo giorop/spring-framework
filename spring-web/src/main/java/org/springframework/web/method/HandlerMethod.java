@@ -88,7 +88,7 @@ public class HandlerMethod extends AnnotatedMethod {
 	private final boolean validateReturnValue;
 
 	@Nullable
-	private HttpStatusCode responseStatus;
+	private HttpStatusCode responseStatus;//当前执行器上的status
 
 	@Nullable
 	private String responseStatusReason;
@@ -202,7 +202,7 @@ public class HandlerMethod extends AnnotatedMethod {
 	}
 
 
-	private void evaluateResponseStatus() {
+	private void evaluateResponseStatus() {//method>class
 		ResponseStatus annotation = getMethodAnnotation(ResponseStatus.class);
 		if (annotation == null) {
 			annotation = AnnotatedElementUtils.findMergedAnnotation(getBeanType(), ResponseStatus.class);

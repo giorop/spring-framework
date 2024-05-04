@@ -24,7 +24,7 @@ import org.springframework.web.util.pattern.PathPattern.MatchingContext;
  * A wildcard path element. In the pattern '/foo/&ast;/goo' the * is
  * represented by a WildcardPathElement. Within a path it matches at least
  * one character but at the end of a path it can match zero characters.
- *
+ * 某个element中包含一个*
  * @author Andy Clement
  * @since 5.0
  */

@@ -43,6 +43,7 @@ public interface WebDataBinderFactory {
 			throws Exception;
 
 	/**
+	 * 主要用于args没能直接提取时 现构造使用
 	 * Variant of {@link #createBinder(NativeWebRequest, Object, String)} with a
 	 * {@link ResolvableType} for which the {@code DataBinder} is created.
 	 * This may be used to construct the target, or otherwise provide more

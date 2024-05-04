@@ -25,6 +25,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.lang.Nullable;
 
 /**
+ * 专门用于注入而设计的一个类型 比如将一个bean 注入到ObjectProvider 然后通过其实现懒加载等
  * A variant of {@link ObjectFactory} designed specifically for injection points,
  * allowing for programmatic optionality and lenient not-unique handling.
  *

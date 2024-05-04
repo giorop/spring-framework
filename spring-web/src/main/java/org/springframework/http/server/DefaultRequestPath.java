@@ -31,7 +31,7 @@ class DefaultRequestPath implements RequestPath {
 
 	private final PathContainer fullPath;
 
-	private final PathContainer contextPath;
+	private final PathContainer contextPath;//path需要以/开头 且不能以/结尾  需要阶段后续给pathWithApplication
 
 	private final PathContainer pathWithinApplication;
 
@@ -53,7 +53,7 @@ class DefaultRequestPath implements RequestPath {
 			return PathContainer.parsePath("");
 		}
 
-		validateContextPath(path.value(), contextPath);
+		validateContextPath(path.value(), contextPath);//先校验
 
 		int length = contextPath.length();
 		int counter = 0;

@@ -68,7 +68,7 @@ import org.springframework.web.util.WebUtils;
  * @since 06.12.2003
  */
 public abstract class OncePerRequestFilter extends GenericFilterBean {
-
+	//ays dispatcher逻辑为多次访问同一个资源 可以省去第二次filter
 	/**
 	 * Suffix that gets appended to the filter name for the
 	 * "already filtered" request attribute.

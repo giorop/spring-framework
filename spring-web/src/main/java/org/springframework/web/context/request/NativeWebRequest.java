@@ -19,6 +19,7 @@ package org.springframework.web.context.request;
 import org.springframework.lang.Nullable;
 
 /**
+ * 类似与一个adapter;web容器使用servletRequest  spring使用这个
  * Extension of the {@link WebRequest} interface, exposing the
  * native request and response objects in a generic fashion.
  *

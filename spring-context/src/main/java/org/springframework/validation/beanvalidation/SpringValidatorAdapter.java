@@ -71,7 +71,7 @@ public class SpringValidatorAdapter implements SmartValidator, jakarta.validatio
 
 
 	@Nullable
-	private jakarta.validation.Validator targetValidator;
+	private jakarta.validation.Validator targetValidator;//将JSR-303->spring自己的validator逻辑
 
 
 	/**
@@ -102,7 +102,7 @@ public class SpringValidatorAdapter implements SmartValidator, jakarta.validatio
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		if (this.targetValidator != null) {
+		if (this.targetValidator != null) {//this.targetValidator.validate(target) 验证后返回某些错误集合
 			processConstraintViolations(this.targetValidator.validate(target), errors);
 		}
 	}
@@ -151,11 +151,11 @@ public class SpringValidatorAdapter implements SmartValidator, jakarta.validatio
 		for (ConstraintViolation<Object> violation : violations) {
 			String field = determineField(violation);
 			FieldError fieldError = errors.getFieldError(field);
-			if (fieldError == null || !fieldError.isBindingFailure()) {
+			if (fieldError == null || !fieldError.isBindingFailure()) {//添加验证异常
 				try {
 					ConstraintDescriptor<?> cd = violation.getConstraintDescriptor();
-					String errorCode = determineErrorCode(cd);
-					Object[] errorArgs = getArgumentsForConstraint(errors.getObjectName(), field, cd);
+					String errorCode = determineErrorCode(cd);//一般为注解本身 比如@Size=>Size
+					Object[] errorArgs = getArgumentsForConstraint(errors.getObjectName(), field, cd);//“name+field”+一般为注解中的参数
 					if (errors instanceof BindingResult bindingResult) {
 						// Can do custom FieldError registration with invalid value from ConstraintViolation,
 						// as necessary for Hibernate Validator compatibility (non-indexed set path in field)

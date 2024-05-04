@@ -245,7 +245,6 @@ public abstract class ReflectionUtils {
 		}
 		return null;
 	}
-
 	private static boolean hasSameParams(Method method, Class<?>[] paramTypes) {
 		return (paramTypes.length == method.getParameterCount() &&
 				Arrays.equals(paramTypes, method.getParameterTypes()));
@@ -483,7 +482,7 @@ public abstract class ReflectionUtils {
 						"] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
 			}
 		}
-		return (result.length == 0 || !defensive) ? result : result.clone();
+		return (result.length == 0 || !defensive) ? result : result.clone();//defensive防止缓存发布，其它方法对其改动
 	}
 
 	@Nullable

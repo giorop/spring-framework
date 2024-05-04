@@ -34,6 +34,7 @@ import org.springframework.web.context.ServletContextAware;
 /**
  * An {@link HttpRequestHandler} for serving static files using the Servlet container's "default" Servlet.
  *
+ * /的优先级> /* > /**
  * <p>This handler is intended to be used with a "/*" mapping when the
  * {@link org.springframework.web.servlet.DispatcherServlet DispatcherServlet}
  * is mapped to "/", thus overriding the Servlet container's default handling of static resources.

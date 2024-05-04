@@ -42,7 +42,7 @@ import org.springframework.web.util.WebUtils;
  * @see SpringBeanAutowiringSupport
  */
 public abstract class WebApplicationObjectSupport extends ApplicationObjectSupport implements ServletContextAware {
-
+	//注入servletContext
 	@Nullable
 	private ServletContext servletContext;
 

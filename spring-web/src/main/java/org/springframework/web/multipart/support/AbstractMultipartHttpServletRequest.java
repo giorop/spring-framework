@@ -45,7 +45,7 @@ public abstract class AbstractMultipartHttpServletRequest extends HttpServletReq
 		implements MultipartHttpServletRequest {
 
 	@Nullable
-	private MultiValueMap<String, MultipartFile> multipartFiles;
+	private MultiValueMap<String, MultipartFile> multipartFiles;//request->解析出的part->MultipartFile
 
 
 	/**
@@ -144,6 +144,7 @@ public abstract class AbstractMultipartHttpServletRequest extends HttpServletReq
 	}
 
 	/**
+	 * request->init MultiValueMap<String, MultipartFile> multipartFiles
 	 * Lazily initialize the multipart request, if possible.
 	 * Only called if not already eagerly initialized.
 	 */

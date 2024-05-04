@@ -122,6 +122,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 	}
 
 	/**
+	 * 比如cacheMetadataReaderFactory中需要通过class->class文件->resource 最后通过resource得到对应的classReader 这个classReader需要被缓存起来
 	 * Obtain a cache for the given value type, keyed by {@link Resource}.
 	 * @param valueType the value type, e.g. an ASM {@code MetadataReader}
 	 * @return the cache {@link Map}, shared at the {@code ResourceLoader} level
@@ -145,7 +146,8 @@ public class DefaultResourceLoader implements ResourceLoader {
 	@Override
 	public Resource getResource(String location) {
 		Assert.notNull(location, "Location must not be null");
-
+		//1通过自定义解析器(解析不同的协议) 2尝试绝对路径：根据子类实现返回对应的resource 默认为classPath  3.尝试classpath: 4尝试url解析
+		//5默认解析：比如相对路径 这里默认实现是classpath根目录 比如子类class相关 则是一个class相对路径
 		for (ProtocolResolver protocolResolver : getProtocolResolvers()) {
 			Resource resource = protocolResolver.resolve(location, this);
 			if (resource != null) {

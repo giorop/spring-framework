@@ -94,7 +94,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 
 	@Override
 	public Object getNativeRequest() {
-		return getRequest();
+		return getRequest();//访问本地request 通常比如原生servlet request;
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 		HttpServletResponse response = getResponse();
 		return (response != null ? WebUtils.getNativeResponse(response, requiredType) : null);
 	}
-
+	//以下方法都代理给原生request
 	/**
 	 * Return the HTTP method of the request.
 	 * @since 4.0.2

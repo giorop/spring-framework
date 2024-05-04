@@ -88,7 +88,7 @@ public class ModelAndViewResolverMethodReturnValueHandler implements HandlerMeth
 				Method method = returnType.getMethod();
 				Assert.state(method != null, "No handler method");
 				ExtendedModelMap model = (ExtendedModelMap) mavContainer.getModel();
-				ModelAndView mav = mavResolver.resolveModelAndView(method, handlerType, returnValue, model, webRequest);
+				ModelAndView mav = mavResolver.resolveModelAndView(method, handlerType, returnValue, model, webRequest);//看能否转换
 				if (mav != ModelAndViewResolver.UNRESOLVED) {
 					mavContainer.addAllAttributes(mav.getModel());
 					mavContainer.setViewName(mav.getViewName());

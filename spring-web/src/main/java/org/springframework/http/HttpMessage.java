@@ -24,7 +24,7 @@ package org.springframework.http;
  * @since 3.0
  */
 public interface HttpMessage {
-
+    //代表一个http消息 这里可以获得headers  比如request  response等
 	/**
 	 * Return the headers of this message.
 	 * @return a corresponding HttpHeaders object (never {@code null})

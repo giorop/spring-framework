@@ -106,26 +106,26 @@ class InternalPathPatternParser {
 		while (this.pos < this.pathPatternLength) {
 			char ch = this.pathPatternData[this.pos];
 			char separator = this.parser.getPathOptions().separator();
-			if (ch == separator) {
-				if (this.pathElementStart != -1) {
+			if (ch == separator) {//分割
+				if (this.pathElementStart != -1) {//[start,pos)为一个元素 需要得到解析
 					pushPathElement(createPathElement());
 				}
-				if (peekDoubleWildcard()) {
+				if (peekDoubleWildcard()) {//连续出现两个**且刚好字符串结束
 					pushPathElement(new WildcardTheRestPathElement(this.pos, separator));
 					this.pos += 2;
 				}
-				else {
+				else {//普通分隔符 为一个元素
 					pushPathElement(new SeparatorPathElement(this.pos, separator));
 				}
 			}
 			else {
-				if (this.pathElementStart == -1) {
+				if (this.pathElementStart == -1) {//最开始的赋值  其余情况pushPathElement会赋值start
 					this.pathElementStart = this.pos;
 				}
 				if (ch == '?') {
 					this.singleCharWildcardCount++;
 				}
-				else if (ch == '{') {
+				else if (ch == '{') {//需要}匹配
 					if (this.insideVariableCapture) {
 						throw new PatternParseException(this.pos, this.pathPatternData,
 								PatternMessage.ILLEGAL_NESTED_CAPTURE);
@@ -136,15 +136,15 @@ class InternalPathPatternParser {
 					// throw new PatternParseException(pos, pathPatternData,
 					// PatternMessage.CANNOT_HAVE_ADJACENT_CAPTURES);
 					this.insideVariableCapture = true;
-					this.variableCaptureStart = this.pos;
+					this.variableCaptureStart = this.pos;//记录{位置
 				}
-				else if (ch == '}') {
+				else if (ch == '}') {//}
 					if (!this.insideVariableCapture) {
 						throw new PatternParseException(this.pos, this.pathPatternData,
 								PatternMessage.MISSING_OPEN_CAPTURE);
 					}
 					this.insideVariableCapture = false;
-					if (this.isCaptureTheRestVariable && (this.pos + 1) < this.pathPatternLength) {
+					if (this.isCaptureTheRestVariable && (this.pos + 1) < this.pathPatternLength) {// {*name} 捕获后面所有路径 故后面需要有路径
 						throw new PatternParseException(this.pos + 1, this.pathPatternData,
 								PatternMessage.NO_MORE_DATA_EXPECTED_AFTER_CAPTURE_THE_REST);
 					}

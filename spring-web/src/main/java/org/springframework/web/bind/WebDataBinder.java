@@ -63,7 +63,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @see ServletRequestDataBinder
  */
 public class WebDataBinder extends DataBinder {
-
+	//主要提供request parameters==>具体java bean中 比如controller method中的参数绑定
 	/**
 	 * Default prefix that field marker parameters start with, followed by the field
 	 * name: e.g. "_subscribeToNewsletter" for a field "subscribeToNewsletter".
@@ -205,6 +205,7 @@ public class WebDataBinder extends DataBinder {
 	 */
 	@Nullable
 	protected Object resolvePrefixValue(String name, Class<?> type, BiFunction<String, Class<?>, Object> resolver) {
+		//当直接name失败后 尝试!name  _name(empty)
 		Object value = resolver.apply(name, type);
 		if (value == null) {
 			String prefix = getFieldDefaultPrefix();
@@ -229,9 +230,9 @@ public class WebDataBinder extends DataBinder {
 	 */
 	@Override
 	protected void doBind(MutablePropertyValues mpvs) {
-		checkFieldDefaults(mpvs);
-		checkFieldMarkers(mpvs);
-		adaptEmptyArrayIndices(mpvs);
+		checkFieldDefaults(mpvs);//!前缀 尝试填充默认值
+		checkFieldMarkers(mpvs);//_前缀 尝试填充空值
+		adaptEmptyArrayIndices(mpvs);//替换field[]->field
 		super.doBind(mpvs);
 	}
 
@@ -242,6 +243,7 @@ public class WebDataBinder extends DataBinder {
 	 * value should be used if the field is otherwise not present.
 	 * @param mpvs the property values to be bound (can be modified)
 	 * @see #getFieldDefaultPrefix
+	 * 如果某个pv.name 为!field 且pvs中未提供该field则尝试注入该field的默认值(原始值)
 	 */
 	protected void checkFieldDefaults(MutablePropertyValues mpvs) {
 		String fieldDefaultPrefix = getFieldDefaultPrefix();
@@ -269,6 +271,7 @@ public class WebDataBinder extends DataBinder {
 	 * @param mpvs the property values to be bound (can be modified)
 	 * @see #getFieldMarkerPrefix
 	 * @see #getEmptyValue(String, Class)
+	 * 如果某个pv.name 为_field 且pvs中未提供该field则尝试注入该field的空值 比如集合->0长度集合  比如其它null
 	 */
 	protected void checkFieldMarkers(MutablePropertyValues mpvs) {
 		String fieldMarkerPrefix = getFieldMarkerPrefix();

@@ -64,11 +64,11 @@ public final class ModelFactory {
 	private static final Log logger = LogFactory.getLog(ModelFactory.class);
 
 
-	private final List<ModelMethod> modelMethods = new ArrayList<>();
+	private final List<ModelMethod> modelMethods = new ArrayList<>();//@ModelAttribute
 
-	private final WebDataBinderFactory dataBinderFactory;
+	private final WebDataBinderFactory dataBinderFactory;//用于method args解析
 
-	private final SessionAttributesHandler sessionAttributesHandler;
+	private final SessionAttributesHandler sessionAttributesHandler;//sessionAttributes
 
 
 	/**
@@ -106,12 +106,12 @@ public final class ModelFactory {
 	 */
 	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod)
 			throws Exception {
-
+		//配置mav 先拉去@SessionAttributes 相关的属性
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
 		container.mergeAttributes(sessionAttributes);
-		invokeModelAttributeMethods(request, container);
+		invokeModelAttributeMethods(request, container);//ModelAttribute方法返回值填入
 
-		for (String name : findSessionAttributeArguments(handlerMethod)) {
+		for (String name : findSessionAttributeArguments(handlerMethod)) {//通过前面的一些属性填充 这里再次检查需要执行的方法 查看被执行方法能否carry ModelAttribute arg
 			if (!container.containsAttribute(name)) {
 				Object value = this.sessionAttributesHandler.retrieveAttribute(request, name);
 				if (value == null) {
@@ -129,13 +129,13 @@ public final class ModelFactory {
 	private void invokeModelAttributeMethods(NativeWebRequest request, ModelAndViewContainer container)
 			throws Exception {
 
-		while (!this.modelMethods.isEmpty()) {
+		while (!this.modelMethods.isEmpty()) {//尝试将method返回值放入container
 			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod();
 			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class);
 			Assert.state(ann != null, "No ModelAttribute annotation");
 			if (container.containsAttribute(ann.name())) {
 				if (!ann.binding()) {
-					container.setBindingDisabled(ann.name());
+					container.setBindingDisabled(ann.name());//这个注入的attribute在arg填充的时候不要再进一步dataBinder.bind()
 				}
 				continue;
 			}
@@ -161,7 +161,7 @@ public final class ModelFactory {
 		}
 	}
 
-	private ModelMethod getNextModelMethod(ModelAndViewContainer container) {
+	private ModelMethod getNextModelMethod(ModelAndViewContainer container) {//先拉取能立马执行的mav直接能提供参数解析的
 		for (ModelMethod modelMethod : this.modelMethods) {
 			if (modelMethod.checkDependencies(container)) {
 				this.modelMethods.remove(modelMethod);
@@ -203,10 +203,10 @@ public final class ModelFactory {
 			this.sessionAttributesHandler.cleanupAttributes(request);
 		}
 		else {
-			this.sessionAttributesHandler.storeAttributes(request, defaultModel);
+			this.sessionAttributesHandler.storeAttributes(request, defaultModel);//将sessionAttributes中声明的类型 放入
 		}
 		if (!container.isRequestHandled() && container.getModel() == defaultModel) {
-			updateBindingResult(request, defaultModel);
+			updateBindingResult(request, defaultModel);//用于提供后续记录错误
 		}
 	}
 
@@ -287,7 +287,7 @@ public final class ModelFactory {
 
 		private final InvocableHandlerMethod handlerMethod;
 
-		private final Set<String> dependencies = new HashSet<>();
+		private final Set<String> dependencies = new HashSet<>();//记录该方法需要的属性
 
 		public ModelMethod(InvocableHandlerMethod handlerMethod) {
 			this.handlerMethod = handlerMethod;

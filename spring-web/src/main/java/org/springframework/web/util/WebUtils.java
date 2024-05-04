@@ -694,6 +694,7 @@ public abstract class WebUtils {
 		if (prefix == null) {
 			prefix = "";
 		}
+		//用prefix筛选
 		while (paramNames != null && paramNames.hasMoreElements()) {
 			String paramName = paramNames.nextElement();
 			if (prefix.isEmpty() || paramName.startsWith(prefix)) {

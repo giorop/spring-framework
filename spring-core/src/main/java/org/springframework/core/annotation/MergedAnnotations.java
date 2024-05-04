@@ -358,7 +358,7 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 
 		return from(element, searchStrategy, Search.never, repeatableContainers, annotationFilter);
 	}
-
+	//searchStrategy:direct searchEnclosingClass:never repeatableContainers:standard annotationFilter:plain
 	private static MergedAnnotations from(AnnotatedElement element, SearchStrategy searchStrategy,
 			Predicate<Class<?>> searchEnclosingClass, RepeatableContainers repeatableContainers,
 			AnnotationFilter annotationFilter) {
@@ -426,6 +426,7 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	 * annotations considered
 	 * @return a {@code MergedAnnotations} instance containing the annotations
 	 */
+	//repeatableContainers:standard annotationFilter:plain
 	static MergedAnnotations from(Object source, Annotation[] annotations,
 			RepeatableContainers repeatableContainers, AnnotationFilter annotationFilter) {
 

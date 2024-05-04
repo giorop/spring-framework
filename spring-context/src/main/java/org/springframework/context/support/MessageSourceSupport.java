@@ -49,6 +49,7 @@ public abstract class MessageSourceSupport {
 	private boolean alwaysUseMessageFormat = false;
 
 	/**
+	 * 待解析string+locale=>messageFormat +上下文(配置文件)==>得到解析
 	 * Cache to hold already generated MessageFormats per message.
 	 * Used for passed-in default messages. MessageFormats for resolved
 	 * codes are cached on a specific basis in subclasses.
@@ -103,6 +104,7 @@ public abstract class MessageSourceSupport {
 	}
 
 	/**
+	 * String(code->value)+locale+args（解析string中的占位符）==>得到解析
 	 * Format the given message String, using cached MessageFormats.
 	 * By default invoked for passed-in default messages, to resolve
 	 * any argument placeholders found in them.
@@ -135,7 +137,7 @@ public abstract class MessageSourceSupport {
 		if (messageFormat == INVALID_MESSAGE_FORMAT) {
 			return msg;
 		}
-		synchronized (messageFormat) {
+		synchronized (messageFormat) {//arg可能也需要解析
 			return messageFormat.format(resolveArguments(args, locale));
 		}
 	}

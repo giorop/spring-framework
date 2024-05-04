@@ -36,7 +36,7 @@ import org.springframework.util.StreamUtils;
  * @since 3.0
  */
 public class ByteArrayHttpMessageConverter extends AbstractHttpMessageConverter<byte[]> {
-
+	//当前stream contextType是APPLICATION_OCTET_STREAM ALL的时候 能carry byte[]的读取和写入
 	/**
 	 * Create a new instance of the {@code ByteArrayHttpMessageConverter}.
 	 */

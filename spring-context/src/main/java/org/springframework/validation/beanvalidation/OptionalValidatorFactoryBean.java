@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @since 4.0.1
  */
 public class OptionalValidatorFactoryBean extends LocalValidatorFactoryBean {
-
+	//默认使用的验证其 webMvc
 	@Override
 	public void afterPropertiesSet() {
 		try {

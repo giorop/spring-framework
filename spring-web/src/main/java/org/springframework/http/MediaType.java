@@ -50,7 +50,7 @@ import org.springframework.util.StringUtils;
  *     HTTP 1.1: Semantics and Content, section 3.1.1.1</a>
  */
 public class MediaType extends MimeType implements Serializable {
-
+	//添加q
 	private static final long serialVersionUID = 2069937152339670231L;
 
 	/**
@@ -553,14 +553,14 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
 	 * @since 5.3
 	 */
-	public MediaType(MimeType mimeType) {
+	public MediaType(MimeType mimeType) {//mineType param中可能携带q 进行处理
 		super(mimeType);
 		getParameters().forEach(this::checkParameters);
 	}
 
 
 	@Override
-	protected void checkParameters(String parameter, String value) {
+	protected void checkParameters(String parameter, String value) {//检查param时同时检查q
 		super.checkParameters(parameter, value);
 		if (PARAM_QUALITY_FACTOR.equals(parameter)) {
 			String unquotedValue = unquote(value);
@@ -608,7 +608,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * and Content, section 5.3.2</a>
 	 */
 	@Override
-	public boolean isMoreSpecific(MimeType other) {
+	public boolean isMoreSpecific(MimeType other) {//通过q 确定优先级
 		Assert.notNull(other, "Other must not be null");
 		if (other instanceof MediaType otherMediaType) {
 			double quality1 = getQualityValue();

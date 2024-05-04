@@ -60,7 +60,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 /**
  * A base class for resolving method argument values by reading from the body of
  * a request with {@link HttpMessageConverter HttpMessageConverters}.
- *
+ * 利用body作为解析源 以及post put patch等方法
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
  * @author Juergen Hoeller
@@ -70,14 +70,14 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 
 	private static final Set<HttpMethod> SUPPORTED_METHODS = Set.of(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH);
 
-	private static final Object NO_VALUE = new Object();
+	private static final Object NO_VALUE = new Object();//解析失败
 
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	protected final List<HttpMessageConverter<?>> messageConverters;
+	protected final List<HttpMessageConverter<?>> messageConverters;//辅助转换
 
-	private final RequestResponseBodyAdviceChain advice;
+	private final RequestResponseBodyAdviceChain advice;//转换先后的advice
 
 
 	/**
@@ -152,7 +152,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 			targetClass = (Class<T>) resolvableType.resolve();
 		}
 
-		MediaType contentType;
+		MediaType contentType;//request->inputMessage=>contentType
 		boolean noContentType = false;
 		try {
 			contentType = inputMessage.getHeaders().getContentType();
@@ -163,7 +163,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 		}
 		if (contentType == null) {
 			noContentType = true;
-			contentType = MediaType.APPLICATION_OCTET_STREAM;
+			contentType = MediaType.APPLICATION_OCTET_STREAM;//表示一个普通流
 		}
 
 		HttpMethod httpMethod = (inputMessage instanceof HttpRequest httpRequest ? httpRequest.getMethod() : null);
@@ -174,12 +174,12 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 			message = new EmptyBodyCheckingHttpInputMessage(inputMessage);
 			for (HttpMessageConverter<?> converter : this.messageConverters) {
 				Class<HttpMessageConverter<?>> converterType = (Class<HttpMessageConverter<?>>) converter.getClass();
-				GenericHttpMessageConverter<?> genericConverter =
+				GenericHttpMessageConverter<?> genericConverter =//分派generic  or normal
 						(converter instanceof GenericHttpMessageConverter ghmc ? ghmc : null);
 				if (genericConverter != null ? genericConverter.canRead(targetType, contextClass, contentType) :
 						(targetClass != null && converter.canRead(targetClass, contentType))) {
 					if (message.hasBody()) {
-						HttpInputMessage msgToUse =
+						HttpInputMessage msgToUse =//前中后
 								getAdvice().beforeBodyRead(message, parameter, targetType, converterType);
 						body = (genericConverter != null ? genericConverter.read(targetType, contextClass, msgToUse) :
 								((HttpMessageConverter<T>) converter).read(targetClass, msgToUse));
@@ -231,7 +231,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 	protected ServletServerHttpRequest createInputMessage(NativeWebRequest webRequest) {
 		HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
 		Assert.state(servletRequest != null, "No HttpServletRequest");
-		return new ServletServerHttpRequest(servletRequest);
+		return new ServletServerHttpRequest(servletRequest);//server+input+header
 	}
 
 	/**
@@ -256,6 +256,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 	}
 
 	/**
+	 * 是否后续有一个error参数 如果有则不抛异常
 	 * Whether to raise a fatal bind exception on validation errors.
 	 * @param binder the data binder used to perform data binding
 	 * @param parameter the method parameter descriptor
@@ -320,7 +321,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 		private final HttpHeaders headers;
 
 		@Nullable
-		private final InputStream body;
+		private final InputStream body;//当body为空的时候赋值null
 
 		public EmptyBodyCheckingHttpInputMessage(HttpInputMessage inputMessage) throws IOException {
 			this.headers = inputMessage.getHeaders();

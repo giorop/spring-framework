@@ -133,6 +133,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	boolean isCacheBeanMetadata();
 
 	/**
+	 * abstractApplicationContext中配置
 	 * Specify the resolution strategy for expressions in bean definition values.
 	 * <p>There is no expression support active in a BeanFactory by default.
 	 * An ApplicationContext will typically set a standard expression strategy
@@ -165,6 +166,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	Executor getBootstrapExecutor();
 
 	/**
+	 * 即 内部框架中没有默认配置
 	 * Specify a {@link ConversionService} to use for converting
 	 * property values, as an alternative to JavaBeans PropertyEditors.
 	 * @since 3.0

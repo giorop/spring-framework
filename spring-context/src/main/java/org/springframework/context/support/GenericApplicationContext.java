@@ -103,11 +103,11 @@ import org.springframework.util.Assert;
  * @see org.springframework.beans.factory.support.PropertiesBeanDefinitionReader
  */
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
-
+	//主要实现BeanDefinitionRegistry接口
 	private final DefaultListableBeanFactory beanFactory;
 
 	@Nullable
-	private ResourceLoader resourceLoader;
+	private ResourceLoader resourceLoader;//如果有设置 则使用之（同时override 父类加载逻辑） 否则使用默认的
 
 	private boolean customClassLoader = false;
 

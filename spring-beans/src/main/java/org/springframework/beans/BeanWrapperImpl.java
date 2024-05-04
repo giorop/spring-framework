@@ -138,7 +138,7 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 		this.typeConverterDelegate = new TypeConverterDelegate(this, this.wrappedObject);
 		setIntrospectionClass(object.getClass());
 	}
-
+	
 	@Override
 	public void setWrappedInstance(Object object, @Nullable String nestedPath, @Nullable Object rootObject) {
 		super.setWrappedInstance(object, nestedPath, rootObject);

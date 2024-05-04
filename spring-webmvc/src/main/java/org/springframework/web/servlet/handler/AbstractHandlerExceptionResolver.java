@@ -170,7 +170,7 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	public ModelAndView resolveException(
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
 
-		if (shouldApplyTo(request, handler)) {
+		if (shouldApplyTo(request, handler)) {//通过test handlers handlerClasses过滤
 			prepareResponse(ex, response);
 			ModelAndView result = doResolveException(request, response, handler, ex);
 			if (result != null) {
@@ -203,14 +203,14 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 * @see #setMappedHandlerClasses
 	 */
 	protected boolean shouldApplyTo(HttpServletRequest request, @Nullable Object handler) {
-		if (this.mappedHandlerPredicate != null) {
+		if (this.mappedHandlerPredicate != null) {//1 test
 			return this.mappedHandlerPredicate.test(handler);
 		}
-		if (handler != null) {
+		if (handler != null) {//适配handlers
 			if (this.mappedHandlers != null && this.mappedHandlers.contains(handler)) {
 				return true;
 			}
-			if (this.mappedHandlerClasses != null) {
+			if (this.mappedHandlerClasses != null) {//适配handler class
 				for (Class<?> handlerClass : this.mappedHandlerClasses) {
 					if (handlerClass.isInstance(handler)) {
 						return true;
@@ -218,7 +218,7 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 				}
 			}
 		}
-		return !hasHandlerMappings();
+		return !hasHandlerMappings();//如果全部为空 则适配
 	}
 
 	/**

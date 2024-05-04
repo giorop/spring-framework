@@ -39,10 +39,10 @@ public class DeferredResultMethodReturnValueHandler implements HandlerMethodRetu
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
+	public boolean supportsReturnType(MethodParameter returnType) {//future相关
 		Class<?> type = returnType.getParameterType();
 		return (DeferredResult.class.isAssignableFrom(type) ||
-				org.springframework.util.concurrent.ListenableFuture.class.isAssignableFrom(type) ||
+				org.springframework.util.concurrent.ListenableFuture.class.isAssignableFrom(type) ||//基本废弃使用
 				CompletionStage.class.isAssignableFrom(type));
 	}
 
@@ -58,14 +58,14 @@ public class DeferredResultMethodReturnValueHandler implements HandlerMethodRetu
 
 		DeferredResult<?> result;
 
-		if (returnValue instanceof DeferredResult<?> deferredResult) {
+		if (returnValue instanceof DeferredResult<?> deferredResult) {//这里全部自己处理
 			result = deferredResult;
 		}
 		else if (returnValue instanceof org.springframework.util.concurrent.ListenableFuture<?> listenableFuture) {
-			result = adaptListenableFuture(listenableFuture);
+			result = adaptListenableFuture(listenableFuture);//普通future
 		}
 		else if (returnValue instanceof CompletionStage<?> completionStage) {
-			result = adaptCompletionStage(completionStage);
+			result = adaptCompletionStage(completionStage);//completableFuture
 		}
 		else {
 			// Should not happen...

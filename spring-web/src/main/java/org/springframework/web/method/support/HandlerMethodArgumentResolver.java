@@ -31,7 +31,7 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @see HandlerMethodReturnValueHandler
  */
 public interface HandlerMethodArgumentResolver {
-
+	//用于参数绑定 数据源为ModelAndViewContainer(比如redirect中的 或者方法执行前的某些拦截)+NativeWebRequest
 	/**
 	 * Whether the given {@linkplain MethodParameter method parameter} is
 	 * supported by this resolver.

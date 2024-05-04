@@ -85,7 +85,7 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 				Object value = propertySource.getProperty(key);
 				if (value != null) {
 					if (resolveNestedPlaceholders && value instanceof String string) {
-						value = resolveNestedPlaceholders(string);
+						value = resolveNestedPlaceholders(string);//解析占位符
 					}
 					logKeyFound(key, propertySource, value);
 					return convertValueIfNecessary(value, targetValueType);

@@ -137,7 +137,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	private String[] exposedContextBeanNames;
 
 	@Nullable
-	private String[] viewNames;
+	private String[] viewNames;//用于filter
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -472,7 +472,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 		if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
 			String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
 			RedirectView view = new RedirectView(redirectUrl,
-					isRedirectContextRelative(), isRedirectHttp10Compatible());
+					isRedirectContextRelative(), isRedirectHttp10Compatible());//用于redirect
 			String[] hosts = getRedirectHosts();
 			if (hosts != null) {
 				view.setHosts(hosts);
@@ -480,7 +480,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 			return applyLifecycleMethods(REDIRECT_URL_PREFIX, view);
 		}
 
-		// Check for special "forward:" prefix.
+		// Check for special "forward:" prefix. 用于forward
 		if (viewName.startsWith(FORWARD_URL_PREFIX)) {
 			String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());
 			InternalResourceView view = new InternalResourceView(forwardUrl);
@@ -523,7 +523,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 * @since 5.3
 	 * @see #setViewClass
 	 */
-	protected AbstractUrlBasedView instantiateView() {
+	protected AbstractUrlBasedView instantiateView() {//创建view
 		Class<?> viewClass = getViewClass();
 		Assert.state(viewClass != null, "No view class");
 		return (AbstractUrlBasedView) BeanUtils.instantiateClass(viewClass);
@@ -567,7 +567,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 */
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
 		AbstractUrlBasedView view = instantiateView();
-		view.setUrl(getPrefix() + viewName + getSuffix());
+		view.setUrl(getPrefix() + viewName + getSuffix());//设置url用于->资源
 		view.setAttributesMap(getAttributesMap());
 
 		String contentType = getContentType();

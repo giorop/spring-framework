@@ -143,7 +143,7 @@ public abstract class AbstractMessageSource extends MessageSourceSupport impleme
 			return msg;
 		}
 		if (defaultMessage == null) {
-			return getDefaultMessage(code);
+			return getDefaultMessage(code);//尝试将code当成defaultMessage
 		}
 		return renderDefaultMessage(defaultMessage, args, locale);
 	}
@@ -163,6 +163,7 @@ public abstract class AbstractMessageSource extends MessageSourceSupport impleme
 
 	@Override
 	public final String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
+		//MessageSourceResolvable 包含code args defaultMessage  比如通过@error得到的
 		String[] codes = resolvable.getCodes();
 		if (codes != null) {
 			for (String code : codes) {

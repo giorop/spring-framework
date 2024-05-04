@@ -123,7 +123,7 @@ public class StandardServletAsyncWebRequest extends ServletWebRequest implements
 			return;
 		}
 		this.asyncContext = getRequest().startAsync(getRequest(), getResponse());
-		this.asyncContext.addListener(this);
+		this.asyncContext.addListener(this);//添加监听
 		if (this.timeout != null) {
 			this.asyncContext.setTimeout(this.timeout);
 		}
@@ -132,7 +132,7 @@ public class StandardServletAsyncWebRequest extends ServletWebRequest implements
 	@Override
 	public void dispatch() {
 		Assert.state(this.asyncContext != null, "Cannot dispatch without an AsyncContext");
-		this.asyncContext.dispatch();
+		this.asyncContext.dispatch();//结束任务 并根据结果做出反应 比如正常返回  异常 等 发出通知
 	}
 
 

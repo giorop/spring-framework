@@ -210,7 +210,7 @@ public abstract class MimeTypeUtils {
 		if (mimeType.startsWith("multipart")) {
 			return parseMimeTypeInternal(mimeType);
 		}
-		return cachedMimeTypes.get(mimeType);
+		return cachedMimeTypes.get(mimeType);//这里尝试缓存
 	}
 
 	private static MimeType parseMimeTypeInternal(String mimeType) {
@@ -222,7 +222,7 @@ public abstract class MimeTypeUtils {
 
 		// java.net.HttpURLConnection returns a *; q=.2 Accept header
 		if (MimeType.WILDCARD_TYPE.equals(fullType)) {
-			fullType = "*/*";
+			fullType = "*/*";//*直接代表*/*  其它情况一定要type/subType
 		}
 		int subIndex = fullType.indexOf('/');
 		if (subIndex == -1) {
@@ -238,7 +238,7 @@ public abstract class MimeTypeUtils {
 		}
 
 		Map<String, String> parameters = null;
-		do {
+		do {//解析params
 			int nextIndex = index + 1;
 			boolean quoted = false;
 			while (nextIndex < mimeType.length()) {
@@ -254,12 +254,12 @@ public abstract class MimeTypeUtils {
 				nextIndex++;
 			}
 			String parameter = mimeType.substring(index + 1, nextIndex).trim();
-			if (parameter.length() > 0) {
+			if (parameter.length() > 0) {//解析key=value
 				if (parameters == null) {
 					parameters = new LinkedHashMap<>(4);
 				}
 				int eqIndex = parameter.indexOf('=');
-				if (eqIndex >= 0) {
+				if (eqIndex >= 0) {//如果没有=直接舍去
 					String attribute = parameter.substring(0, eqIndex).trim();
 					String value = parameter.substring(eqIndex + 1).trim();
 					parameters.put(attribute, value);
@@ -270,7 +270,7 @@ public abstract class MimeTypeUtils {
 		while (index < mimeType.length());
 
 		try {
-			return new MimeType(type, subtype, parameters);
+			return new MimeType(type, subtype, parameters);//验证字符
 		}
 		catch (UnsupportedCharsetException ex) {
 			throw new InvalidMimeTypeException(mimeType, "unsupported charset '" + ex.getCharsetName() + "'");
@@ -315,13 +315,13 @@ public abstract class MimeTypeUtils {
 		while (i < mimeTypes.length()) {
 			switch (mimeTypes.charAt(i)) {
 				case '"' -> inQuotes = !inQuotes;
-				case ',' -> {
+				case ',' -> {//用,分割
 					if (!inQuotes) {
 						tokens.add(mimeTypes.substring(startIndex, i));
 						startIndex = i + 1;
 					}
 				}
-				case '\\' -> i++;
+				case '\\' -> i++;//转义 跳过 稍微快点
 			}
 			i++;
 		}

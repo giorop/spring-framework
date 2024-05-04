@@ -228,17 +228,17 @@ class ConfigurationClassParser {
 		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
 			return;
 		}
-
+		//整个加载过程类似与一个多叉树 解析过程中 不应该出现循环解析；同样也需要避免多次解析同一个configClass
 		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
 		if (existingClass != null) {
 			if (configClass.isImported()) {
-				if (existingClass.isImported()) {
+				if (existingClass.isImported()) {//单纯记录一下
 					existingClass.mergeImportedBy(configClass);
 				}
 				// Otherwise ignore new imported config class; existing non-imported class overrides it.
 				return;
 			}
-			else if (configClass.isScanned()) {
+			else if (configClass.isScanned()) {//通过@ComponentScan得到的config 不应该在此被解析
 				String beanName = configClass.getBeanName();
 				if (StringUtils.hasLength(beanName) && this.registry.containsBeanDefinition(beanName)) {
 					this.registry.removeBeanDefinition(beanName);
@@ -285,11 +285,11 @@ class ConfigurationClassParser {
 			throws IOException {
 
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
-			// Recursively process any member (nested) classes first
+			// Recursively process any member (nested) classes first 1 内部申明的子config优先加载
 			processMemberClasses(configClass, sourceClass, filter);
 		}
 
-		// Process any @PropertySource annotations
+		// Process any @PropertySource annotations 处理propertySource通常加载到env中 提供环境变量
 		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), org.springframework.context.annotation.PropertySource.class,
 				PropertySources.class, true)) {
@@ -390,7 +390,7 @@ class ConfigurationClassParser {
 			}
 			OrderComparator.sort(candidates);
 			for (SourceClass candidate : candidates) {
-				if (this.importStack.contains(configClass)) {
+				if (this.importStack.contains(configClass)) {//应当树状结构 不应该出现循环圈
 					this.problemReporter.error(new CircularImportProblem(configClass, this.importStack));
 				}
 				else {
@@ -563,12 +563,13 @@ class ConfigurationClassParser {
 						if (selectorFilter != null) {
 							filter = filter.or(selectorFilter);
 						}
-						if (selector instanceof DeferredImportSelector deferredImportSelector) {
+						if (selector instanceof DeferredImportSelector deferredImportSelector) {//延迟处理
 							this.deferredImportSelectorHandler.handle(configClass, deferredImportSelector);
 						}
 						else {
 							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
 							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames, filter);
+							//尝试递归 通常得到普通class
 							processImports(configClass, currentSourceClass, importSourceClasses, filter, false);
 						}
 					}
@@ -579,7 +580,7 @@ class ConfigurationClassParser {
 						ImportBeanDefinitionRegistrar registrar =
 								ParserStrategyUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class,
 										this.environment, this.resourceLoader, this.registry);
-						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata());
+						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata());//记录
 					}
 					else {
 						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
@@ -693,7 +694,7 @@ class ConfigurationClassParser {
 		@Override
 		@Nullable
 		public AnnotationMetadata getImportingClassFor(String importedClass) {
-			return CollectionUtils.lastElement(this.imports.get(importedClass));
+			return CollectionUtils.lastElement(this.imports.get(importedClass));//最后被引入 当前正在工作的分支
 		}
 
 		@Override

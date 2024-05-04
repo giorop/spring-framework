@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
  * @since 3.0
  */
 public interface ServerHttpRequest extends HttpRequest, HttpInputMessage {
-
+	//server端的request  request+input
 	/**
 	 * Return a {@link java.security.Principal} instance containing the name of the
 	 * authenticated user.

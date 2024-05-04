@@ -41,6 +41,13 @@ public abstract class TypeUtils {
 	private static final Type[] IMPLICIT_UPPER_BOUNDS = { Object.class };
 
 	/**
+	 * 1.当T完全相同时(包括?) 则父子关系取决于泛型本身
+	 * 2.当泛型本身不同时，则两者不存在父子关系 比如ArrayList(Integer) 无法向上转化成ArrayList(Number)
+	 * 泛型的作用是限制容器中的元素类型，这里Integer表示只能放Integer类型的元素，而Number 能扩大范围
+	 * 比如 void modify(ArrayList(Number)list) 无法将ArrayList(Integer)传入
+	 * 3.当有?时
+	 * 3.1 无界通配符是所有其它的父类型 同上述原理 当声明无界时，其本身已经无法合法调用任意方法。
+	 * 3.2
 	 * Check if the right-hand side type may be assigned to the left-hand side
 	 * type following the Java generics rules.
 	 * @param lhsType the target type (left-hand side (LHS) type)
@@ -58,7 +65,7 @@ public abstract class TypeUtils {
 			return true;
 		}
 
-		if (lhsType instanceof Class<?> lhsClass) {
+		if (lhsType instanceof Class<?> lhsClass) {//raw type 是所有泛型的父类
 			// just comparing two classes
 			if (rhsType instanceof Class<?> rhsClass) {
 				return ClassUtils.isAssignable(lhsClass, rhsClass);

@@ -81,7 +81,7 @@ abstract class AbstractMediaTypeExpression implements MediaTypeExpression, Compa
 		}
 	}
 
-	protected boolean matchParameters(MediaType contentType) {
+	protected boolean matchParameters(MediaType contentType) {//当前mediaType需要的参数 如果contentType没有提供 则失败
 		for (Map.Entry<String, String> entry : getMediaType().getParameters().entrySet()) {
 			if (StringUtils.hasText(entry.getValue())) {
 				String value = contentType.getParameter(entry.getKey());

@@ -108,6 +108,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 	}
 
 	/**
+	 * factoryBean->bean
 	 * Obtain an object to expose from the given FactoryBean.
 	 * @param factory the FactoryBean instance
 	 * @param beanName the name of the bean
@@ -131,9 +132,10 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 					if (shouldPostProcess) {
 						if (isSingletonCurrentlyInCreation(beanName)) {
 							// Temporarily return non-post-processed object, not storing it yet
+							// 这里的循环引用 触发的代理Bug会在factoryBean本身反应出来
 							return object;
 						}
-						beforeSingletonCreation(beanName);
+						beforeSingletonCreation(beanName);//主线程会触发这个后置处理
 						try {
 							object = postProcessObjectFromFactoryBean(object, beanName);
 						}
@@ -167,6 +169,8 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 	}
 
 	/**
+	 * 调用factoryBean.getObject()  其实现可能在未完全初始化的前提下抛出FactoryBeanNotInitializedException 或者返回null.
+	 * 其中null分为真是null和由于未完全初始化的null(循环引用导致的未完全初始化)
 	 * Obtain an object to expose from the given FactoryBean.
 	 * @param factory the FactoryBean instance
 	 * @param beanName the name of the bean
@@ -199,6 +203,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 	}
 
 	/**
+	 * 这里介入后置处理 容器管理的单例Bean 有三个阶段 1.获得实例 2.装配 3.后置处理 这里factory.getObject接管前两个步骤 故第三个步骤还是需要处理 比如代理
 	 * Post-process the given object that has been obtained from the FactoryBean.
 	 * The resulting object will get exposed for bean references.
 	 * <p>The default implementation simply returns the given object as-is.

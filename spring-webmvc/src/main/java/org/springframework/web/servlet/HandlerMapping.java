@@ -55,7 +55,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
  */
 public interface HandlerMapping {
-
+	//将request->映射到具体的执行器 handler 这个handler在不同子类中可以表示不同的东西 比如在requestMappingHandlerMapping中表示一个方法
 	/**
 	 * Name of the {@link HttpServletRequest} attribute that contains the mapped
 	 * handler for the best matching pattern.

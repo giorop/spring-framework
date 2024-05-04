@@ -40,7 +40,7 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("serial")
 public abstract class AbstractErrors implements Errors, Serializable {
 
-	private String nestedPath = "";
+	private String nestedPath = "";//nestedPathStack+nestPath 额外保留栈顶path
 
 	private final Deque<String> nestedPathStack = new ArrayDeque<>();
 
@@ -89,6 +89,7 @@ public abstract class AbstractErrors implements Errors, Serializable {
 	}
 
 	/**
+	 * field=>full path
 	 * Transform the given field into its full path,
 	 * regarding the nested path of this instance.
 	 */
@@ -116,7 +117,7 @@ public abstract class AbstractErrors implements Errors, Serializable {
 	@Override
 	public List<FieldError> getFieldErrors(String field) {
 		List<FieldError> fieldErrors = getFieldErrors();
-		List<FieldError> result = new ArrayList<>();
+		List<FieldError> result = new ArrayList<>();//override match 逻辑
 		String fixedField = fixedField(field);
 		for (FieldError fieldError : fieldErrors) {
 			if (isMatchingFieldError(fixedField, fieldError)) {

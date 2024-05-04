@@ -147,7 +147,7 @@ public class HandlerExecutionChain {
 				triggerAfterCompletion(request, response, null);
 				return false;
 			}
-			this.interceptorIndex = i;
+			this.interceptorIndex = i;//用于逆序after
 		}
 		return true;
 	}
@@ -182,7 +182,7 @@ public class HandlerExecutionChain {
 	}
 
 	/**
-	 * Apply afterConcurrentHandlerStarted callback on mapped AsyncHandlerInterceptors.
+	 * Apply afterConcurrentHandlerStarted callback on mapped AsyncHandlerInterceptors. 用于异步回调 给asyHandlerInterceptor
 	 */
 	void applyAfterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response) {
 		for (int i = this.interceptorList.size() - 1; i >= 0; i--) {

@@ -81,7 +81,7 @@ final class PostProcessorRegistrationDelegate {
 		// to ensure that your proposal does not result in a breaking change:
 		// https://github.com/spring-projects/spring-framework/issues?q=PostProcessorRegistrationDelegate+is%3Aclosed+label%3A%22status%3A+declined%22
 
-		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
+		// Invoke BeanDefinitionRegistryPostProcessors first, if any. 该接口实现可能会导入新的beanDefinition  其中priority>order>其它  内部提供的就一个ConfigurationClassPostProcessor 处理@Configuration
 		Set<String> processedBeans = new HashSet<>();
 
 		if (beanFactory instanceof BeanDefinitionRegistry registry) {
@@ -104,7 +104,7 @@ final class PostProcessorRegistrationDelegate {
 			// PriorityOrdered, Ordered, and the rest.
 			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
 
-			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
+			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered. factoryBean生产的Bean只享受代理周期 通常逻辑也不生产和容器相关的bean
 			String[] postProcessorNames =
 					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
@@ -243,7 +243,7 @@ final class PostProcessorRegistrationDelegate {
 			if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
 				BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
 				priorityOrderedPostProcessors.add(pp);
-				if (pp instanceof MergedBeanDefinitionPostProcessor) {
+				if (pp instanceof MergedBeanDefinitionPostProcessor) {//比如处理@Autowired
 					internalPostProcessors.add(pp);
 				}
 			}
@@ -414,7 +414,7 @@ final class PostProcessorRegistrationDelegate {
 		@Override
 		public Object postProcessAfterInitialization(Object bean, String beanName) {
 			if (!(bean instanceof BeanPostProcessor) && !isInfrastructureBean(beanName) &&
-					this.beanFactory.getBeanPostProcessorCount() < this.beanPostProcessorTargetCount) {
+					this.beanFactory.getBeanPostProcessorCount() < this.beanPostProcessorTargetCount) {//当前普通bean在构造时beanPostProcessor还未全部实例化完毕
 				if (logger.isWarnEnabled()) {
 					Set<String> bppsInCreation = new LinkedHashSet<>(2);
 					for (String bppName : this.postProcessorNames) {
@@ -431,7 +431,7 @@ final class PostProcessorRegistrationDelegate {
 									"(for example: not eligible for auto-proxying). The currently created " +
 									"BeanPostProcessor " + bppsInCreation + " is declared through a non-static " +
 									"factory method on that class; consider declaring it as static instead.");
-							return bean;
+							return bean;//当前bpp通过某个 bean的factoryMethod生产。。。故Bpp之前需要先生产该bean 如果static则不需要
 						}
 					}
 					logger.warn("Bean '" + beanName + "' of type [" + bean.getClass().getName() +

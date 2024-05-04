@@ -93,7 +93,7 @@ public final class MultipartResolutionDelegate {
 	@Nullable
 	public static Object resolveMultipartArgument(String name, MethodParameter parameter, HttpServletRequest request)
 			throws Exception {
-
+		//request是否有解析 multipart的能力
 		MultipartHttpServletRequest multipartRequest =
 				WebUtils.getNativeRequest(request, MultipartHttpServletRequest.class);
 		boolean isMultipart = (multipartRequest != null || isMultipartContent(request));

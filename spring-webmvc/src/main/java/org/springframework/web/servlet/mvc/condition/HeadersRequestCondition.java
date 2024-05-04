@@ -42,7 +42,7 @@ import org.springframework.web.cors.CorsUtils;
  * @since 3.1
  */
 public final class HeadersRequestCondition extends AbstractRequestCondition<HeadersRequestCondition> {
-
+	//表示header中必须包含这些header
 	private static final HeadersRequestCondition PRE_FLIGHT_MATCH = new HeadersRequestCondition();
 
 
@@ -67,7 +67,7 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
 				HeaderExpression expr = new HeaderExpression(header);
 				if ("Accept".equalsIgnoreCase(expr.name) || "Content-Type".equalsIgnoreCase(expr.name)) {
 					continue;
-				}
+				}//分别由consumer 和produces处理
 				result = (result != null ? result : CollectionUtils.newLinkedHashSet(headers.length));
 				result.add(expr);
 			}
@@ -178,7 +178,7 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
 		@Override
 		protected boolean isCaseSensitiveName() {
 			return false;
-		}
+		}//getHeader 本身不区分大小写
 
 		@Override
 		protected String parseValue(String valueExpression) {

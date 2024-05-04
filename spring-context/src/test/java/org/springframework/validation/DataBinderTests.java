@@ -132,7 +132,7 @@ class DataBinderTests {
 	@Test
 	void bindingWithDefaultConversionNoErrors() throws BindException {
 		TestBean rod = new TestBean();
-		DataBinder binder = new DataBinder(rod, "person");
+		DataBinder binder = new DataBinder(rod, "person");//默认beanWrapper 使用默认conversion
 		assertThat(binder.isIgnoreUnknownFields()).isTrue();
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		pvs.add("name", "Rod");
@@ -181,7 +181,7 @@ class DataBinderTests {
 		DataBinder binder = new DataBinder(rod, "person");
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		pvs.add("name", "Rod");
-		pvs.add("spouse.age", 32);
+		pvs.add("spouse.age", 32);//没有该属性 而且接口无法自动填充
 
 		assertThatExceptionOfType(NullValueInNestedPathException.class)
 				.isThrownBy(() -> binder.bind(pvs));
@@ -194,7 +194,7 @@ class DataBinderTests {
 		binder.setIgnoreInvalidFields(true);
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		pvs.add("name", "Rod");
-		pvs.add("spouse.age", 32);
+		pvs.add("spouse.age", 32);//直接ignore
 
 		binder.bind(pvs);
 		binder.close();
@@ -209,11 +209,11 @@ class DataBinderTests {
 		DataBinder binder = new DataBinder(rod, "person");
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		pvs.add("name", "Rod");
-		pvs.add("age", "32x");
+		pvs.add("age", "32x");//这里access异常 会->error
 		pvs.add("touchy", "m.y");
 		binder.bind(pvs);
 
-		assertThatExceptionOfType(BindException.class).isThrownBy(binder::close).satisfies(ex -> {
+		assertThatExceptionOfType(BindException.class).isThrownBy(binder::close).satisfies(ex -> {//close时如果有error则抛出异常
 			assertThat(rod.getName()).isEqualTo("Rod");
 			Map<?, ?> map = binder.getBindingResult().getModel();
 			TestBean tb = (TestBean) map.get("person");
@@ -233,7 +233,7 @@ class DataBinderTests {
 
 			assertThat(br.hasFieldErrors("age")).isTrue();
 			assertThat(br.getFieldErrorCount("age")).isEqualTo(1);
-			assertThat(binder.getBindingResult().getFieldValue("age")).isEqualTo("32x");
+			assertThat(binder.getBindingResult().getFieldValue("age")).isEqualTo("32x");//传入的异常 如果是validate出的异常 可能需要某些类型转换->实际类型->String
 			FieldError ageError = binder.getBindingResult().getFieldError("age");
 			assertThat(ageError).isNotNull();
 			assertThat(ageError.getCode()).isEqualTo("typeMismatch");
@@ -250,7 +250,7 @@ class DataBinderTests {
 			assertThat(touchyError).isNotNull();
 			assertThat(touchyError.getCode()).isEqualTo("methodInvocation");
 			assertThat(touchyError.getRejectedValue()).isEqualTo("m.y");
-			assertThat(touchyError.contains(MethodInvocationException.class)).isTrue();
+			assertThat(touchyError.contains(MethodInvocationException.class)).isTrue();//方法执行中抛出的异常会被包装成执行异常
 			assertThat(touchyError.unwrap(MethodInvocationException.class).getCause().getMessage()).contains("a .");
 			assertThat(tb.getTouchy()).isNull();
 
@@ -363,7 +363,7 @@ class DataBinderTests {
 		FormattingConversionService conversionService = new FormattingConversionService();
 		DefaultConversionService.addDefaultConverters(conversionService);
 		conversionService.addFormatterForFieldType(Float.class, new NumberStyleFormatter());
-		binder.setConversionService(conversionService);
+		binder.setConversionService(conversionService);//替代default
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		pvs.add("myFloat", "1,2");
 
@@ -373,7 +373,7 @@ class DataBinderTests {
 			assertThat(tb.getMyFloat()).isEqualTo(Float.valueOf(1.2f));
 			assertThat(binder.getBindingResult().getFieldValue("myFloat")).isEqualTo("1,2");
 
-			PropertyEditor editor = binder.getBindingResult().findEditor("myFloat", Float.class);
+			PropertyEditor editor = binder.getBindingResult().findEditor("myFloat", Float.class);//首先找注册的，如果不行则converter->adapter->editor
 			assertThat(editor).isNotNull();
 			editor.setValue(1.4f);
 			assertThat(editor.getAsText()).isEqualTo("1,4");
@@ -402,7 +402,7 @@ class DataBinderTests {
 		LocaleContextHolder.setLocale(Locale.GERMAN);
 		try {
 			binder.bind(pvs);
-			assertThat(tb.getMyFloat()).isEqualTo(Float.valueOf(0.0f));
+			assertThat(tb.getMyFloat()).isEqualTo(Float.valueOf(0.0f));//类型转换异常
 			assertThat(binder.getBindingResult().getFieldValue("myFloat")).isEqualTo("1x2");
 			assertThat(binder.getBindingResult().hasFieldErrors("myFloat")).isTrue();
 		}
@@ -435,7 +435,7 @@ class DataBinderTests {
 
 		binder.bind(pvs);
 		assertThat(binder.getBindingResult().hasFieldErrors("name")).isTrue();
-		assertThat(binder.getBindingResult().getFieldError("name").getCode()).isEqualTo("typeMismatch");
+		assertThat(binder.getBindingResult().getFieldError("name").getCode()).isEqualTo("typeMismatch");//ParseException
 		assertThat(binder.getBindingResult().getFieldValue("name")).isEqualTo("test");
 	}
 

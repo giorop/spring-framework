@@ -82,7 +82,7 @@ public class MatrixVariableMethodArgumentResolver extends AbstractNamedValueMeth
 		if (CollectionUtils.isEmpty(pathParameters)) {
 			return null;
 		}
-
+		//同样在handMapping match的时候设置进去
 		MatrixVariable ann = parameter.getParameterAnnotation(MatrixVariable.class);
 		Assert.state(ann != null, "No MatrixVariable annotation");
 		String pathVar = ann.pathVar();

@@ -46,7 +46,7 @@ public class ServletServerHttpResponse implements ServerHttpResponse {
 
 	private boolean headersWritten = false;
 
-	private boolean bodyUsed = false;
+	private boolean bodyUsed = false;//用于分辨 body是否被访问到
 
 	@Nullable
 	private HttpHeaders readOnlyHeaders;

@@ -114,7 +114,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 	@Nullable
 	protected final HttpSession getSession(boolean allowCreate) {
 		if (isRequestActive()) {
-			HttpSession session = this.request.getSession(allowCreate);
+			HttpSession session = this.request.getSession(allowCreate);//如果request存货 则可以选择构造
 			this.session = session;
 			return session;
 		}
@@ -136,7 +136,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 	}
 
 	private HttpSession obtainSession() {
-		HttpSession session = getSession(true);
+		HttpSession session = getSession(true);//调用的前提一定时request一定存活
 		Assert.state(session != null, "No HttpSession");
 		return session;
 	}
@@ -152,12 +152,12 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 			return this.request.getAttribute(name);
 		}
 		else {
-			HttpSession session = getSession(false);
+			HttpSession session = getSession(false);//此时需要session中的value 如果不存在 现构造也为空 没必要
 			if (session != null) {
 				try {
 					Object value = session.getAttribute(name);
 					if (value != null) {
-						this.sessionAttributesToUpdate.put(name, value);
+						this.sessionAttributesToUpdate.put(name, value);//access
 					}
 					return value;
 				}

@@ -49,9 +49,9 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public class ContentNegotiationManager implements ContentNegotiationStrategy, MediaTypeFileExtensionResolver {
 
-	private final List<ContentNegotiationStrategy> strategies = new ArrayList<>();
+	private final List<ContentNegotiationStrategy> strategies = new ArrayList<>();//request->mediaType
 
-	private final Set<MediaTypeFileExtensionResolver> resolvers = new LinkedHashSet<>();
+	private final Set<MediaTypeFileExtensionResolver> resolvers = new LinkedHashSet<>();//mediaType->file后缀
 
 
 	/**
@@ -135,7 +135,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	}
 
 	@Override
-	public List<String> resolveFileExtensions(MediaType mediaType) {
+	public List<String> resolveFileExtensions(MediaType mediaType) {//通过media=>返回所有能解析到的后缀
 		return doResolveExtensions(resolver -> resolver.resolveFileExtensions(mediaType));
 	}
 
@@ -177,7 +177,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	 * {@link MediaTypeFileExtensionResolver}s.
 	 * @since 5.2.4
 	 */
-	public Map<String, MediaType> getMediaTypeMappings() {
+	public Map<String, MediaType> getMediaTypeMappings() {//一个后缀对应一个mediaType  一个mediaType对应多个mediaType
 		Map<String, MediaType> result = null;
 		for (MediaTypeFileExtensionResolver resolver : this.resolvers) {
 			if (resolver instanceof MappingMediaTypeFileExtensionResolver mappingResolver) {

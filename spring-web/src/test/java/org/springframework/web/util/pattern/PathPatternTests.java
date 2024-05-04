@@ -78,7 +78,7 @@ class PathPatternTests {
 	}
 
 	@Test
-	void basicMatching() {
+	void basicMatching() {//这里mtches
 		checkMatches("", "");
 		checkMatches("", "/");
 		checkMatches("", null);
@@ -103,7 +103,7 @@ class PathPatternTests {
 	@Test
 	void optionalTrailingSeparators() {
 		PathPattern pp;
-		// LiteralPathElement
+		// LiteralPathElement parse设置能自动补全末尾/ 默认否
 		pp = parse("/resource");
 		assertMatches(pp,"/resource");
 		assertMatches(pp,"/resource");
@@ -145,7 +145,7 @@ class PathPatternTests {
 		);
 		assertNoMatch(pp,"/resource//");
 
-		// CaptureTheRestPathElement
+		// CaptureTheRestPathElement 捕获后面所有路径 添加前缀 表示路径？？
 		pp = parse("/{*var}");
 		assertMatches(pp,"/resource");
 		assertThat(pp.matchAndExtract(toPathContainer("/resource")).getUriVariables()).containsEntry(
@@ -1184,14 +1184,14 @@ class PathPatternTests {
 	private PathPattern.PathMatchInfo matchAndExtract(String pattern, String path) {
 		return parse(pattern).matchAndExtract(PathPatternTests.toPathContainer(path));
 	}
-
+	//表达式路径->pathPattern
 	@SuppressWarnings("deprecation")
 	private PathPattern parse(String path) {
 		PathPatternParser pp = new PathPatternParser();
 		pp.setMatchOptionalTrailingSeparator(true);
 		return pp.parse(path);
 	}
-
+	//url->pathContainer
 	public static PathContainer toPathContainer(String path) {
 		if (path == null) {
 			return null;

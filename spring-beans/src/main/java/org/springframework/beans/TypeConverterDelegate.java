@@ -116,7 +116,7 @@ class TypeConverterDelegate {
 	@Nullable
 	public <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object oldValue, @Nullable Object newValue,
 			@Nullable Class<T> requiredType, @Nullable TypeDescriptor typeDescriptor) throws IllegalArgumentException {
-
+		//customEditor->conversionService->default editor
 		// Custom editor for this type?
 		PropertyEditor editor = this.propertyEditorRegistry.findCustomEditor(requiredType, propertyName);
 
@@ -139,7 +139,7 @@ class TypeConverterDelegate {
 
 		Object convertedValue = newValue;
 
-		// Value not of required type?
+		// Value not of required type?  需要editor转换 1找到 customEditor  2 not required type(default editor)
 		if (editor != null || (requiredType != null && !ClassUtils.isAssignableValue(requiredType, convertedValue))) {
 			if (typeDescriptor != null && requiredType != null && Collection.class.isAssignableFrom(requiredType)) {
 				TypeDescriptor elementTypeDesc = typeDescriptor.getElementTypeDescriptor();
@@ -160,14 +160,14 @@ class TypeConverterDelegate {
 			}
 			convertedValue = doConvertValue(oldValue, convertedValue, requiredType, editor);
 		}
-
+		//最终适配requiredType  1 requiredType:null 直接返回 2 convertedValue:null 直接返回 或者包装optional 3 容器或者其它
 		boolean standardConversion = false;
 
 		if (requiredType != null) {
 			// Try to apply some standard type conversion rules if appropriate.
 
 			if (convertedValue != null) {
-				if (Object.class == requiredType) {
+				if (Object.class == requiredType) {//1 Object对象
 					return (T) convertedValue;
 				}
 				else if (requiredType.isArray()) {

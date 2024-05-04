@@ -32,7 +32,6 @@ import org.springframework.lang.Nullable;
  * @see BeanWrapper
  */
 public interface ConfigurablePropertyAccessor extends PropertyAccessor, PropertyEditorRegistry, TypeConverter {
-
 	/**
 	 * Specify a {@link ConversionService} to use for converting
 	 * property values, as an alternative to JavaBeans PropertyEditors.

@@ -89,7 +89,7 @@ public class ExceptionHandlerMethodResolver {
 	private List<Class<? extends Throwable>> detectExceptionMappings(Method method) {
 		List<Class<? extends Throwable>> result = new ArrayList<>();
 		detectAnnotationExceptionMappings(method, result);
-		if (result.isEmpty()) {
+		if (result.isEmpty()) {//parameter
 			for (Class<?> paramType : method.getParameterTypes()) {
 				if (Throwable.class.isAssignableFrom(paramType)) {
 					result.add((Class<? extends Throwable>) paramType);

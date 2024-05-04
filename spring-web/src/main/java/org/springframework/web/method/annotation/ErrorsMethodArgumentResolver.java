@@ -63,7 +63,7 @@ public class ErrorsMethodArgumentResolver implements HandlerMethodArgumentResolv
 			return model.get(lastKey);
 		}
 
-		throw new IllegalStateException(
+		throw new IllegalStateException(//modelAttribute(or 普通class) @RequestBody @RequestPart args参数在绑定后会将绑定结果放入mav中
 				"An Errors/BindingResult argument is expected to be declared immediately after " +
 				"the model attribute, the @RequestBody or the @RequestPart arguments " +
 				"to which they apply: " + parameter.getMethod());

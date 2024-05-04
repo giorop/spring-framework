@@ -78,7 +78,7 @@ public final class WebAsyncManager {
 			new DisconnectedClientHelper(DISCONNECTED_CLIENT_LOG_CATEGORY);
 
 	private static final CallableProcessingInterceptor timeoutCallableInterceptor =
-			new TimeoutCallableProcessingInterceptor();
+			new TimeoutCallableProcessingInterceptor();//抛出异常
 
 	private static final DeferredResultProcessingInterceptor timeoutDeferredResultInterceptor =
 			new TimeoutDeferredResultProcessingInterceptor();
@@ -87,7 +87,7 @@ public final class WebAsyncManager {
 	@Nullable
 	private AsyncWebRequest asyncWebRequest;
 
-	private AsyncTaskExecutor taskExecutor = DEFAULT_TASK_EXECUTOR;
+	private AsyncTaskExecutor taskExecutor = DEFAULT_TASK_EXECUTOR;//newThread
 
 	@Nullable
 	private volatile Object concurrentResult = RESULT_NONE;
@@ -129,7 +129,7 @@ public final class WebAsyncManager {
 		Assert.notNull(asyncWebRequest, "AsyncWebRequest must not be null");
 		this.asyncWebRequest = asyncWebRequest;
 		this.asyncWebRequest.addCompletionHandler(() -> asyncWebRequest.removeAttribute(
-				WebAsyncUtils.WEB_ASYNC_MANAGER_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST));
+				WebAsyncUtils.WEB_ASYNC_MANAGER_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST));//任务完成时移除
 	}
 
 	/**
@@ -279,6 +279,7 @@ public final class WebAsyncManager {
 	}
 
 	/**
+	 * 开启异步任务
 	 * Use the given {@link WebAsyncTask} to configure the task executor as well as
 	 * the timeout value of the {@code AsyncWebRequest} before delegating to
 	 * {@link #startCallableProcessing(Callable, Object...)}.
@@ -310,14 +311,14 @@ public final class WebAsyncManager {
 
 		final Callable<?> callable = webAsyncTask.getCallable();
 		final CallableInterceptorChain interceptorChain = new CallableInterceptorChain(interceptors);
-
+		//asyncWebRequest startAsy  然后执行任务 最后dispatch 通过执行任务的结果 发布通知 之后监听做出响应
 		this.asyncWebRequest.addTimeoutHandler(() -> {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Async request timeout for " + formatUri(this.asyncWebRequest));
 			}
 			Object result = interceptorChain.triggerAfterTimeout(this.asyncWebRequest, callable);
 			if (result != CallableProcessingInterceptor.RESULT_NONE) {
-				setConcurrentResultAndDispatch(result);
+				setConcurrentResultAndDispatch(result);//超时 并放入结果
 			}
 		});
 
@@ -334,11 +335,11 @@ public final class WebAsyncManager {
 
 		this.asyncWebRequest.addCompletionHandler(() ->
 				interceptorChain.triggerAfterCompletion(this.asyncWebRequest, callable));
-
+		//任务前
 		interceptorChain.applyBeforeConcurrentHandling(this.asyncWebRequest, callable);
-		startAsyncProcessing(processingContext);
+		startAsyncProcessing(processingContext);//开启异步
 		try {
-			Future<?> future = this.taskExecutor.submit(() -> {
+			Future<?> future = this.taskExecutor.submit(() -> {//提交任务 用时很短
 				Object result = null;
 				try {
 					interceptorChain.applyPreProcess(this.asyncWebRequest, callable);
@@ -352,7 +353,7 @@ public final class WebAsyncManager {
 				}
 				setConcurrentResultAndDispatch(result);
 			});
-			interceptorChain.setTaskFuture(future);
+			interceptorChain.setTaskFuture(future);//设置future 用于超时取消等
 		}
 		catch (Throwable ex) {
 			Object result = interceptorChain.applyPostProcess(this.asyncWebRequest, callable, ex);
@@ -376,7 +377,7 @@ public final class WebAsyncManager {
 			}
 			return;
 		}
-
+		//链接直接断开 那就没必要继续处理
 		if (result instanceof Exception ex && disconnectedClientHelper.checkAndLogClientDisconnectedException(ex)) {
 			return;
 		}
@@ -385,7 +386,7 @@ public final class WebAsyncManager {
 			logger.debug("Async " + (this.errorHandlingInProgress ? "error" : "result set") +
 					", dispatch to " + formatUri(this.asyncWebRequest));
 		}
-		this.asyncWebRequest.dispatch();
+		this.asyncWebRequest.dispatch();//结束任务
 	}
 
 	/**
@@ -451,9 +452,9 @@ public final class WebAsyncManager {
 
 		try {
 			interceptorChain.applyPreProcess(this.asyncWebRequest, deferredResult);
-			deferredResult.setResultHandler(result -> {
+			deferredResult.setResultHandler(result -> {//延时任务 等到future等完成任务 触发deferredResult的setResult  此时handleResult执行
 				result = interceptorChain.applyPostProcess(this.asyncWebRequest, deferredResult, result);
-				setConcurrentResultAndDispatch(result);
+				setConcurrentResultAndDispatch(result);//dispatch
 			});
 		}
 		catch (Throwable ex) {
@@ -469,7 +470,7 @@ public final class WebAsyncManager {
 		}
 
 		Assert.state(this.asyncWebRequest != null, "AsyncWebRequest must not be null");
-		this.asyncWebRequest.startAsync();
+		this.asyncWebRequest.startAsync();//代理给request 开启异步状态
 		if (logger.isDebugEnabled()) {
 			logger.debug("Started async request");
 		}

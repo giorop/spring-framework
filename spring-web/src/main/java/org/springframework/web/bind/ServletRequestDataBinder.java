@@ -104,6 +104,7 @@ public class ServletRequestDataBinder extends WebDataBinder {
 
 
 	/**
+	 * request作为数据元 通过type创建target
 	 * Use a default or single data constructor to create the target by
 	 * binding request parameters, multipart files, or parts to constructor args.
 	 * <p>After the call, use {@link #getBindingResult()} to check for bind errors.
@@ -125,7 +126,7 @@ public class ServletRequestDataBinder extends WebDataBinder {
 	}
 
 	@Override
-	protected boolean shouldConstructArgument(MethodParameter param) {
+	protected boolean shouldConstructArgument(MethodParameter param) {//argument为null时是否递归构造
 		Class<?> type = param.nestedIfOptional().getNestedParameterType();
 		return (super.shouldConstructArgument(param) &&
 				!MultipartFile.class.isAssignableFrom(type) && !Part.class.isAssignableFrom(type));
@@ -156,15 +157,16 @@ public class ServletRequestDataBinder extends WebDataBinder {
 		}
 		MutablePropertyValues mpvs = new ServletRequestParameterPropertyValues(request);
 		MultipartRequest multipartRequest = WebUtils.getNativeRequest(request, MultipartRequest.class);
-		if (multipartRequest != null) {
+		if (multipartRequest != null) {//multipart 此时request已经包装成MultipartRequest 比如multipartFilter 或者dispatcher传递的时候resolve
 			bindMultipart(multipartRequest.getMultiFileMap(), mpvs);
 		}
-		else if (isFormDataPost(request)) {
+		else if (isFormDataPost(request)) {//这个时候包装 这个时候只处理part部分
 			HttpServletRequest httpServletRequest = WebUtils.getNativeRequest(request, HttpServletRequest.class);
 			if (httpServletRequest != null && HttpMethod.POST.matches(httpServletRequest.getMethod())) {
 				StandardServletPartUtils.bindParts(httpServletRequest, mpvs, isBindEmptyMultipartFiles());
 			}
 		}
+		//multipartFile+part+params作为数据源
 		addBindValues(mpvs, request);
 		doBind(mpvs);
 	}
@@ -242,7 +244,7 @@ public class ServletRequestDataBinder extends WebDataBinder {
 		}
 
 		@Nullable
-		protected Object getRequestParameter(String name, Class<?> type) {
+		protected Object getRequestParameter(String name, Class<?> type) {//从request中获取param
 			Object value = this.request.getParameterValues(name);
 			return (ObjectUtils.isArray(value) && Array.getLength(value) == 1 ? Array.get(value, 0) : value);
 		}

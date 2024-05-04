@@ -179,14 +179,14 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
 
-		if (shouldValidateArguments() && this.methodValidator != null) {
+		if (shouldValidateArguments() && this.methodValidator != null) {//参数验证
 			this.methodValidator.applyArgumentValidation(
 					getBean(), getBridgedMethod(), getMethodParameters(), args, this.validationGroups);
 		}
 
 		Object returnValue = doInvoke(args);
 
-		if (shouldValidateReturnValue() && this.methodValidator != null) {
+		if (shouldValidateReturnValue() && this.methodValidator != null) {//返回值验证
 			this.methodValidator.applyReturnValueValidation(
 					getBean(), getBridgedMethod(), getReturnType(), returnValue, this.validationGroups);
 		}
@@ -195,6 +195,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	}
 
 	/**
+	 * 实际参数注入逻辑在这
 	 * Get the method argument values for the current request, checking the provided
 	 * argument values and falling back to the configured argument resolvers.
 	 * <p>The resulting array will be passed into {@link #doInvoke}.
@@ -219,7 +220,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			if (!this.resolvers.supportsParameter(parameter)) {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
-			try {
+			try {//参数填充
 				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
 			}
 			catch (Exception ex) {

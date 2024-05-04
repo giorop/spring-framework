@@ -130,6 +130,7 @@ public abstract class WebApplicationContextUtils {
 	}
 
 	/**
+	 * root first or else unique one
 	 * Find a unique {@code WebApplicationContext} for this web app: either the
 	 * root web app context (preferred) or a unique {@code WebApplicationContext}
 	 * among the registered {@code ServletContext} attributes (typically coming

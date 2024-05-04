@@ -112,6 +112,7 @@ public interface AsyncTaskExecutor extends TaskExecutor {
 	}
 
 	/**
+	 * CompletableFuture 当前常用的提交方式
 	 * Submit a {@code Runnable} task for execution, receiving a {@code CompletableFuture}
 	 * representing that task. The Future will return a {@code null} result upon completion.
 	 * @param task the {@code Runnable} to execute (never {@code null})

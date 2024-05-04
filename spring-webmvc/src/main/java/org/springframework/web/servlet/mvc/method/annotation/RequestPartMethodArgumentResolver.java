@@ -74,7 +74,7 @@ import org.springframework.web.multipart.support.RequestPartServletServerHttpReq
  * @since 3.1
  */
 public class RequestPartMethodArgumentResolver extends AbstractMessageConverterMethodArgumentResolver {
-
+	//通过body解析数据  其中multipart相关 特殊处理 multipart本身也是body一部分 但一个body对应的multipart有多个部分 parameter可能只对应其中一个part
 	/**
 	 * Basic constructor with converters only.
 	 */
@@ -130,25 +130,25 @@ public class RequestPartMethodArgumentResolver extends AbstractMessageConverterM
 		String name = getPartName(parameter, requestPart);
 		parameter = parameter.nestedIfOptional();
 		Object arg = null;
-
+		//直接从servletRequest中获取 multipart可以直接另辟蹊径读取
 		Object mpArg = MultipartResolutionDelegate.resolveMultipartArgument(name, parameter, servletRequest);
 		if (mpArg != MultipartResolutionDelegate.UNRESOLVABLE) {
 			arg = mpArg;
 		}
 		else {
-			try {
+			try {//直接body读取->parameter
 				HttpInputMessage inputMessage = new RequestPartServletServerHttpRequest(servletRequest, name);
 				arg = readWithMessageConverters(inputMessage, parameter, parameter.getNestedGenericParameterType());
 				if (binderFactory != null) {
 					ResolvableType type = ResolvableType.forMethodParameter(parameter);
 					WebDataBinder binder = binderFactory.createBinder(request, arg, name, type);
-					if (arg != null) {
+					if (arg != null) {//验证
 						validateIfApplicable(binder, parameter);
-						if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
+						if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {//如果参数后面紧跟一个Error则不抛异常 后续参数绑定会将这个result放入error中
 							throw new MethodArgumentNotValidException(parameter, binder.getBindingResult());
 						}
 					}
-					if (mavContainer != null) {
+					if (mavContainer != null) {//添加绑定结果 会触发移除前面的bingingResult 使得binging error的时候唯一
 						mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
 					}
 				}

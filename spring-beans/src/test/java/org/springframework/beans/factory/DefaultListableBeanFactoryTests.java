@@ -436,7 +436,7 @@ class DefaultListableBeanFactoryTests {
 
 	@Test
 	void empty() {
-		assertThat(lbf.getBeanDefinitionNames()).as("No beans defined --> array != null").isNotNull();
+		assertThat(lbf.getBeanDefinitionNames()).as("No beans defined --> array != null").isNotNull();//empty array
 		assertThat(lbf.getBeanDefinitionNames()).as("No beans defined after no arg constructor").isEmpty();
 		assertThat(lbf.getBeanDefinitionCount()).as("No beans defined after no arg constructor").isEqualTo(0);
 	}

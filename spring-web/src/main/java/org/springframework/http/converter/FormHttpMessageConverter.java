@@ -160,14 +160,14 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 
 	private List<MediaType> supportedMediaTypes = new ArrayList<>();
 
-	private List<HttpMessageConverter<?>> partConverters = new ArrayList<>();
+	private List<HttpMessageConverter<?>> partConverters = new ArrayList<>();//辅助multipart 中part项的写入
 
 	private Charset charset = DEFAULT_CHARSET;
 
 	@Nullable
 	private Charset multipartCharset;
 
-
+	//post  或者 multipart
 	public FormHttpMessageConverter() {
 		this.supportedMediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);
 		this.supportedMediaTypes.add(MediaType.MULTIPART_FORM_DATA);
@@ -362,7 +362,7 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 		if (isMultipart(map, contentType)) {
 			writeMultipart((MultiValueMap<String, Object>) map, contentType, outputMessage);
 		}
-		else {
+		else {//普通输出
 			writeForm((MultiValueMap<String, Object>) map, contentType, outputMessage);
 		}
 	}
@@ -375,7 +375,7 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 		for (List<?> values : map.values()) {
 			for (Object value : values) {
 				if (value != null && !(value instanceof String)) {
-					return true;
+					return true;//出现任意不是String 则当multipart使用
 				}
 			}
 		}
@@ -390,7 +390,7 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 
 		Charset charset = (mediaType.getCharset() != null ? mediaType.getCharset() : this.charset);
 
-		byte[] bytes = serializeForm(formData, charset).getBytes(charset);
+		byte[] bytes = serializeForm(formData, charset).getBytes(charset);//序列化原始数据
 		outputMessage.getHeaders().setContentLength(bytes.length);
 
 		if (outputMessage instanceof StreamingHttpOutputMessage streamingOutputMessage) {
@@ -486,8 +486,8 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 			});
 		}
 		else {
-			writeParts(outputMessage.getBody(), parts, boundary);
-			writeEnd(outputMessage.getBody(), boundary);
+			writeParts(outputMessage.getBody(), parts, boundary);//写入每个part
+			writeEnd(outputMessage.getBody(), boundary);//写入结尾
 		}
 	}
 
@@ -505,9 +505,9 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 			String name = entry.getKey();
 			for (Object part : entry.getValue()) {
 				if (part != null) {
-					writeBoundary(os, boundary);
-					writePart(name, getHttpEntity(part), os);
-					writeNewLine(os);
+					writeBoundary(os, boundary);//每个part 分隔线
+					writePart(name, getHttpEntity(part), os);//part实体
+					writeNewLine(os);//new line
 				}
 			}
 		}
@@ -519,11 +519,11 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 		if (partBody == null) {
 			throw new IllegalStateException("Empty body for part '" + name + "': " + partEntity);
 		}
-		Class<?> partType = partBody.getClass();
-		HttpHeaders partHeaders = partEntity.getHeaders();
-		MediaType partContentType = partHeaders.getContentType();
+		Class<?> partType = partBody.getClass();//part body class
+		HttpHeaders partHeaders = partEntity.getHeaders();//header
+		MediaType partContentType = partHeaders.getContentType();//mediaType  +class确定实际converter
 		for (HttpMessageConverter<?> messageConverter : this.partConverters) {
-			if (messageConverter.canWrite(partType, partContentType)) {
+			if (messageConverter.canWrite(partType, partContentType)) {//通过class+mediaType选择converter
 				Charset charset = isFilenameCharsetSet() ? StandardCharsets.US_ASCII : this.charset;
 				HttpOutputMessage multipartMessage = new MultipartHttpOutputMessage(os, charset);
 				String filename = getFilename(partBody);

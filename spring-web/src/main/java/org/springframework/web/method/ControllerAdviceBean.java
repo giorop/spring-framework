@@ -244,6 +244,7 @@ public class ControllerAdviceBean implements Ordered {
 	}
 
 	/**
+	 * 测试某beanType是否在被advice范围内
 	 * Check whether the given bean type should be advised by this
 	 * {@code ControllerAdviceBean}.
 	 * @param beanType the type of the bean to check
@@ -290,7 +291,7 @@ public class ControllerAdviceBean implements Ordered {
 		}
 		List<ControllerAdviceBean> adviceBeans = new ArrayList<>();
 		for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, Object.class)) {
-			if (!ScopedProxyUtils.isScopedTarget(name)) {
+			if (!ScopedProxyUtils.isScopedTarget(name)) {//排除被scoped的bean
 				ControllerAdvice controllerAdvice = beanFactory.findAnnotationOnBean(name, ControllerAdvice.class);
 				if (controllerAdvice != null) {
 					// Use the @ControllerAdvice annotation found by findAnnotationOnBean()
@@ -314,7 +315,7 @@ public class ControllerAdviceBean implements Ordered {
 				AnnotatedElementUtils.findMergedAnnotation(beanType, ControllerAdvice.class) : null);
 		return createBeanTypePredicate(controllerAdvice);
 	}
-
+	//用于筛选其适配的范围
 	private static HandlerTypePredicate createBeanTypePredicate(@Nullable ControllerAdvice controllerAdvice) {
 		if (controllerAdvice != null) {
 			return HandlerTypePredicate.builder()

@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
  * with and compared to
  */
 public abstract class AbstractRequestCondition<T extends AbstractRequestCondition<T>> implements RequestCondition<T> {
-
+	//提供content用于解析condition
 	/**
 	 * Indicates whether this condition is empty, i.e. whether it
 	 * contains any discrete items.
@@ -46,9 +46,10 @@ public abstract class AbstractRequestCondition<T extends AbstractRequestConditio
 	 * <p>For example URL patterns, HTTP request methods, param expressions, etc.
 	 * @return a collection of objects (never {@code null})
 	 */
-	protected abstract Collection<?> getContent();
+	protected abstract Collection<?> getContent();//用于构成condition的实体 比如url等
 
 	/**
+	 * 某condition中的筛选是 和 或者 或
 	 * The notation to use when printing discrete items of content.
 	 * <p>For example {@code " || "} for URL patterns or {@code " && "}
 	 * for param expressions.

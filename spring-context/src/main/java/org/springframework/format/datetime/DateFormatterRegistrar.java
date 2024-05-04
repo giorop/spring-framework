@@ -70,6 +70,7 @@ public class DateFormatterRegistrar implements FormatterRegistrar {
 	}
 
 	/**
+	 * 主要为了适配DateTimeFormat  其只转换到date 最后需要完成date和field之间的转换
 	 * Add date converters to the specified registry.
 	 * @param converterRegistry the registry of converters to add to
 	 */

@@ -49,9 +49,9 @@ import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition.Hea
  * @since 3.1
  */
 public final class ProducesRequestCondition extends AbstractRequestCondition<ProducesRequestCondition> {
-
+	//accept 表示请求接受的响应格式 produces表示当前能生产的 格式
 	private static final ContentNegotiationManager DEFAULT_CONTENT_NEGOTIATION_MANAGER =
-			new ContentNegotiationManager();
+			new ContentNegotiationManager();//request->MediaTypes
 
 	private static final ProducesRequestCondition EMPTY_CONDITION = new ProducesRequestCondition();
 
@@ -67,6 +67,7 @@ public final class ProducesRequestCondition extends AbstractRequestCondition<Pro
 
 
 	/**
+	 * produces+header中的accept
 	 * Creates a new instance from "produces" expressions. If 0 expressions
 	 * are provided in total, this condition will match to any request.
 	 * @param produces expressions with syntax defined by {@link RequestMapping#produces()}
@@ -101,6 +102,7 @@ public final class ProducesRequestCondition extends AbstractRequestCondition<Pro
 		if (this.expressions.size() > 1) {
 			Collections.sort(this.expressions);
 		}
+		//用于提取request中的mediaType
 		this.contentNegotiationManager = manager != null ? manager : DEFAULT_CONTENT_NEGOTIATION_MANAGER;
 	}
 

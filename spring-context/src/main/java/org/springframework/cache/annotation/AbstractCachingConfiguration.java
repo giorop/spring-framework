@@ -72,7 +72,7 @@ public abstract class AbstractCachingConfiguration implements ImportAware {
 					"@EnableCaching is not present on importing class " + importMetadata.getClassName());
 		}
 	}
-
+	//通过这里配置一些其它bean
 	@Autowired
 	void setConfigurers(ObjectProvider<CachingConfigurer> configurers) {
 		Supplier<CachingConfigurer> configurer = () -> {

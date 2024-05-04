@@ -19,6 +19,7 @@ package org.springframework.web.context.request;
 import org.springframework.lang.Nullable;
 
 /**
+ * 设计目的主要用于访问request的attributes
  * Abstraction for accessing attribute objects associated with a request.
  * Supports access to request-scoped attributes as well as to session-scoped
  * attributes, with the optional notion of a "global session".
@@ -96,6 +97,7 @@ public interface RequestAttributes {
 	String[] getAttributeNames(int scope);
 
 	/**
+	 * attribute销毁时的回调
 	 * Register a callback to be executed on destruction of the
 	 * specified attribute in the given scope.
 	 * <p>Implementations should do their best to execute the callback

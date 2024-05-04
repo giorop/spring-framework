@@ -23,7 +23,7 @@ import org.springframework.lang.Nullable;
 /**
  * Auto-proxy creator that considers infrastructure Advisor beans only,
  * ignoring any application-defined Advisors.
- *
+ * 用于代理增强 适配的方法
  * @author Juergen Hoeller
  * @since 2.0.7
  */
@@ -41,7 +41,7 @@ public class InfrastructureAdvisorAutoProxyCreator extends AbstractAdvisorAutoPr
 	}
 
 	@Override
-	protected boolean isEligibleAdvisorBean(String beanName) {
+	protected boolean isEligibleAdvisorBean(String beanName) {//排除自定义的一些advisor
 		return (this.beanFactory != null && this.beanFactory.containsBeanDefinition(beanName) &&
 				this.beanFactory.getBeanDefinition(beanName).getRole() == BeanDefinition.ROLE_INFRASTRUCTURE);
 	}

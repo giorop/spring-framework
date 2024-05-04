@@ -60,7 +60,7 @@ import org.springframework.aot.hint.annotation.Reflective;
 @Documented
 @Reflective
 public @interface InitBinder {
-
+	//用于设置dataBinder
 	/**
 	 * The names of command/form attributes and/or request parameters
 	 * that this init-binder method is supposed to apply to.

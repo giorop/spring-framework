@@ -65,7 +65,7 @@ public class DateFormatter implements Formatter<Date> {
 	private Object source;
 
 	@Nullable
-	private String pattern;
+	private String pattern;//String 格式
 
 	@Nullable
 	private String[] fallbackPatterns;
@@ -232,7 +232,7 @@ public class DateFormatter implements Formatter<Date> {
 	}
 
 
-	protected DateFormat getDateFormat(Locale locale) {
+	protected DateFormat getDateFormat(Locale locale) {//locale+pattern==>DateFormat
 		return configureDateFormat(createDateFormat(locale));
 	}
 

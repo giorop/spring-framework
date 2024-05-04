@@ -38,7 +38,7 @@ import org.springframework.web.method.support.InvocableHandlerMethod;
  */
 public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 
-	private final List<InvocableHandlerMethod> binderMethods;
+	private final List<InvocableHandlerMethod> binderMethods;//invocableHandlerMethod表示某个可执行方法
 
 
 	/**
@@ -75,6 +75,7 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 	}
 
 	/**
+	 * initBinder 适配了某方法 故此当某个args在执行时做出配置 比如限制obj的某个参数无法被绑定等
 	 * Determine whether the given {@code @InitBinder} method should be used
 	 * to initialize the given {@link WebDataBinder} instance. By default we
 	 * check the specified attribute names in the annotation value, if any.

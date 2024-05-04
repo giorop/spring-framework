@@ -52,7 +52,7 @@ import org.springframework.util.StringUtils;
  * @see jakarta.servlet.RequestDispatcher
  */
 public class UrlPathHelper {
-
+	//处理请求路径 request.uri-> 解析
 	/**
 	 * Name of Servlet request attribute that holds a
 	 * {@link #getLookupPathForRequest resolved} lookupPath.
@@ -296,8 +296,8 @@ public class UrlPathHelper {
 	 * @see #getLookupPathForRequest
 	 */
 	protected String getPathWithinServletMapping(HttpServletRequest request, String pathWithinApp) {
-		String servletPath = getServletPath(request);
-		String sanitizedPathWithinApp = getSanitizedPath(pathWithinApp);
+		String servletPath = getServletPath(request);//mapping 该path可能携带通配
+		String sanitizedPathWithinApp = getSanitizedPath(pathWithinApp);//  //->/
 		String path;
 
 		// If the app container sanitized the servletPath, check against the sanitized version
@@ -308,7 +308,7 @@ public class UrlPathHelper {
 			path = getRemainingPath(pathWithinApp, servletPath, false);
 		}
 
-		if (path != null) {
+		if (path != null) {//这里表示已经不携带 *
 			// Normal case: URI contains servlet path.
 			return path;
 		}
@@ -318,7 +318,7 @@ public class UrlPathHelper {
 			if (pathInfo != null) {
 				// Use path info if available. Indicates index page within a servlet mapping?
 				// e.g. with index page: URI="/", servletPath="/index.html"
-				return pathInfo;
+				return pathInfo;//container已经有解析
 			}
 			if (!this.urlDecode) {
 				// No path info... (not mapped by prefix, nor by extension, nor "/*")
@@ -343,7 +343,7 @@ public class UrlPathHelper {
 	 * @see #getLookupPathForRequest
 	 */
 	public String getPathWithinApplication(HttpServletRequest request) {
-		String contextPath = getContextPath(request);
+		String contextPath = getContextPath(request);//从0到context结束
 		String requestUri = getRequestUri(request);
 		String path = getRemainingPath(requestUri, contextPath, true);
 		if (path != null) {
@@ -362,7 +362,7 @@ public class UrlPathHelper {
 	 * stripped of semicolon content unlike the requestUri.
 	 */
 	@Nullable
-	private String getRemainingPath(String requestUri, String mapping, boolean ignoreCase) {
+	private String getRemainingPath(String requestUri, String mapping, boolean ignoreCase) {//mapping是纯粹的
 		int index1 = 0;
 		int index2 = 0;
 		for (; (index1 < requestUri.length()) && (index2 < mapping.length()); index1++, index2++) {
@@ -378,7 +378,7 @@ public class UrlPathHelper {
 			if (c1 == c2 || (ignoreCase && (Character.toLowerCase(c1) == Character.toLowerCase(c2)))) {
 				continue;
 			}
-			return null;
+			return null;//发现不匹配
 		}
 		if (index2 != mapping.length()) {
 			return null;
@@ -476,6 +476,8 @@ public class UrlPathHelper {
 
 
 	/**
+	 * forward之后request会存放当前资源路径 会将原始路径放入attribute
+	 * include和forward相反 会存放之前路径 经当前路径放入attribute
 	 * Return the request URI for the given request. If this is a forwarded request,
 	 * correctly resolves to the request URI of the original request.
 	 */
@@ -558,7 +560,7 @@ public class UrlPathHelper {
 	 * @see java.net.URLDecoder#decode(String, String)
 	 * @see java.net.URLDecoder#decode(String)
 	 */
-	public String decodeRequestString(HttpServletRequest request, String source) {
+	public String decodeRequestString(HttpServletRequest request, String source) {//将路径中的转义符等还原
 		if (this.urlDecode) {
 			return decodeInternal(request, source);
 		}
@@ -599,6 +601,7 @@ public class UrlPathHelper {
 	}
 
 	/**
+	 * jsessionid至少去掉
 	 * Remove ";" (semicolon) content from the given request URI if the
 	 * {@linkplain #setRemoveSemicolonContent removeSemicolonContent}
 	 * property is set to "true". Note that "jsessionid" is always removed.
@@ -690,7 +693,7 @@ public class UrlPathHelper {
 	}
 
 	private boolean shouldRemoveTrailingServletPathSlash(HttpServletRequest request) {
-		if (request.getAttribute(WEBSPHERE_URI_ATTRIBUTE) == null) {
+		if (request.getAttribute(WEBSPHERE_URI_ATTRIBUTE) == null) {//默认不移除 uri的后缀/
 			// Regular servlet container: behaves as expected in any case,
 			// so the trailing slash is the result of a "/" url-pattern mapping.
 			// Don't remove that slash.
@@ -739,6 +742,7 @@ public class UrlPathHelper {
 
 
 	/**
+	 * 主要用于raw url传递；通常情况用于mapping匹配时 ;之后的参数无意义
 	 * Shared, read-only instance for the full, encoded path. The following apply:
 	 * <ul>
 	 * <li>{@code alwaysUseFullPath=true}

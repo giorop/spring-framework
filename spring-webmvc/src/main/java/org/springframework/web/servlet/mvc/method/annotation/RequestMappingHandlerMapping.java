@@ -320,7 +320,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 			if (typeInfo != null) {
 				info = typeInfo.combine(info);
 			}
-			if (info.isEmptyMapping()) {
+			if (info.isEmptyMapping()) {//url是否为空 则默认
 				info = info.mutate().paths("", "/").options(this.config).build();
 			}
 			String prefix = getPathPrefix(handlerType);
@@ -374,7 +374,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 							.formatted(element, httpExchanges));
 			requestMappingInfo = createRequestMappingInfo((HttpExchange) httpExchanges.get(0).annotation, customCondition);
 		}
-
+		//上述不能同时拥有
 		return requestMappingInfo;
 	}
 

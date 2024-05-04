@@ -91,7 +91,10 @@ import org.springframework.util.ClassUtils;
  * @see java.beans.PropertyEditorSupport#setValue
  */
 public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
-
+	//editor的注册中心 提供default注册 defaultEditorsActive(configValueEditorsActive)->overriddenDefaultEditors->customEditors 后者高优先
+	//overriddenDefaultEditors用于覆盖defaultEditors 也是default的一部分
+	//customEditorsForPath 更进一步的区分 数组 容器等
+	//custom editors>conversionService>default editors   factory级别没有注册conversionService  要applicationContext才注入
 	@Nullable
 	private ConversionService conversionService;
 
@@ -156,6 +159,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 	}
 
 	/**
+	 * custom editors->ConversionService->default editors 转换优先级
 	 * Override the default editor for the specified type with the given property editor.
 	 * <p>Note that this is different from registering a custom editor in that the editor
 	 * semantically still is a default editor. A ConversionService will override such a
@@ -306,10 +310,10 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 				this.customEditors = new LinkedHashMap<>(16);
 			}
 			this.customEditors.put(requiredType, propertyEditor);
-			this.customEditorCache = null;
+			this.customEditorCache = null;//修改后 置空；添加新的editor之后可能有更适配的editor
 		}
 	}
-
+	//custom path->custom type
 	@Override
 	@Nullable
 	public PropertyEditor findCustomEditor(@Nullable Class<?> requiredType, @Nullable String propertyPath) {
@@ -331,7 +335,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 				}
 			}
 			if (requiredType == null) {
-				requiredTypeToUse = getPropertyType(propertyPath);
+				requiredTypeToUse = getPropertyType(propertyPath);//通过路径 反向获得该位置的类型
 			}
 		}
 		// No property-specific editor -> check type-specific editor.
@@ -492,6 +496,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 
 
 	/**
+	 * []中的所有元素 类型应当是一致的 故如果存放了特定的转换器 则也可适配其它的
 	 * Add property paths with all variations of stripped keys and/or indexes.
 	 * Invokes itself recursively with nested paths.
 	 * @param strippedPaths the result list to add to

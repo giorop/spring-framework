@@ -106,7 +106,7 @@ public class PropertyPlaceholderHelper {
 	 * Replace all placeholders of format {@code ${name}} with the value returned
 	 * from the supplied {@link PlaceholderResolver}.
 	 * @param value the value containing the placeholders to be replaced
-	 * @param placeholderResolver the {@code PlaceholderResolver} to use for replacement
+	 * @param placeholderResolver the {@code PlaceholderResolver} to use for replacement 从占位符key->value 得到的value可能还需进一步解析
 	 * @return the supplied value with placeholders replaced inline
 	 */
 	public String replacePlaceholders(String value, PlaceholderResolver placeholderResolver) {

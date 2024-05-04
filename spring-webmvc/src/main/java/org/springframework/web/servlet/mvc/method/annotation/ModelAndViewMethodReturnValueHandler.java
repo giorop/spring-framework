@@ -87,7 +87,7 @@ public class ModelAndViewMethodReturnValueHandler implements HandlerMethodReturn
 		if (mav.isReference()) {
 			String viewName = mav.getViewName();
 			mavContainer.setViewName(viewName);
-			if (viewName != null && isRedirectViewName(viewName)) {
+			if (viewName != null && isRedirectViewName(viewName)) {//重定向
 				mavContainer.setRedirectModelScenario(true);
 			}
 		}

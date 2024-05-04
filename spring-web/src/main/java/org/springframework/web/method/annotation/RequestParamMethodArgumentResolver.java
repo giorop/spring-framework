@@ -80,7 +80,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 
 	private static final TypeDescriptor STRING_TYPE_DESCRIPTOR = TypeDescriptor.valueOf(String.class);
 
-	private final boolean useDefaultResolution;
+	private final boolean useDefaultResolution;//是否解析简单类型
 
 
 	/**
@@ -113,6 +113,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 
 
 	/**
+	 * 这里利用的request param 通过name映射
 	 * Supports the following:
 	 * <ul>
 	 * <li>@RequestParam-annotated method arguments.
@@ -125,7 +126,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 	 */
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		if (parameter.hasParameterAnnotation(RequestParam.class)) {
+		if (parameter.hasParameterAnnotation(RequestParam.class)) {//@RequestParam Map 没有指定name则选择用map逻辑解析(所有key-value放入)
 			if (Map.class.isAssignableFrom(parameter.nestedIfOptional().getNestedParameterType())) {
 				RequestParam requestParam = parameter.getParameterAnnotation(RequestParam.class);
 				return (requestParam != null && StringUtils.hasText(requestParam.name()));
@@ -134,15 +135,16 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 				return true;
 			}
 		}
-		else {
-			if (parameter.hasParameterAnnotation(RequestPart.class)) {
+		else {//RequestPart 和requestParam
+			if (parameter.hasParameterAnnotation(RequestPart.class)) {//@RequestPart 用于解析body内容
 				return false;
 			}
+			//multipart 且没有标记RequestPart  常规方式尝试直接从request中解析multipart
 			parameter = parameter.nestedIfOptional();
 			if (MultipartResolutionDelegate.isMultipartArgument(parameter)) {
 				return true;
 			}
-			else if (this.useDefaultResolution) {
+			else if (this.useDefaultResolution) {//解析常规 可以直接string->converter
 				return BeanUtils.isSimpleProperty(parameter.getNestedParameterType());
 			}
 			else {
@@ -162,7 +164,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
 		HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
 
-		if (servletRequest != null) {
+		if (servletRequest != null) {//解析multipart
 			Object mpArg = MultipartResolutionDelegate.resolveMultipartArgument(name, parameter, servletRequest);
 			if (mpArg != MultipartResolutionDelegate.UNRESOLVABLE) {
 				return mpArg;
@@ -177,7 +179,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 				arg = (files.size() == 1 ? files.get(0) : files);
 			}
 		}
-		if (arg == null) {
+		if (arg == null) {//直接提取值
 			String[] paramValues = request.getParameterValues(name);
 			if (paramValues != null) {
 				arg = (paramValues.length == 1 ? paramValues[0] : paramValues);

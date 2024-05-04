@@ -90,9 +90,9 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
 	@Override
 	@SuppressWarnings("unchecked")
 	@Nullable
-	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
+	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {//通过pattern提前放入的参数
 		Map<String, String> uriTemplateVars = (Map<String, String>) request.getAttribute(
-				HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
+				HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);//handMapping match的时候放入
 		return (uriTemplateVars != null ? uriTemplateVars.get(name) : null);
 	}
 
@@ -112,7 +112,7 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
 	@SuppressWarnings("unchecked")
 	protected void handleResolvedValue(@Nullable Object arg, String name, MethodParameter parameter,
 			@Nullable ModelAndViewContainer mavContainer, NativeWebRequest request) {
-
+		//解析完后 放入request 用于view解析
 		String key = View.PATH_VARIABLES;
 		int scope = RequestAttributes.SCOPE_REQUEST;
 		Map<String, Object> pathVars = (Map<String, Object>) request.getAttribute(key, scope);
@@ -120,7 +120,7 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
 			pathVars = new HashMap<>();
 			request.setAttribute(key, pathVars, scope);
 		}
-		pathVars.put(name, arg);
+		pathVars.put(name, arg);//这和arg区别与原始String 这里解析完之后可能带类型
 	}
 
 	@Override

@@ -22,13 +22,13 @@ import java.io.OutputStream;
 /**
  * Represents an HTTP output message that allows for setting a streaming body.
  * Note that such messages typically do not support {@link #getBody()} access.
- *
+ * body是一个流 一般不支持getBody
  * @author Arjen Poutsma
  * @since 4.0
  * @see #setBody
  */
 public interface StreamingHttpOutputMessage extends HttpOutputMessage {
-
+	//body callback 用于写入信息
 	/**
 	 * Set the streaming body callback for this message.
 	 * @param body the streaming body callback

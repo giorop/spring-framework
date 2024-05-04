@@ -24,6 +24,7 @@ import java.util.Map;
 import org.springframework.lang.Nullable;
 
 /**
+ * spring 内部request
  * Generic interface for a web request. Mainly intended for generic web
  * request interceptors, giving them access to general request metadata,
  * not for actual handling of the request.
@@ -167,6 +168,7 @@ public interface WebRequest extends RequestAttributes {
 	 * @return whether the request qualifies as not modified,
 	 * allowing to abort request processing and relying on the response
 	 * telling the client that the content has not been modified
+	 * 通常请求携带 版本和时间信息；如过上次请求还未过期 则不需要提供再一次的响应
 	 */
 	boolean checkNotModified(long lastModifiedTimestamp);
 

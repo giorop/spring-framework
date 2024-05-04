@@ -75,6 +75,7 @@ public interface MultiValueMap<K, V> extends Map<K, List<V>> {
 	}
 
 	/**
+	 * 区别add add:添加额外的value set:put
 	 * Set the given single value under the given key.
 	 * @param key the key
 	 * @param value the value to set

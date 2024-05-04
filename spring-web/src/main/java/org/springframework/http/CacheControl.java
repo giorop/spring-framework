@@ -50,7 +50,7 @@ import org.springframework.util.StringUtils;
  * @see <a href="https://www.mnot.net/cache_docs/">Mark Nottingham's cache documentation</a>
  */
 public class CacheControl {
-
+	//用于创建response中cache-Control的header
 	@Nullable
 	private Duration maxAge;
 
@@ -338,6 +338,7 @@ public class CacheControl {
 	}
 
 	/**
+	 * 将cacheControl 输出为String header 用于设置response中的头
 	 * Return the "Cache-Control" header value, if any.
 	 * @return the header value, or {@code null} if no directive was added
 	 */

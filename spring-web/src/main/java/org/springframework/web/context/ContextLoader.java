@@ -260,7 +260,7 @@ public class ContextLoader {
 			// Store context in local instance variable, to guarantee that
 			// it is available on ServletContext shutdown.
 			if (this.context == null) {
-				this.context = createWebApplicationContext(servletContext);
+				this.context = createWebApplicationContext(servletContext);//通过servletContext创建webApplicationContext 比如web.xml 或者其它
 			}
 			if (this.context instanceof ConfigurableWebApplicationContext cwac && !cwac.isActive()) {
 				// The context has not yet been refreshed -> provide services such as
@@ -268,10 +268,10 @@ public class ContextLoader {
 				if (cwac.getParent() == null) {
 					// The context instance was injected without an explicit parent ->
 					// determine parent for root web application context, if any.
-					ApplicationContext parent = loadParentContext(servletContext);
+					ApplicationContext parent = loadParentContext(servletContext);//尝试配置parent
 					cwac.setParent(parent);
 				}
-				configureAndRefreshWebApplicationContext(cwac, servletContext);
+				configureAndRefreshWebApplicationContext(cwac, servletContext);//refresh
 			}
 			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
 
@@ -310,7 +310,7 @@ public class ContextLoader {
 	 * @see ConfigurableWebApplicationContext
 	 */
 	protected WebApplicationContext createWebApplicationContext(ServletContext sc) {
-		Class<?> contextClass = determineContextClass(sc);
+		Class<?> contextClass = determineContextClass(sc);//如果有配置则选择 否则默认(xml)
 		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
 			throw new ApplicationContextException("Custom context class [" + contextClass.getName() +
 					"] is not of type [" + ConfigurableWebApplicationContext.class.getName() + "]");
@@ -328,7 +328,7 @@ public class ContextLoader {
 	 */
 	protected Class<?> determineContextClass(ServletContext servletContext) {
 		String contextClassName = servletContext.getInitParameter(CONTEXT_CLASS_PARAM);
-		if (contextClassName != null) {
+		if (contextClassName != null) {//比如在xml中配置configClass
 			try {
 				return ClassUtils.forName(contextClassName, ClassUtils.getDefaultClassLoader());
 			}
@@ -342,7 +342,7 @@ public class ContextLoader {
 				// Load default strategy implementations from properties file.
 				// This is currently strictly internal and not meant to be customized
 				// by application developers.
-				try {
+				try {//web.xml
 					ClassPathResource resource = new ClassPathResource(DEFAULT_STRATEGIES_PATH, ContextLoader.class);
 					defaultStrategies = PropertiesLoaderUtils.loadProperties(resource);
 				}
@@ -377,7 +377,7 @@ public class ContextLoader {
 		}
 
 		wac.setServletContext(sc);
-		String configLocationParam = sc.getInitParameter(CONFIG_LOCATION_PARAM);
+		String configLocationParam = sc.getInitParameter(CONFIG_LOCATION_PARAM);//xml配置 用于加载bean
 		if (configLocationParam != null) {
 			wac.setConfigLocation(configLocationParam);
 		}
@@ -386,12 +386,12 @@ public class ContextLoader {
 		// is refreshed; do it eagerly here to ensure servlet property sources are in place for
 		// use in any post-processing or initialization that occurs below prior to #refresh
 		ConfigurableEnvironment env = wac.getEnvironment();
-		if (env instanceof ConfigurableWebEnvironment cwe) {
+		if (env instanceof ConfigurableWebEnvironment cwe) {//refresh之前配置 使得servletContext中的环境能被提前使用
 			cwe.initPropertySources(sc, null);
 		}
 
-		customizeContext(sc, wac);
-		wac.refresh();
+		customizeContext(sc, wac);//用于提前配置context
+		wac.refresh();//refresh 容器启动
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class ContextLoader {
 	 */
 	protected void customizeContext(ServletContext sc, ConfigurableWebApplicationContext wac) {
 		List<Class<ApplicationContextInitializer<ConfigurableApplicationContext>>> initializerClasses =
-				determineContextInitializerClasses(sc);
+				determineContextInitializerClasses(sc);//sc中找initializer->context
 
 		for (Class<ApplicationContextInitializer<ConfigurableApplicationContext>> initializerClass : initializerClasses) {
 			Class<?> initializerContextClass =

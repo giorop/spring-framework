@@ -174,7 +174,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
 			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 
-		Object body;
+		Object body;//obj+class+type
 		Class<?> valueType;
 		Type targetType;
 
@@ -215,13 +215,13 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			if (logger.isDebugEnabled()) {
 				logger.debug("Found 'Content-Type:" + contentType + "' in response");
 			}
-			selectedMediaType = contentType;
+			selectedMediaType = contentType;//output直接确定类型
 		}
-		else {
+		else {//根据converters确定类型
 			HttpServletRequest request = inputMessage.getServletRequest();
 			List<MediaType> acceptableTypes;
 			try {
-				acceptableTypes = getAcceptableMediaTypes(request);
+				acceptableTypes = getAcceptableMediaTypes(request);//request声明其可以接受的类型
 			}
 			catch (HttpMediaTypeNotAcceptableException ex) {
 				int series = outputMessage.getServletResponse().getStatus() / 100;
@@ -234,7 +234,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 				throw ex;
 			}
 
-			List<MediaType> producibleTypes = getProducibleMediaTypes(request, valueType, targetType);
+			List<MediaType> producibleTypes = getProducibleMediaTypes(request, valueType, targetType);//得到当前class能转换成的mediaType
 			if (body != null && producibleTypes.isEmpty()) {
 				throw new HttpMessageNotWritableException(
 						"No converter found for return value of type: " + valueType);
@@ -258,7 +258,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 				return;
 			}
 
-			MimeTypeUtils.sortBySpecificity(compatibleMediaTypes);
+			MimeTypeUtils.sortBySpecificity(compatibleMediaTypes);//排序 得到最优输出类型
 
 			for (MediaType mediaType : compatibleMediaTypes) {
 				if (mediaType.isConcrete()) {
@@ -293,7 +293,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 						LogFormatUtils.traceDebug(logger, traceOn ->
 								"Writing [" + LogFormatUtils.formatValue(theBody, !traceOn) + "]");
 						addContentDispositionHeader(inputMessage, outputMessage);
-						if (genericConverter != null) {
+						if (genericConverter != null) {//输出到流中
 							genericConverter.write(body, targetType, selectedMediaType, outputMessage);
 						}
 						else {
@@ -310,7 +310,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			}
 		}
 
-		if (body != null) {
+		if (body != null) {//找不到适配mediaType
 			Set<MediaType> producibleMediaTypes =
 					(Set<MediaType>) inputMessage.getServletRequest()
 							.getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
@@ -324,6 +324,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 	}
 
 	/**
+	 * value(1)>methodParameter=>class
 	 * Return the type of the value to be written to the response. Typically this is
 	 * a simple check via getClass on the value but if the value is null, then the
 	 * return type needs to be examined possibly including generic type determination
@@ -364,6 +365,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 	}
 
 	/**
+	 * type+converters=>mediaType 表示可以适配得到的类型 用于写出到流中
 	 * Returns the media types that can be produced. The resulting media types are:
 	 * <ul>
 	 * <li>The producible media types specified in the request mappings, or
@@ -377,11 +379,11 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			HttpServletRequest request, Class<?> valueClass, @Nullable Type targetType) {
 
 		Set<MediaType> mediaTypes =
-				(Set<MediaType>) request.getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
+				(Set<MediaType>) request.getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);//比如@RequestMapping中直接声明了produce
 		if (!CollectionUtils.isEmpty(mediaTypes)) {
 			return new ArrayList<>(mediaTypes);
 		}
-		Set<MediaType> result = new LinkedHashSet<>();
+		Set<MediaType> result = new LinkedHashSet<>();//通过converter协议出可以将class转换出那些类型
 		for (HttpMessageConverter<?> converter : this.messageConverters) {
 			if (converter instanceof GenericHttpMessageConverter<?> ghmc && targetType != null) {
 				if (ghmc.canWrite(targetType, valueClass, null)) {
@@ -406,7 +408,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 
 		for (MediaType requestedType : acceptableTypes) {
 			for (MediaType producibleType : producibleTypes) {
-				if (requestedType.isCompatibleWith(producibleType)) {
+				if (requestedType.isCompatibleWith(producibleType)) {//两者适配
 					mediaTypesToUse.add(getMostSpecificMediaType(requestedType, producibleType));
 				}
 			}

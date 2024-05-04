@@ -35,7 +35,7 @@ import org.springframework.util.StringValueResolver;
  * @see BeanExpressionContext
  */
 public class EmbeddedValueResolver implements StringValueResolver {
-
+	//配置#{}解析环境
 	private final BeanExpressionContext exprContext;
 
 	@Nullable
@@ -51,8 +51,8 @@ public class EmbeddedValueResolver implements StringValueResolver {
 	@Override
 	@Nullable
 	public String resolveStringValue(String strVal) {
-		String value = this.exprContext.getBeanFactory().resolveEmbeddedValue(strVal);
-		if (this.exprResolver != null && value != null) {
+		String value = this.exprContext.getBeanFactory().resolveEmbeddedValue(strVal);//先解析${} 比如使用env
+		if (this.exprResolver != null && value != null) {//再解析#{}
 			Object evaluated = this.exprResolver.evaluate(value, this.exprContext);
 			value = (evaluated != null ? evaluated.toString() : null);
 		}

@@ -33,7 +33,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.context.MessageSourceResolvable#getCodes()
  */
 public interface MessageCodesResolver {
-
+	//errorCode+Object+field==>实际用于messageSource的code
 	/**
 	 * Build message codes for the given error code and object name.
 	 * Used for building the codes list of an ObjectError.

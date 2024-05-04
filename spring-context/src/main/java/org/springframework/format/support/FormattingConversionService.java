@@ -52,7 +52,7 @@ import org.springframework.util.StringValueResolver;
  */
 public class FormattingConversionService extends GenericConversionService
 		implements FormatterRegistry, EmbeddedValueResolverAware {
-
+	//通过将print parse适配成converter==>注入conversionService
 	@Nullable
 	private StringValueResolver embeddedValueResolver;
 
@@ -85,7 +85,7 @@ public class FormattingConversionService extends GenericConversionService
 	}
 
 	@Override
-	public void addFormatterForFieldType(Class<?> fieldType, Formatter<?> formatter) {
+	public void addFormatterForFieldType(Class<?> fieldType, Formatter<?> formatter) {//比如这里就可以出现类型不一致
 		addConverter(new PrinterConverter(fieldType, formatter, this));
 		addConverter(new ParserConverter(fieldType, formatter, this));
 	}
@@ -95,7 +95,7 @@ public class FormattingConversionService extends GenericConversionService
 		addConverter(new PrinterConverter(fieldType, printer, this));
 		addConverter(new ParserConverter(fieldType, parser, this));
 	}
-
+	//比如@DataTimeFormat 默认实现中会添加该converter
 	@Override
 	public void addFormatterForFieldAnnotation(AnnotationFormatterFactory<? extends Annotation> annotationFormatterFactory) {
 		Class<? extends Annotation> annotationType = getAnnotationType(annotationFormatterFactory);
@@ -149,7 +149,7 @@ public class FormattingConversionService extends GenericConversionService
 		private final Printer printer;
 
 		private final ConversionService conversionService;
-
+		//fieldType和printer通常是对应的 但如果手动注册 也是可以不一致的 故最终代理时需要将fieldType->printType
 		public PrinterConverter(Class<?> fieldType, Printer<?> printer, ConversionService conversionService) {
 			this.fieldType = fieldType;
 			this.printerObjectType = TypeDescriptor.valueOf(resolvePrinterObjectType(printer));
@@ -158,7 +158,7 @@ public class FormattingConversionService extends GenericConversionService
 		}
 
 		@Override
-		public Set<ConvertiblePair> getConvertibleTypes() {
+		public Set<ConvertiblePair> getConvertibleTypes() {//用于筛选
 			return Collections.singleton(new ConvertiblePair(this.fieldType, String.class));
 		}
 
@@ -171,6 +171,7 @@ public class FormattingConversionService extends GenericConversionService
 			if (source == null) {
 				return "";
 			}
+			//sourceType->printerObjectType 再调用print  比如printerObjectType为number 而sourceType不是number;通常注册时是一致的
 			return this.printer.print(source, LocaleContextHolder.getLocale());
 		}
 
@@ -214,7 +215,7 @@ public class FormattingConversionService extends GenericConversionService
 			}
 			Object result;
 			try {
-				result = this.parser.parse(text, LocaleContextHolder.getLocale());
+				result = this.parser.parse(text, LocaleContextHolder.getLocale());//同样parse转换得到的不一定和fieldType一致;通常是一致的
 			}
 			catch (IllegalArgumentException ex) {
 				throw ex;
@@ -237,7 +238,7 @@ public class FormattingConversionService extends GenericConversionService
 
 
 	private class AnnotationPrinterConverter implements ConditionalGenericConverter {
-
+		//annotationType用于提供格式等
 		private final Class<? extends Annotation> annotationType;
 
 		@SuppressWarnings("rawtypes")

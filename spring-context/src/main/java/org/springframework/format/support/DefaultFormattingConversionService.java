@@ -85,7 +85,7 @@ public class DefaultFormattingConversionService extends FormattingConversionServ
 	public DefaultFormattingConversionService(
 			@Nullable StringValueResolver embeddedValueResolver, boolean registerDefaultFormatters) {
 
-		if (embeddedValueResolver != null) {
+		if (embeddedValueResolver != null) {//该bean通常是由factoryBean生产配置
 			setEmbeddedValueResolver(embeddedValueResolver);
 		}
 		DefaultConversionService.addDefaultConverters(this);

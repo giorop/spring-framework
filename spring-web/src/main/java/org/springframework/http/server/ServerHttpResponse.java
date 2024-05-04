@@ -30,7 +30,7 @@ import org.springframework.http.HttpStatusCode;
  * @since 3.0
  */
 public interface ServerHttpResponse extends HttpOutputMessage, Flushable, Closeable {
-
+	//server端的response output+flush
 	/**
 	 * Set the HTTP status code of the response.
 	 * @param status the HTTP status as an HttpStatus enum value

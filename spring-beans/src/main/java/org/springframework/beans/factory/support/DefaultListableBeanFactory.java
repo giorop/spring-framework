@@ -1080,7 +1080,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 						"without bootstrap executor configured - falling back to mainline initialization");
 			}
 		}
-		if (!mbd.isLazyInit()) {
+		if (!mbd.isLazyInit()) {//主线程 加载
 			instantiateSingleton(beanName);
 		}
 		return null;
@@ -1464,7 +1464,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	@Nullable
 	public Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName,
 			@Nullable Set<String> autowiredBeanNames, @Nullable TypeConverter typeConverter) throws BeansException {
-
+		//descriptor 描述了需要求得的类型和位置等信息
 		descriptor.initParameterNameDiscovery(getParameterNameDiscoverer());
 		if (Optional.class == descriptor.getDependencyType()) {
 			return createOptionalDependency(descriptor, requestingBeanName);
@@ -1522,7 +1522,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 
 			// Step 3: shortcut for declared dependency name or qualifier-suggested name matching target bean name
-			if (descriptor.usesStandardBeanLookup()) {
+			if (descriptor.usesStandardBeanLookup()) {//通过beanName(field  methodParamter 或者 annotation 获取)
 				String dependencyName = descriptor.getDependencyName();
 				if (dependencyName == null || !containsBean(dependencyName)) {
 					String suggestedName = getAutowireCandidateResolver().getSuggestedName(descriptor);
@@ -1541,8 +1541,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}
 				}
 			}
-
-			// Step 4a: multiple beans as stream / array / standard collection / plain map
+			//4a 标准容器处理方式 4b直接当成普通bean处理 4c 此时如果还是为空 则考虑是否声明的是自定义的容器类
+			// Step 4a: multiple beans as stream / array / standard collection / plain map 一些集合类型 找到基本元素 并组成这些聚合
 			Object multipleBeans = resolveMultipleBeans(descriptor, beanName, autowiredBeanNames, typeConverter);
 			if (multipleBeans != null) {
 				return multipleBeans;
@@ -1627,7 +1627,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		Class<?> type = descriptor.getDependencyType();
 
 		if (descriptor instanceof StreamDependencyDescriptor streamDependencyDescriptor) {
-			Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor);
+			Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor);//descriptor.getDependencyType()为元素类型
 			if (autowiredBeanNames != null) {
 				autowiredBeanNames.addAll(matchingBeans.keySet());
 			}
@@ -1779,6 +1779,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	}
 
 	/**
+	 * 遍历容器中所有bean  删选出匹配的bean
 	 * Find bean instances that match the required type.
 	 * Called during autowiring for the specified bean.
 	 * @param beanName the name of the bean that is about to be wired
@@ -1797,7 +1798,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		String[] candidateNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 				this, requiredType, true, descriptor.isEager());
 		Map<String, Object> result = CollectionUtils.newLinkedHashMap(candidateNames.length);
-		for (Map.Entry<Class<?>, Object> classObjectEntry : this.resolvableDependencies.entrySet()) {
+		for (Map.Entry<Class<?>, Object> classObjectEntry : this.resolvableDependencies.entrySet()) {//一些提前声明的bean 比如beanFactory-->当前DefaultListableBeanFactory
 			Class<?> autowiringType = classObjectEntry.getKey();
 			if (autowiringType.isAssignableFrom(requiredType)) {
 				Object autowiringValue = classObjectEntry.getValue();
@@ -1841,6 +1842,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/**
 	 * Add an entry to the candidate map: a bean instance if available or just the resolved
 	 * type, preventing early bean initialization ahead of primary candidate selection.
+	 * 对于集合等 所有bean都匹配故可以都优先加载  但对于唯一bean 需要避免提前加载
 	 */
 	private void addCandidateEntry(Map<String, Object> candidates, String candidateName,
 			DependencyDescriptor descriptor, Class<?> requiredType) {
@@ -2295,7 +2297,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (this.optional) {
 				return createOptionalDependency(this.descriptor, this.beanName);
 			}
-			else {
+			else {//等到实际使用的时候进行装配
 				Object result = doResolveDependency(this.descriptor, this.beanName, null, null);
 				if (result == null) {
 					throw new NoSuchBeanDefinitionException(this.descriptor.getResolvableType());
@@ -2313,7 +2315,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				DependencyDescriptor descriptorToUse = new DependencyDescriptor(this.descriptor) {
 					@Override
 					public Object resolveCandidate(String beanName, Class<?> requiredType, BeanFactory beanFactory) {
-						return beanFactory.getBean(beanName, args);
+						return beanFactory.getBean(beanName, args);//beanName+arg=>bean
 					}
 				};
 				Object result = doResolveDependency(descriptorToUse, this.beanName, null, null);

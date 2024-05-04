@@ -30,7 +30,7 @@ import java.io.InputStream;
  * @since 3.0
  */
 public interface HttpInputMessage extends HttpMessage {
-
+	//代表可读的消息 实体为body  服务器端收到的请求 或者客户端收到的response
 	/**
 	 * Return the body of the message as an input stream.
 	 * @return the input stream body (never {@code null})

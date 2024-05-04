@@ -34,6 +34,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
 public interface MatchableHandlerMapping extends HandlerMapping {
 
 	/**
+	 * 优先使用这个用于uri匹配
 	 * Return the parser of this {@code HandlerMapping}, if configured in which
 	 * case pre-parsed patterns are used.
 	 * @since 5.3
@@ -44,6 +45,7 @@ public interface MatchableHandlerMapping extends HandlerMapping {
 	}
 
 	/**
+	 *
 	 * Determine whether the request matches the given pattern. Use this method
 	 * when {@link #getPatternParser()} returns {@code null} which means that the
 	 * {@code HandlerMapping} is using String pattern matching.

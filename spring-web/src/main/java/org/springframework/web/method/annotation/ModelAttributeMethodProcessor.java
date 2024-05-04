@@ -73,9 +73,10 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 
 	/**
 	 * Class constructor.
+	 *
 	 * @param annotationNotRequired if "true", non-simple method arguments and
-	 * return values are considered model attributes with or without a
-	 * {@code @ModelAttribute} annotation
+	 *                              return values are considered model attributes with or without a
+	 *                              {@code @ModelAttribute} annotation
 	 */
 	public ModelAttributeMethodProcessor(boolean annotationNotRequired) {
 		this.annotationNotRequired = annotationNotRequired;
@@ -98,14 +99,15 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	 * its default if it is available. The model attribute is then populated
 	 * with request values via data binding and optionally validated
 	 * if {@code @java.validation.Valid} is present on the argument.
+	 *
 	 * @throws BindException if data binding and validation result in an error
-	 * and the next method parameter is not of type {@link Errors}
-	 * @throws Exception if WebDataBinder initialization fails
+	 *                       and the next method parameter is not of type {@link Errors}
+	 * @throws Exception     if WebDataBinder initialization fails
 	 */
 	@Override
 	@Nullable
 	public final Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
+										NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 
 		Assert.state(mavContainer != null, "ModelAttributeMethodProcessor requires ModelAndViewContainer");
 		Assert.state(binderFactory != null, "ModelAttributeMethodProcessor requires WebDataBinderFactory");
@@ -113,25 +115,23 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		String name = ModelFactory.getNameForParameter(parameter);
 		ModelAttribute ann = parameter.getParameterAnnotation(ModelAttribute.class);
 		if (ann != null) {
-			mavContainer.setBinding(name, ann.binding());
+			mavContainer.setBinding(name, ann.binding());//是否进一步bind 通过dataBind(pvs)
 		}
 
 		Object attribute;
 		BindingResult bindingResult = null;
-
+		//mav 或者 request注入 如果失败 则直接赋值bindingResult
 		if (mavContainer.containsAttribute(name)) {
 			attribute = mavContainer.getModel().get(name);
-			if (attribute == null || ObjectUtils.unwrapOptional(attribute) == null) {
+			if (attribute == null || ObjectUtils.unwrapOptional(attribute) == null) {//空注入
 				bindingResult = binderFactory.createBinder(webRequest, null, name).getBindingResult();
 				attribute = wrapAsOptionalIfNecessary(parameter, null);
 			}
-			}
-		else {
+		} else {//request注入
 			try {
 				// Mainly to allow subclasses alternative to create attribute
 				attribute = createAttribute(name, parameter, binderFactory, webRequest);
-			}
-			catch (MethodArgumentNotValidException ex) {
+			} catch (MethodArgumentNotValidException ex) {
 				if (isBindExceptionRequired(parameter)) {
 					throw ex;
 				}
@@ -148,7 +148,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 				constructAttribute(binder, webRequest);
 				attribute = wrapAsOptionalIfNecessary(parameter, binder.getTarget());
 			}
-			if (!binder.getBindingResult().hasErrors()) {
+			if (!binder.getBindingResult().hasErrors()) {//校验
 				if (!mavContainer.isBindingDisabled(name)) {
 					bindRequestParameters(binder, webRequest);
 				}
@@ -164,10 +164,10 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 			bindingResult = binder.getBindingResult();
 		}
 
-		// Add resolved attribute and BindingResult at the end of the model
+		// Add resolved attribute and BindingResult at the end of the model 放入object本身 以及bindingResult
 		Map<String, Object> bindingResultModel = bindingResult.getModel();
 		mavContainer.removeAttributes(bindingResultModel);
-		mavContainer.addAllAttributes(bindingResultModel);
+		mavContainer.addAllAttributes(bindingResultModel);//bindingResult 以及 obj本身
 
 		return attribute;
 	}
@@ -178,28 +178,32 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	}
 
 	/**
+	 * 直接使用request中的param构造
 	 * Extension point to create the model attribute if not found in the model,
 	 * with subsequent parameter binding through bean properties (unless suppressed).
 	 * <p>By default, as of 6.1 this method returns {@code null} in which case
 	 * {@link org.springframework.validation.DataBinder#construct} is used instead
 	 * to create the model attribute. The main purpose of this method then is to
 	 * allow to create the model attribute in some other, alternative way.
+	 *
 	 * @param attributeName the name of the attribute (never {@code null})
-	 * @param parameter the method parameter declaration
+	 * @param parameter     the method parameter declaration
 	 * @param binderFactory for creating WebDataBinder instance
-	 * @param request the current request
+	 * @param request       the current request
 	 * @return the created model attribute, or {@code null}
 	 */
 	@Nullable
 	protected Object createAttribute(String attributeName, MethodParameter parameter,
-			WebDataBinderFactory binderFactory, NativeWebRequest request) throws Exception {
+									 WebDataBinderFactory binderFactory, NativeWebRequest request) throws Exception {
 
 		return null;
 	}
 
 	/**
+	 * 尝试通过该类型的构造方法构造
 	 * Extension point to create the attribute, binding the request to constructor args.
-	 * @param binder the data binder instance to use for the binding
+	 *
+	 * @param binder  the data binder instance to use for the binding
 	 * @param request the current request
 	 * @since 6.1
 	 */
@@ -209,7 +213,8 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 
 	/**
 	 * Extension point to bind the request to the target object via setters/fields.
-	 * @param binder the data binder instance to use for the binding
+	 *
+	 * @param binder  the data binder instance to use for the binding
 	 * @param request the current request
 	 */
 	protected void bindRequestParameters(WebDataBinder binder, NativeWebRequest request) {
@@ -221,7 +226,8 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	 * <p>The default implementation checks for {@code @jakarta.validation.Valid},
 	 * Spring's {@link org.springframework.validation.annotation.Validated},
 	 * and custom annotations whose name starts with "Valid".
-	 * @param binder the DataBinder to be used
+	 *
+	 * @param binder    the DataBinder to be used
 	 * @param parameter the method parameter declaration
 	 * @see WebDataBinder#validate(Object...)
 	 * @see SmartValidator#validate(Object, Errors, Object...)
@@ -230,7 +236,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		for (Annotation ann : parameter.getParameterAnnotations()) {
 			Object[] validationHints = ValidationAnnotationUtils.determineValidationHints(ann);
 			if (validationHints != null) {
-				binder.validate(validationHints);
+				binder.validate(validationHints);//开启验证
 				break;
 			}
 		}
@@ -239,7 +245,8 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	/**
 	 * Whether to raise a fatal bind exception on validation errors.
 	 * <p>The default implementation delegates to {@link #isBindExceptionRequired(MethodParameter)}.
-	 * @param binder the data binder used to perform data binding
+	 *
+	 * @param binder    the data binder used to perform data binding
 	 * @param parameter the method parameter declaration
 	 * @return {@code true} if the next method parameter is not of type {@link Errors}
 	 * @see #isBindExceptionRequired(MethodParameter)
@@ -250,6 +257,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 
 	/**
 	 * Whether to raise a fatal bind exception on validation errors.
+	 *
 	 * @param parameter the method parameter declaration
 	 * @return {@code true} if the next method parameter is not of type {@link Errors}
 	 * @since 5.0
@@ -277,7 +285,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	 */
 	@Override
 	public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
+								  ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
 
 		if (returnValue != null) {
 			String name = ModelFactory.getNameForReturnValue(returnValue, returnType);

@@ -44,9 +44,9 @@ public class ServletServerHttpAsyncRequestControl implements ServerHttpAsyncRequ
 	private final ServletServerHttpResponse response;
 
 	@Nullable
-	private AsyncContext asyncContext;
+	private AsyncContext asyncContext;//用于开启异步 和dispatch
 
-	private final AtomicBoolean asyncCompleted = new AtomicBoolean();
+	private final AtomicBoolean asyncCompleted = new AtomicBoolean();//当任务结束时设置
 
 
 	/**

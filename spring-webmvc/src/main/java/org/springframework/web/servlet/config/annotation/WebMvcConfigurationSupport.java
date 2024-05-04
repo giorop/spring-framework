@@ -295,6 +295,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 
 
 	/**
+	 * RequestMappingHandlerMapping 0
 	 * Return a {@link RequestMappingHandlerMapping} ordered at 0 for mapping
 	 * requests to annotated controllers.
 	 */
@@ -307,7 +308,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 
 		RequestMappingHandlerMapping mapping = createRequestMappingHandlerMapping();
 		mapping.setOrder(0);
-		mapping.setContentNegotiationManager(contentNegotiationManager);
+		mapping.setContentNegotiationManager(contentNegotiationManager);//
 
 		initHandlerMapping(mapping, conversionService, resourceUrlProvider);
 
@@ -658,7 +659,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			adapter.setRequestBodyAdvice(Collections.singletonList(new JsonViewRequestBodyAdvice()));
 			adapter.setResponseBodyAdvice(Collections.singletonList(new JsonViewResponseBodyAdvice()));
 		}
-
+		//handlerAdapter设置异步相关
 		AsyncSupportConfigurer configurer = getAsyncSupportConfigurer();
 		if (configurer.getTaskExecutor() != null) {
 			adapter.setTaskExecutor(configurer.getTaskExecutor());
@@ -755,7 +756,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 		if (validator == null) {
 			if (ClassUtils.isPresent("jakarta.validation.Validator", getClass().getClassLoader())) {
 				try {
-					validator = new OptionalValidatorFactoryBean();
+					validator = new OptionalValidatorFactoryBean();//默认配置
 				}
 				catch (Throwable ex) {
 					throw new BeanInitializationException("Failed to create default validator", ex);
@@ -943,7 +944,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * @since 5.3.2
 	 */
 	protected AsyncSupportConfigurer getAsyncSupportConfigurer() {
-		if (this.asyncSupportConfigurer == null) {
+		if (this.asyncSupportConfigurer == null) {//用于设置异步相关
 			this.asyncSupportConfigurer = new AsyncSupportConfigurer();
 			configureAsyncSupport(this.asyncSupportConfigurer);
 		}

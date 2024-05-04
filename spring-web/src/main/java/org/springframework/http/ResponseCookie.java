@@ -159,7 +159,7 @@ public final class ResponseCookie extends HttpCookie {
 	}
 
 	@Override
-	public String toString() {
+	public String toString() {//用于输出到response
 		StringBuilder sb = new StringBuilder();
 		sb.append(getName()).append('=').append(getValue());
 		if (StringUtils.hasText(getPath())) {

@@ -22,7 +22,7 @@ import org.springframework.lang.Nullable;
 
 /**
  * Contract for request mapping conditions.
- *
+ * 比如解析@RequestMapping中的一些方法 得到筛选条件
  * <p>Request conditions can be combined via {@link #combine(Object)}, matched to
  * a request via {@link #getMatchingCondition(HttpServletRequest)}, and compared
  * to each other via {@link #compareTo(Object, HttpServletRequest)} to determine
@@ -46,6 +46,7 @@ public interface RequestCondition<T> {
 	T combine(T other);
 
 	/**
+	 * filter  如果通过则构造 如果失败 则null
 	 * Check if the condition matches the request returning a potentially new
 	 * instance created for the current request. For example a condition with
 	 * multiple URL patterns may return a new instance only with those patterns

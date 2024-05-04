@@ -98,7 +98,7 @@ public interface BeanPostProcessor {
 	 */
 	@Nullable
 	default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
+		return bean;//常用的就是代理 
 	}
 
 }

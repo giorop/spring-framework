@@ -99,11 +99,12 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class ContentNegotiationManagerFactoryBean
 		implements FactoryBean<ContentNegotiationManager>, ServletContextAware, InitializingBean {
-
+	//默认使用accept header
 	@Nullable
 	private List<ContentNegotiationStrategy> strategies;
 
-
+	//以下添加有严格顺序 用于解析 当前前面的解析完毕(非all) 则后续不再解析
+	//parameter>pathExtension->
 	private boolean favorParameter = false;
 
 	private String parameterName = "format";
@@ -326,7 +327,7 @@ public class ContentNegotiationManagerFactoryBean
 		List<ContentNegotiationStrategy> strategies = new ArrayList<>();
 
 		if (this.strategies != null) {
-			strategies.addAll(this.strategies);
+			strategies.addAll(this.strategies);//自定义优先
 		}
 		else {
 			if (this.favorPathExtension) {

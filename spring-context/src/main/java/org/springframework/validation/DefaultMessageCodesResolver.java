@@ -100,7 +100,7 @@ public class DefaultMessageCodesResolver implements MessageCodesResolver, Serial
 	private static final MessageCodeFormatter DEFAULT_FORMATTER = Format.PREFIX_ERROR_CODE;
 
 
-	private String prefix = "";
+	private String prefix = "";//前缀 比如用于绑定特定的resource bundles
 
 	private MessageCodeFormatter formatter = DEFAULT_FORMATTER;
 
@@ -151,8 +151,8 @@ public class DefaultMessageCodesResolver implements MessageCodesResolver, Serial
 	public String[] resolveMessageCodes(String errorCode, String objectName, String field, @Nullable Class<?> fieldType) {
 		Set<String> codeList = new LinkedHashSet<>();
 		List<String> fieldList = new ArrayList<>();
-		buildFieldList(field, fieldList);
-		addCodes(codeList, errorCode, objectName, fieldList);
+		buildFieldList(field, fieldList);//处理[] 左边原则
+		addCodes(codeList, errorCode, objectName, fieldList);//prefix.error.object.field
 		int dotIndex = field.lastIndexOf('.');
 		if (dotIndex != -1) {
 			buildFieldList(field.substring(dotIndex + 1), fieldList);
@@ -172,6 +172,7 @@ public class DefaultMessageCodesResolver implements MessageCodesResolver, Serial
 	}
 
 	private void addCode(Collection<String> codeList, String errorCode, @Nullable String objectName, @Nullable String field) {
+		//prefix.errorCode.object.field
 		codeList.add(postProcessMessageCode(this.formatter.format(errorCode, objectName, field)));
 	}
 
