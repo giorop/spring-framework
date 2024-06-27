@@ -33,19 +33,19 @@ import org.springframework.util.CollectionUtils;
  */
 public abstract class CacheOperation implements BasicOperation {
 
-	private final String name;
+	private final String name;//当前缓存操作的name
 
-	private final Set<String> cacheNames;
+	private final Set<String> cacheNames;//当前操作关联的缓存
 
-	private final String key;
+	private final String key;//当前缓存的key
 
-	private final String keyGenerator;
+	private final String keyGenerator;//用于生成缓存key
 
-	private final String cacheManager;
+	private final String cacheManager;//用于cacheName->cache
 
-	private final String cacheResolver;
+	private final String cacheResolver;//用于获得缓存 和cacheManager互斥
 
-	private final String condition;
+	private final String condition;//当前缓存操作的前置condition
 
 	private final String toString;
 

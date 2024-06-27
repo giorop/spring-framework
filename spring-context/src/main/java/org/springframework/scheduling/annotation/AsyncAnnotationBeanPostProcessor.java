@@ -63,7 +63,7 @@ import org.springframework.util.function.SingletonSupplier;
  */
 @SuppressWarnings("serial")
 public class AsyncAnnotationBeanPostProcessor extends AbstractBeanFactoryAwareAdvisingPostProcessor {
-
+	//配置advisor 默认 AsyncAnnotationAdvisor
 	/**
 	 * The default name of the {@link TaskExecutor} bean to pick up: "taskExecutor".
 	 * <p>Note that the initial lookup happens by type; this is just the fallback
@@ -84,12 +84,12 @@ public class AsyncAnnotationBeanPostProcessor extends AbstractBeanFactoryAwareAd
 	private Supplier<AsyncUncaughtExceptionHandler> exceptionHandler;
 
 	@Nullable
-	private Class<? extends Annotation> asyncAnnotationType;
+	private Class<? extends Annotation> asyncAnnotationType;//拦截的注解
 
 
 
 	public AsyncAnnotationBeanPostProcessor() {
-		setBeforeExistingAdvisors(true);
+		setBeforeExistingAdvisors(true);//默认最先执行
 	}
 
 

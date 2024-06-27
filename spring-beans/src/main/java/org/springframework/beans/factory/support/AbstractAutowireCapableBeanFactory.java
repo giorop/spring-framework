@@ -400,7 +400,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	@Override
-	public void applyBeanPropertyValues(Object existingBean, String beanName) throws BeansException {
+	public void applyBeanPropertyValues(Object existingBean, String beanName) throws BeansException {//只填充md中的pv
 		markBeanAsCreated(beanName);
 		BeanDefinition bd = getMergedBeanDefinition(beanName);
 		BeanWrapper bw = new BeanWrapperImpl(existingBean);

@@ -38,6 +38,7 @@ import org.springframework.lang.Nullable;
  */
 public interface GenericHttpMessageConverter<T> extends HttpMessageConverter<T> {
 	//父类通过class filter  这里通过type和ContextClass组成要写入读取对象的信息
+	//genericType
 	/**
 	 * Indicates whether the given type can be read by this converter.
 	 * This method should perform the same checks as

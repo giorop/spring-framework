@@ -28,7 +28,7 @@ import java.io.OutputStream;
  * @see #setBody
  */
 public interface StreamingHttpOutputMessage extends HttpOutputMessage {
-	//body callback 用于写入信息
+	//这里body的底层实现是一个流，想写入数据 直接调用Body的接口
 	/**
 	 * Set the streaming body callback for this message.
 	 * @param body the streaming body callback

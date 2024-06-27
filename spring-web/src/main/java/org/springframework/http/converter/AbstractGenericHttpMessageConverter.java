@@ -36,7 +36,7 @@ import org.springframework.lang.Nullable;
  */
 public abstract class AbstractGenericHttpMessageConverter<T> extends AbstractHttpMessageConverter<T>
 		implements GenericHttpMessageConverter<T> {
-
+	//genericType
 	/**
 	 * Construct an {@code AbstractGenericHttpMessageConverter} with no supported media types.
 	 * @see #setSupportedMediaTypes

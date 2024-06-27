@@ -45,7 +45,7 @@ import org.springframework.util.FileCopyUtils;
  */
 public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 
-	private final Type responseType;
+	private final Type responseType;//指定类型
 
 	@Nullable
 	private final Class<T> responseClass;
@@ -100,6 +100,7 @@ public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 							ResolvableType resolvableType = ResolvableType.forType(this.responseType);
 							logger.debug("Reading to [" + resolvableType + "]");
 						}
+						//response->t
 						return (T) genericMessageConverter.read(this.responseType, null, responseWrapper);
 					}
 				}

@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
  * @since 3.0
  */
 public interface TriggerContext {
-
+	//记录某个任务 上一次执行的时间等
 	/**
 	 * Return the clock to use for trigger calculation.
 	 * <p>Defaults to {@link Clock#systemDefaultZone()}.
@@ -56,6 +56,7 @@ public interface TriggerContext {
 	}
 
 	/**
+	 * 最近一次 预定的执行时间
 	 * Return the last <i>scheduled</i> execution time of the task,
 	 * or {@code null} if not scheduled before.
 	 * @since 6.0
@@ -77,6 +78,7 @@ public interface TriggerContext {
 	}
 
 	/**
+	 * 最近的一次执行时间
 	 * Return the last <i>actual</i> execution time of the task,
 	 * or {@code null} if not scheduled before.
 	 * @since 6.0
@@ -98,6 +100,7 @@ public interface TriggerContext {
 	}
 
 	/**
+	 * 最近一次任务 完成的时间
 	 * Return the last completion time of the task,
 	 * or {@code null} if not scheduled before.
 	 * @since 6.0

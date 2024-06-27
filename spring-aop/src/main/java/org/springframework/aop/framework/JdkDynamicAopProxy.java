@@ -165,8 +165,8 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		Object oldProxy = null;
 		boolean setProxyContext = false;
 
-		TargetSource targetSource = this.advised.targetSource;
-		Object target = null;
+		TargetSource targetSource = this.advised.targetSource;//用于->target
+		Object target = null;//target
 
 		try {
 			if (!this.cache.equalsDefined && AopUtils.isEqualsMethod(method)) {
@@ -200,7 +200,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			target = targetSource.getTarget();
 			Class<?> targetClass = (target != null ? target.getClass() : null);
 
-			// Get the interception chain for this method. 每次调用方法先filter出advice
+			// Get the interception chain for this method. 每次调用方法先filter出advice 筛选出对应的advice
 			List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 
 			// Check whether we have any advice. If we don't, we can fall back on direct
@@ -213,7 +213,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 				retVal = AopUtils.invokeJoinpointUsingReflection(target, method, argsToUse);
 			}
 			else {
-				// We need to create a method invocation...
+				// We need to create a method invocation... 构造执行链 并执行
 				MethodInvocation invocation =
 						new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.
@@ -242,7 +242,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		}
 		finally {
 			if (target != null && !targetSource.isStatic()) {
-				// Must have come from TargetSource.
+				// Must have come from TargetSource. target并非静态 此时需要释放
 				targetSource.releaseTarget(target);
 			}
 			if (setProxyContext) {

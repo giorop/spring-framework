@@ -384,7 +384,7 @@ public abstract class AbstractPlatformTransactionManager
 			return handleExistingTransaction(def, transaction, debugEnabled);
 		}
 
-		// Check definition settings for new transaction.
+		// Check definition settings for new transaction. 当前环境有现成事务
 		if (def.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
 			throw new InvalidTimeoutException("Invalid transaction timeout", def.getTimeout());
 		}

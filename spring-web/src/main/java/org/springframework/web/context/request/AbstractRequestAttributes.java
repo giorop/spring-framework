@@ -25,13 +25,13 @@ import org.springframework.util.Assert;
  * Abstract support class for RequestAttributes implementations,
  * offering a request completion mechanism for request-specific destruction
  * callbacks and for updating accessed session attributes.
- *	主要提供request完成请求 销毁的回调
+ *主要提供request完成请求 销毁的回调
  * @author Juergen Hoeller
  * @since 2.0
  * @see #requestCompleted()
  */
 public abstract class AbstractRequestAttributes implements RequestAttributes {
-
+	//销毁功能的实现 请求处理完后的销毁
 	/** Map from attribute name String to destruction callback Runnable. */
 	protected final Map<String, Runnable> requestDestructionCallbacks = new LinkedHashMap<>(8);
 

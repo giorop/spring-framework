@@ -448,7 +448,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Multicast right now if possible - or lazily once the multicaster is initialized
-		if (this.earlyApplicationEvents != null) {
+		if (this.earlyApplicationEvents != null) {//multicaster没有准备完成前有效
 			this.earlyApplicationEvents.add(applicationEvent);
 		}
 		else if (this.applicationEventMulticaster != null) {

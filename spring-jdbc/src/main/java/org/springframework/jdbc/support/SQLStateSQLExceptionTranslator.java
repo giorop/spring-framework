@@ -51,7 +51,7 @@ import org.springframework.lang.Nullable;
  * @see SQLExceptionSubclassTranslator
  */
 public class SQLStateSQLExceptionTranslator extends AbstractFallbackSQLExceptionTranslator {
-
+	//通过sqlException state=>DataAccessException
 	private static final Set<String> BAD_SQL_GRAMMAR_CODES = Set.of(
 			"07",  // Dynamic SQL error
 			"21",  // Cardinality violation

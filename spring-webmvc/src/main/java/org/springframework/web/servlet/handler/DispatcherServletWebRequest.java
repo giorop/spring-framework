@@ -57,6 +57,6 @@ public class DispatcherServletWebRequest extends ServletWebRequest {
 	@Override
 	public Locale getLocale() {
 		return RequestContextUtils.getLocale(getRequest());
-	}
+	}//代理locale获取 默认request header;也可以通过其它 比如language 或者其它字段 或者filter设置等
 
 }

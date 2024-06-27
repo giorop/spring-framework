@@ -50,7 +50,7 @@ import org.springframework.web.util.WebUtils;
  * @since 2.0
  */
 public class ServletWebRequest extends ServletRequestAttributes implements NativeWebRequest {
-
+	//代理httpServletRequest其它的功能
 	private static final Set<String> SAFE_METHODS = Set.of("GET", "HEAD");
 
 	/**

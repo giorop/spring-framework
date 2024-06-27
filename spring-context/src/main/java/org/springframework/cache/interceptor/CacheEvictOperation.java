@@ -24,7 +24,7 @@ package org.springframework.cache.interceptor;
  * @since 3.1
  */
 public class CacheEvictOperation extends CacheOperation {
-
+	//移除操作
 	private final boolean cacheWide;
 
 	private final boolean beforeInvocation;

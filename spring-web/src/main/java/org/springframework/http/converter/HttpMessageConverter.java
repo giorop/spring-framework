@@ -36,6 +36,7 @@ import org.springframework.lang.Nullable;
  */
 public interface HttpMessageConverter<T> {
 	//class针对要写入和读取的对象 mediaType针对流的contentType
+	//底部数据是http数据
 	/**
 	 * Indicates whether the given class can be read by this converter.
 	 * @param clazz the class to test for readability

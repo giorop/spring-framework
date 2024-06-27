@@ -23,7 +23,7 @@ import org.springframework.lang.Nullable;
 /**
  * Auto-proxy creator that considers infrastructure Advisor beans only,
  * ignoring any application-defined Advisors.
- * 用于代理增强 适配的方法
+ * 基本后置处理器 用于 寻找容器中的advisor 并 增强proxy bean
  * @author Juergen Hoeller
  * @since 2.0.7
  */

@@ -32,7 +32,7 @@ import org.springframework.http.HttpRequest;
  */
 @FunctionalInterface
 public interface ClientHttpRequestExecution {
-
+	//clientHttpRequest通常将执行请求代理给该接口
 	/**
 	 * Execute the request with the given request attributes and body,
 	 * and return the response.

@@ -35,7 +35,8 @@ import org.springframework.lang.Nullable;
  * @see WebRequestInterceptor
  */
 public interface WebRequest extends RequestAttributes {
-
+	//一个通用的request->其实现通常代理给实际的httpServletRequest
+	//这里主要暴露给request interceptors处理一些httpServletRequest 之外的操作
 	/**
 	 * Return the request header of the given name, or {@code null} if none.
 	 * <p>Retrieves the first header value in case of a multi-value header.

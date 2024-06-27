@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  * @since 3.1
  */
 public abstract class AbstractClientHttpRequestFactoryWrapper implements ClientHttpRequestFactory {
-
+	//装饰模式 各种增强  比如buffer interceptor
 	private final ClientHttpRequestFactory requestFactory;
 
 
@@ -62,6 +62,7 @@ public abstract class AbstractClientHttpRequestFactoryWrapper implements ClientH
 	}
 
 	/**
+	 * 通常requestFactory生产实际的request  再将这个request包装成 缓存等
 	 * Create a new {@link ClientHttpRequest} for the specified URI and HTTP method
 	 * by using the passed-on request factory.
 	 * <p>Called from {@link #createRequest(URI, HttpMethod)}.

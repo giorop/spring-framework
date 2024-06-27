@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  */
 @FunctionalInterface
 public interface KeyGenerator {
-
+	//用于生成key  class+method+args
 	/**
 	 * Generate a key for the given method and its parameters.
 	 * @param target the target instance

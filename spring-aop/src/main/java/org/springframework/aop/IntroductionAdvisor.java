@@ -32,6 +32,7 @@ package org.springframework.aop;
 public interface IntroductionAdvisor extends Advisor, IntroductionInfo {
 
 	/**
+	 * 筛选具体类 用于 引入对应的接口
 	 * Return the filter determining which target classes this introduction
 	 * should apply to.
 	 * <p>This represents the class part of a pointcut. Note that method
@@ -41,6 +42,8 @@ public interface IntroductionAdvisor extends Advisor, IntroductionInfo {
 	ClassFilter getClassFilter();
 
 	/**
+	 * 当前advice是用于去增强某个class 实现额外接口的，此时这个advisor 需要本身提供这些方法的具体实现，否则无法给 被引入class增强
+	 * 通常代理给其维护的 advice去实现
 	 * Can the advised interfaces be implemented by the introduction advice?
 	 * Invoked before adding an IntroductionAdvisor.
 	 * @throws IllegalArgumentException if the advised interfaces can't be

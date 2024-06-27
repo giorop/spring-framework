@@ -34,8 +34,9 @@ import org.springframework.http.HttpStatusCode;
  * @since 3.0
  */
 public interface ClientHttpResponse extends HttpInputMessage, Closeable {
-
+	//代表客户端收到的响应 客户端发送请求后得到的响应 HttpInputMessage:可以读取信息
 	/**
+	 * 获取响应状态码
 	 * Get the HTTP status code as an {@link HttpStatusCode}.
 	 * @return the HTTP status as {@code HttpStatusCode} value (never {@code null})
 	 * @throws IOException in case of I/O errors

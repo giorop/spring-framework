@@ -69,10 +69,11 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 
 	private final boolean publicMethodsOnly;
 
-	private final Set<TransactionAnnotationParser> annotationParsers;
+	private final Set<TransactionAnnotationParser> annotationParsers;//helper用于解析@Transactional 等表明是事务的注解
 
 
 	/**
+	 * 默认public only
 	 * Create a default AnnotationTransactionAttributeSource, supporting
 	 * public methods that carry the {@code Transactional} annotation
 	 * or the EJB3 {@link jakarta.ejb.TransactionAttribute} annotation.
@@ -161,6 +162,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	}
 
 	/**
+	 * 代理给parser 辅助解析
 	 * Determine the transaction attribute for the given method or class.
 	 * <p>This implementation delegates to configured
 	 * {@link TransactionAnnotationParser TransactionAnnotationParsers}

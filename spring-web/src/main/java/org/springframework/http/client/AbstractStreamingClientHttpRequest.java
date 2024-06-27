@@ -35,7 +35,8 @@ import org.springframework.util.FastByteArrayOutputStream;
  */
 abstract class AbstractStreamingClientHttpRequest extends AbstractClientHttpRequest
 		implements StreamingHttpOutputMessage {
-
+	//底部body是通过Stream流的方式实现的 比如非自己维护一个byte[]实例 底层暴露的是一个外部维护的stream流
+	//body 或者 bodyStream 二选一  body:外部提供流  bodyStream:自己本身提供流
 	@Nullable
 	private Body body;
 
@@ -65,14 +66,14 @@ abstract class AbstractStreamingClientHttpRequest extends AbstractClientHttpRequ
 	@Override
 	protected final ClientHttpResponse executeInternal(HttpHeaders headers) throws IOException {
 		if (this.body == null && this.bodyStream != null) {
-			this.body = outputStream -> this.bodyStream.writeTo(outputStream);
+			this.body = outputStream -> this.bodyStream.writeTo(outputStream);//bodyStream->body
 		}
 		return executeInternal(headers, this.body);
 	}
 
 
 	/**
-	 * 实际写入流
+	 * 发送请求(填充请求header,body) 然后发送->获得响应
 	 * Abstract template method that writes the given headers and content to the HTTP request.
 	 * @param headers the HTTP headers
 	 * @param body the HTTP body, may be {@code null} if no body was {@linkplain #setBody(Body) set}

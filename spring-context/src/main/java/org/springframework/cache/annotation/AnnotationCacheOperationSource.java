@@ -49,7 +49,7 @@ public class AnnotationCacheOperationSource extends AbstractFallbackCacheOperati
 
 	private final boolean publicMethodsOnly;
 
-	private final Set<CacheAnnotationParser> annotationParsers;
+	private final Set<CacheAnnotationParser> annotationParsers;//代理给该parser执行逻辑 通过识别注解判定
 
 
 	/**

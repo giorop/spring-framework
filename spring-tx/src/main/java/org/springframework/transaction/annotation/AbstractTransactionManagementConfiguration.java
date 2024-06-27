@@ -66,6 +66,7 @@ public abstract class AbstractTransactionManagementConfiguration implements Impo
 
 	@Autowired(required = false)
 	void setConfigurers(Collection<TransactionManagementConfigurer> configurers) {
+		//尝试用容器中声明的txManager注册 如果没有 则使用默认
 		if (CollectionUtils.isEmpty(configurers)) {
 			return;
 		}

@@ -84,7 +84,7 @@ public class EventListenerMethodProcessor
 	private final Set<Class<?>> nonAnnotatedClasses = ConcurrentHashMap.newKeySet(64);
 
 
-	public EventListenerMethodProcessor() {
+	public EventListenerMethodProcessor() {//两者用于解析占位符
 		this.originalEvaluationContext = new StandardEvaluationContext();
 		this.evaluator = new EventExpressionEvaluator(this.originalEvaluationContext);
 	}

@@ -30,7 +30,7 @@ import org.springframework.lang.Nullable;
  * @since 2.5.2
  */
 public interface NativeWebRequest extends WebRequest {
-
+	//一个wrapper，装饰模式 包装内部实际的httpServletRequest代理实际的request操作
 	/**
 	 * Return the underlying native request object.
 	 * @see jakarta.servlet.http.HttpServletRequest

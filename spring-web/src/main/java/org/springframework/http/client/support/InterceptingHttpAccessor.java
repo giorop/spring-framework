@@ -43,7 +43,7 @@ import org.springframework.util.CollectionUtils;
  * @see org.springframework.web.client.RestTemplate
  */
 public abstract class InterceptingHttpAccessor extends HttpAccessor {
-
+	//额外携带ClientHttpRequestInterceptor
 	private final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 
 	@Nullable
@@ -98,7 +98,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 		List<ClientHttpRequestInterceptor> interceptors = getInterceptors();
 		if (!CollectionUtils.isEmpty(interceptors)) {
 			ClientHttpRequestFactory factory = this.interceptingRequestFactory;
-			if (factory == null) {
+			if (factory == null) {//包装factory 使其拥有interceptor的能力
 				factory = new InterceptingClientHttpRequestFactory(super.getRequestFactory(), interceptors);
 				this.interceptingRequestFactory = factory;
 			}

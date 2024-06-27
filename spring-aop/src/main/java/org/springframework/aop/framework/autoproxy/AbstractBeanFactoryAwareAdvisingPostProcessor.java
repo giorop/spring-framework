@@ -64,7 +64,7 @@ public abstract class AbstractBeanFactoryAwareAdvisingPostProcessor extends Abst
 	}
 
 	@Override
-	protected boolean isEligible(Object bean, String beanName) {
+	protected boolean isEligible(Object bean, String beanName) {//,original的这些bean 不应该被代理
 		return (!AutoProxyUtils.isOriginalInstance(beanName, bean.getClass()) &&
 				super.isEligible(bean, beanName));
 	}

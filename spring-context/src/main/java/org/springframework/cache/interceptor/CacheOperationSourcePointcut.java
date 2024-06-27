@@ -52,7 +52,7 @@ class CacheOperationSourcePointcut extends StaticMethodMatcherPointcut implement
 	}
 
 	@Override
-	public boolean matches(Method method, Class<?> targetClass) {
+	public boolean matches(Method method, Class<?> targetClass) {//代理给CacheOperationSource 当某method中声明缓存相关注解
 		return (this.cacheOperationSource == null ||
 				!CollectionUtils.isEmpty(this.cacheOperationSource.getCacheOperations(method, targetClass)));
 	}
@@ -79,7 +79,7 @@ class CacheOperationSourcePointcut extends StaticMethodMatcherPointcut implement
 	 * for filtering classes whose methods are not worth searching to begin with.
 	 */
 	private class CacheOperationSourceClassFilter implements ClassFilter {
-
+		//这里基本没有拦截 几乎适配所有自定义类
 		@Override
 		public boolean matches(Class<?> clazz) {
 			if (CacheManager.class.isAssignableFrom(clazz)) {

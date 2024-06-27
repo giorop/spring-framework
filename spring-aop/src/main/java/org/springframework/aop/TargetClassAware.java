@@ -30,7 +30,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.aop.support.AopUtils#getTargetClass(Object)
  */
 public interface TargetClassAware {
-
+	//当前proxy 中的target 的Class
 	/**
 	 * Return the target class behind the implementing object
 	 * (typically a proxy configuration or an actual proxy).

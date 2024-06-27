@@ -145,10 +145,10 @@ public class ConcurrentMapCache extends AbstractValueAdaptingCache {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
-	public <T> T get(Object key, Callable<T> valueLoader) {
+	public <T> T get(Object key, Callable<T> valueLoader) {//valueLoader提供默认值
 		return (T) fromStoreValue(this.store.computeIfAbsent(key, k -> {
 			try {
-				return toStoreValue(valueLoader.call());
+				return toStoreValue(valueLoader.call());//如果没有 则cache then return
 			}
 			catch (Throwable ex) {
 				throw new ValueRetrievalException(key, valueLoader, ex);

@@ -29,6 +29,7 @@ import java.util.Map;
 public interface UriTemplateHandler {
 
 	/**
+	 * template可能有占位符需要填充
 	 * Expand the given URI template with a map of URI variables.
 	 * @param uriTemplate the URI template
 	 * @param uriVariables variable values

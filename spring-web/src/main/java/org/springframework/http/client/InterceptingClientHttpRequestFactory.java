@@ -33,7 +33,7 @@ import org.springframework.lang.Nullable;
  * @see ClientHttpRequestInterceptor
  */
 public class InterceptingClientHttpRequestFactory extends AbstractClientHttpRequestFactoryWrapper {
-
+	//生产InterceptingClientHttpRequest 介入一些interceptor
 	private final List<ClientHttpRequestInterceptor> interceptors;
 
 

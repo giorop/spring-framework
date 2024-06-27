@@ -30,7 +30,7 @@ import org.springframework.cache.Cache;
  */
 @FunctionalInterface
 public interface CacheResolver {
-
+	//通过上下文提取Cache
 	/**
 	 * Return the cache(s) to use for the specified invocation.
 	 * @param context the context of the particular invocation

@@ -43,16 +43,17 @@ import org.springframework.lang.Nullable;
 public interface Cache {
 
 	/**
-	 * Return the cache name.
+	 * Return the cache name. 当前缓存name唯一性
 	 */
 	String getName();
 
 	/**
-	 * Return the underlying native cache provider.
+	 * Return the underlying native cache provider.底层具体实现缓存
 	 */
 	Object getNativeCache();
 
 	/**
+	 * 主要解决null值 如果缓存中不存在该key=>null 如果key对应的key为null则包装这个null
 	 * Return the value to which this cache maps the specified key.
 	 * <p>Returns {@code null} if the cache contains no mapping for this key;
 	 * otherwise, the cached value (which may be {@code null} itself) will

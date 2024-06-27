@@ -57,7 +57,7 @@ import java.lang.reflect.Method;
  * @see ClassFilter
  */
 public interface MethodMatcher {
-
+	//用于筛选方法  static模式:忽略参数本身  动态模式：此时具体的方法执行时，其参数有所不同，此时需要筛选参数
 	/**
 	 * Perform static checking to determine whether the given method matches.
 	 * <p>If this method returns {@code false} or if {@link #isRuntime()}

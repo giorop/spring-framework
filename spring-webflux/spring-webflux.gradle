@@ -7,6 +7,7 @@ dependencies {
 	api(project(":spring-beans"))
 	api(project(":spring-core"))
 	api(project(":spring-web"))
+	//响应式编程
 	api("io.projectreactor:reactor-core")
 	optional(project(":spring-context"))
 	optional(project(":spring-context-support"))  // for FreeMarker support

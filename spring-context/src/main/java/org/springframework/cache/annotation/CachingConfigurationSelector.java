@@ -78,9 +78,10 @@ public class CachingConfigurationSelector extends AdviceModeImportSelector<Enabl
 	 * Return the imports to use if the {@link AdviceMode} is set to {@link AdviceMode#PROXY}.
 	 * <p>Take care of adding the necessary JSR-107 import if it is available.
 	 */
-	private String[] getProxyImports() {
+	private String[] getProxyImports() {//importSelector->ImportBeanDefinitionRegistrar
 		List<String> result = new ArrayList<>(3);
-		result.add(AutoProxyRegistrar.class.getName());//添加后置处理器 用于开启代理增强
+		//用于开启aop代理 扫描容器中的advisor->filter目标类 并代理增强
+		result.add(AutoProxyRegistrar.class.getName());//添加后置处理器 用于开启代理增强 该ImportBeanDefinitionRegistrar 主要注册autoProxy工具类
 		result.add(ProxyCachingConfiguration.class.getName());
 		if (jsr107Present && jcacheImplPresent) {
 			result.add(PROXY_JCACHE_CONFIGURATION_CLASS);

@@ -44,6 +44,7 @@ import org.springframework.lang.Nullable;
 public interface TransactionDefinition {
 
 	/**
+	 * 若当前方法运行在某个事务中则跟随，否则创建一个新的事务进行处理
 	 * Support a current transaction; create a new one if none exists.
 	 * Analogous to the EJB transaction attribute of the same name.
 	 * <p>This is typically the default setting of a transaction definition
@@ -70,7 +71,7 @@ public interface TransactionDefinition {
 	 * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#setTransactionSynchronization
 	 * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#SYNCHRONIZATION_ON_ACTUAL_TRANSACTION
 	 */
-	int PROPAGATION_SUPPORTS = 1;
+	int PROPAGATION_SUPPORTS = 1;//如果当前在事务中则跟随；否则按非事务行为执行
 
 	/**
 	 * Support a current transaction; throw an exception if no current transaction
@@ -78,7 +79,7 @@ public interface TransactionDefinition {
 	 * <p>Note that transaction synchronization within a {@code PROPAGATION_MANDATORY}
 	 * scope will always be driven by the surrounding transaction.
 	 */
-	int PROPAGATION_MANDATORY = 2;
+	int PROPAGATION_MANDATORY = 2;//尝试跟随当前事务 如果没有则异常
 
 	/**
 	 * Create a new transaction, suspending the current transaction if one exists.

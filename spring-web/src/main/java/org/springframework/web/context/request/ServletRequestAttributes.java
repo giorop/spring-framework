@@ -43,7 +43,7 @@ import org.springframework.web.util.WebUtils;
  * @see jakarta.servlet.http.HttpSession#getAttribute
  */
 public class ServletRequestAttributes extends AbstractRequestAttributes {
-
+	//主要实现 RequestAttribute的属性相关方法的实现
 	/**
 	 * Constant identifying the {@link String} prefixed to the name of a
 	 * destruction callback when it is stored in a {@link HttpSession}.
@@ -60,7 +60,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 		immutableValueTypes.add(String.class);
 	}
 
-
+	//将功能代理给实际的httpServletRequest  完成属性相关功能
 	private final HttpServletRequest request;
 
 	@Nullable
@@ -114,12 +114,12 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 	@Nullable
 	protected final HttpSession getSession(boolean allowCreate) {
 		if (isRequestActive()) {
-			HttpSession session = this.request.getSession(allowCreate);//如果request存货 则可以选择构造
+			HttpSession session = this.request.getSession(allowCreate);//如果request存活 则可以选择构造
 			this.session = session;
 			return session;
 		}
 		else {
-			// Access through stored session reference, if any...
+			// Access through stored session reference, if any... 此时request失活 无法创建新的session
 			HttpSession session = this.session;
 			if (session == null) {
 				if (allowCreate) {
@@ -136,7 +136,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 	}
 
 	private HttpSession obtainSession() {
-		HttpSession session = getSession(true);//调用的前提一定时request一定存活
+		HttpSession session = getSession(true);//尝试获得session
 		Assert.state(session != null, "No HttpSession");
 		return session;
 	}

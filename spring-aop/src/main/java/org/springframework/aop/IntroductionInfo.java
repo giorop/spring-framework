@@ -29,7 +29,7 @@ package org.springframework.aop;
  * @since 1.1.1
  */
 public interface IntroductionInfo {
-
+	//待引入的额外接口信息  比如某个具体类需要增强实现额外的接口
 	/**
 	 * Return the additional interfaces introduced by this Advisor or Advice.
 	 * @return the introduced interfaces

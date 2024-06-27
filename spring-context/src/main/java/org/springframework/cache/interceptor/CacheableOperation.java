@@ -27,7 +27,7 @@ import org.springframework.lang.Nullable;
  * @since 3.1
  */
 public class CacheableOperation extends CacheOperation {
-
+	//get操作
 	@Nullable
 	private final String unless;
 

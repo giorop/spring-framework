@@ -92,7 +92,7 @@ public class ScopedProxyFactoryBean extends ProxyConfig
 
 		ProxyFactory pf = new ProxyFactory();
 		pf.copyFrom(this);
-		pf.setTargetSource(this.scopedTargetSource);
+		pf.setTargetSource(this.scopedTargetSource);//用于获取target
 
 		Assert.notNull(this.targetBeanName, "Property 'targetBeanName' is required");
 		Class<?> beanType = beanFactory.getType(this.targetBeanName);

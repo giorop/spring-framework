@@ -52,7 +52,7 @@ import org.springframework.lang.Nullable;
 public interface JdbcOperations {
 
 	//-------------------------------------------------------------------------
-	// Methods dealing with a plain java.sql.Connection
+	// Methods dealing with a plain java.sql.Connection 直接暴露connection
 	//-------------------------------------------------------------------------
 
 	/**

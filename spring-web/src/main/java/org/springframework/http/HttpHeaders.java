@@ -75,7 +75,7 @@ import org.springframework.util.StringUtils;
  * @since 3.0
  */
 public class HttpHeaders implements MultiValueMap<String, String>, Serializable {
-
+	//代表http消息头
 	private static final long serialVersionUID = -8578554704772377436L;
 
 

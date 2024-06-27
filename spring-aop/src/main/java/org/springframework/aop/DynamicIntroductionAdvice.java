@@ -39,6 +39,7 @@ import org.aopalliance.aop.Advice;
 public interface DynamicIntroductionAdvice extends Advice {
 
 	/**
+	 * 当前advice是否实现了具体的interface
 	 * Does this introduction advice implement the given interface?
 	 * @param intf the interface to check
 	 * @return whether the advice implements the specified interface

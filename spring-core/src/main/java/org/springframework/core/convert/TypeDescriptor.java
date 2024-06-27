@@ -213,7 +213,7 @@ public class TypeDescriptor implements Serializable {
 	 * @return this TypeDescriptor narrowed (returns a copy with its type updated to the
 	 * class of the provided value)
 	 */
-	public TypeDescriptor narrow(@Nullable Object value) {
+	public TypeDescriptor narrow(@Nullable Object value) {//比如field声明为Object 而实际传参为一个Map
 		if (value == null) {
 			return this;
 		}
@@ -471,6 +471,7 @@ public class TypeDescriptor implements Serializable {
 
 	@Nullable
 	private TypeDescriptor getRelatedIfResolvable(ResolvableType type) {
+		//nest之后的泛型本身没有注解信息  将基础类型获取的注解放入
 		if (type.resolve() == null) {
 			return null;
 		}

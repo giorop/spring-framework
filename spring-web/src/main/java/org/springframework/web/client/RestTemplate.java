@@ -398,9 +398,9 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	@Override
 	@Nullable
 	public <T> T getForObject(String url, Class<T> responseType, Object... uriVariables) throws RestClientException {
-		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType);
+		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType);//发送请求前写accept contentType内容头
 		HttpMessageConverterExtractor<T> responseExtractor =
-				new HttpMessageConverterExtractor<>(responseType, getMessageConverters(), logger);
+				new HttpMessageConverterExtractor<>(responseType, getMessageConverters(), logger);//提取response->T
 		return execute(url, HttpMethod.GET, requestCallback, responseExtractor, uriVariables);
 	}
 
@@ -786,7 +786,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	public <T> T execute(String uriTemplate, HttpMethod method, @Nullable RequestCallback requestCallback,
 			@Nullable ResponseExtractor<T> responseExtractor, Object... uriVariables) throws RestClientException {
 
-		URI url = getUriTemplateHandler().expand(uriTemplate, uriVariables);
+		URI url = getUriTemplateHandler().expand(uriTemplate, uriVariables);//构建真实的uri
 		return doExecute(url, uriTemplate, method, requestCallback, responseExtractor);
 	}
 
@@ -850,14 +850,15 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	}
 
 	/**
+	 * 核心方法
 	 * Execute the given method on the provided URI.
 	 * <p>The {@link ClientHttpRequest} is processed using the {@link RequestCallback};
 	 * the response with the {@link ResponseExtractor}.
-	 * @param url the fully-expanded URL to connect to
-	 * @param uriTemplate the URI template that was used for creating the expanded URL
+	 * @param url the fully-expanded URL to connect to 请求地址
+	 * @param uriTemplate the URI template that was used for creating the expanded URL 原始请求uri的template
 	 * @param method the HTTP method to execute (GET, POST, etc.)
-	 * @param requestCallback object that prepares the request (can be {@code null})
-	 * @param responseExtractor object that extracts the return value from the response (can be {@code null})
+	 * @param requestCallback object that prepares the request (can be {@code null}) 发送请求前的一些对request的补充
+	 * @param responseExtractor object that extracts the return value from the response (can be {@code null}) 用于提取返回值
 	 * @return an arbitrary object, as returned by the {@link ResponseExtractor}
 	 * @since 6.0
 	 */
@@ -870,26 +871,26 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		Assert.notNull(method, "HttpMethod is required");
 		ClientHttpRequest request;
 		try {
-			request = createRequest(url, method);
+			request = createRequest(url, method);//factory创建
 		}
 		catch (IOException ex) {
 			throw createResourceAccessException(url, method, ex);
 		}
 
-		ClientRequestObservationContext observationContext = new ClientRequestObservationContext(request);
+		ClientRequestObservationContext observationContext = new ClientRequestObservationContext(request);//一个上下文 保存请求过程中的相关信息
 		observationContext.setUriTemplate(uriTemplate);
 		Observation observation = ClientHttpObservationDocumentation.HTTP_CLIENT_EXCHANGES.observation(
 				this.observationConvention, DEFAULT_OBSERVATION_CONVENTION,
-				() -> observationContext, this.observationRegistry).start();
+				() -> observationContext, this.observationRegistry).start();//开启跟踪
 		ClientHttpResponse response = null;
 		try (Observation.Scope scope = observation.openScope()){
 			if (requestCallback != null) {
-				requestCallback.doWithRequest(request);
+				requestCallback.doWithRequest(request);//比如写入 accept type
 			}
-			response = request.execute();
+			response = request.execute();//发送请求
 			observationContext.setResponse(response);
 			handleResponse(url, method, response);
-			return (responseExtractor != null ? responseExtractor.extractData(response) : null);
+			return (responseExtractor != null ? responseExtractor.extractData(response) : null);//拿到返回值
 		}
 		catch (IOException ex) {
 			ResourceAccessException accessEx = createResourceAccessException(url, method, ex);
@@ -1006,7 +1007,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 
 		@Override
 		public void doWithRequest(ClientHttpRequest request) throws IOException {
-			if (this.responseType != null) {
+			if (this.responseType != null) {//通过自己需要的responseType->converters->得到自己能够接受的请求类型 放入请求头 表示愿意接受的请求类型
 				List<MediaType> allSupportedMediaTypes = getMessageConverters().stream()
 						.filter(converter -> canReadResponse(this.responseType, converter))
 						.flatMap((HttpMessageConverter<?> converter) -> getSupportedMediaTypes(this.responseType, converter))
@@ -1140,7 +1141,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * Response extractor for {@link HttpEntity}.
 	 */
 	private class ResponseEntityResponseExtractor<T> implements ResponseExtractor<ResponseEntity<T>> {
-
+		//将原始T 提取代理给delegate 之后wrap成httpEntity
 		@Nullable
 		private final HttpMessageConverterExtractor<T> delegate;
 

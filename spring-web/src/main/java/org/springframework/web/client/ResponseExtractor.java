@@ -41,6 +41,7 @@ import org.springframework.lang.Nullable;
 public interface ResponseExtractor<T> {
 
 	/**
+	 * 从response中获取 数据
 	 * Extract data from the given {@code ClientHttpResponse} and return it.
 	 * @param response the HTTP response
 	 * @return the extracted data

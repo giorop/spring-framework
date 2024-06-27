@@ -40,9 +40,9 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
  */
 public class ResourceHandlerRegistration {
 
-	private final String[] pathPatterns;
+	private final String[] pathPatterns;//其能捕获的url patterns
 
-	private final List<String> locationValues = new ArrayList<>();
+	private final List<String> locationValues = new ArrayList<>();//映射到的静态文件位置
 
 	private final List<Resource> locationsResources = new ArrayList<>();
 

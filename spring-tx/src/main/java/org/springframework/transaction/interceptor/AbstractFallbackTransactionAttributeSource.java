@@ -78,6 +78,7 @@ public abstract class AbstractFallbackTransactionAttributeSource
 	private transient StringValueResolver embeddedValueResolver;
 
 	/**
+	 * method->transactionAttribute
 	 * Cache of TransactionAttributes, keyed by method on a specific target class.
 	 * <p>As this base class is not marked Serializable, the cache will be recreated
 	 * after serialization - provided that the concrete subclass is Serializable.
@@ -171,18 +172,18 @@ public abstract class AbstractFallbackTransactionAttributeSource
 		// If the target class is null, the method will be unchanged.
 		Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 
-		// First try is the method in the target class.
+		// First try is the method in the target class. 1找方法上的 比如直接方法标注@Transactional
 		TransactionAttribute txAttr = findTransactionAttribute(specificMethod);
 		if (txAttr != null) {
 			return txAttr;
 		}
 
-		// Second try is the transaction attribute on the target class.
+		// Second try is the transaction attribute on the target class. 2尝试class上的
 		txAttr = findTransactionAttribute(specificMethod.getDeclaringClass());
 		if (txAttr != null && ClassUtils.isUserLevelMethod(method)) {
 			return txAttr;
 		}
-
+		//fallback to original method
 		if (specificMethod != method) {
 			// Fallback is to look at the original method.
 			txAttr = findTransactionAttribute(method);
@@ -220,7 +221,7 @@ public abstract class AbstractFallbackTransactionAttributeSource
 
 	/**
 	 * Should only public methods be allowed to have transactional semantics?
-	 * <p>The default implementation returns {@code false}.
+	 * <p>The default implementation returns {@code false}. 默认false 即不区分方法访问符
 	 */
 	protected boolean allowPublicMethodsOnly() {
 		return false;

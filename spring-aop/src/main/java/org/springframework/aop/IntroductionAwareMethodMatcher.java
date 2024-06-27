@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
  * @since 2.0
  */
 public interface IntroductionAwareMethodMatcher extends MethodMatcher {
-
+	//两种逻辑 如果有引入 和没引入 match 可能有不同的filter逻辑
 	/**
 	 * Perform static checking whether the given method matches. This may be invoked
 	 * instead of the 2-arg {@link #matches(java.lang.reflect.Method, Class)} method

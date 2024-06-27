@@ -75,6 +75,7 @@ public abstract class AbstractFallbackCacheOperationSource implements CacheOpera
 
 
 	/**
+	 * 比如advisor methodFilter的时候fallback到该方法 如果有则匹配
 	 * Determine the caching attribute for this method invocation.
 	 * <p>Defaults to the class's caching attribute if no method attribute is found.
 	 * @param method the method for the current invocation (never {@code null})
@@ -131,20 +132,23 @@ public abstract class AbstractFallbackCacheOperationSource implements CacheOpera
 
 		// The method may be on an interface, but we need attributes from the target class.
 		// If the target class is null, the method will be unchanged.
+		// 比如通过jdk实现的代理 此时这个method是接口上的，与实际执行的那个方法不是同一个
 		Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 
 		// First try is the method in the target class.
+		//实际执行的方法优先
 		Collection<CacheOperation> opDef = findCacheOperations(specificMethod);
 		if (opDef != null) {
 			return opDef;
 		}
 
 		// Second try is the caching operation on the target class.
+		//实际方法上的class第二
 		opDef = findCacheOperations(specificMethod.getDeclaringClass());
 		if (opDef != null && ClassUtils.isUserLevelMethod(method)) {
 			return opDef;
 		}
-
+		//fallback 到exp:接口方法
 		if (specificMethod != method) {
 			// Fallback is to look at the original method.
 			opDef = findCacheOperations(method);

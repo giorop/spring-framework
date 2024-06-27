@@ -195,7 +195,7 @@ public abstract class AbstractApplicationEventMulticaster
 		// Potential new retriever to populate
 		CachedListenerRetriever newRetriever = null;
 
-		// Quick check for existing entry on ConcurrentHashMap
+		// Quick check for existing entry on ConcurrentHashMap 先尝试缓存
 		CachedListenerRetriever existingRetriever = this.retrieverCache.get(cacheKey);
 		if (existingRetriever == null) {
 			// Caching a new ListenerRetriever if possible
@@ -204,7 +204,7 @@ public abstract class AbstractApplicationEventMulticaster
 							(sourceType == null || ClassUtils.isCacheSafe(sourceType, this.beanClassLoader)))) {
 				newRetriever = new CachedListenerRetriever();
 				existingRetriever = this.retrieverCache.putIfAbsent(cacheKey, newRetriever);
-				if (existingRetriever != null) {
+				if (existingRetriever != null) {//
 					newRetriever = null;  // no need to populate it in retrieveApplicationListeners
 				}
 			}
@@ -223,6 +223,7 @@ public abstract class AbstractApplicationEventMulticaster
 	}
 
 	/**
+	 * 这里有比较复杂的同步逻辑
 	 * Actually retrieve the application listeners for the given event and source type.
 	 * @param eventType the event type
 	 * @param sourceType the event source type
@@ -378,6 +379,7 @@ public abstract class AbstractApplicationEventMulticaster
 	}
 
 	/**
+	 * 核心support->GenericApplicationListenerAdapter 所有support 调用到这里
 	 * Determine whether the given listener supports the given event.
 	 * <p>The default implementation detects the {@link SmartApplicationListener}
 	 * and {@link GenericApplicationListener} interfaces. In case of a standard
@@ -402,7 +404,7 @@ public abstract class AbstractApplicationEventMulticaster
 	 * Cache key for ListenerRetrievers, based on event type and source type.
 	 */
 	private static final class ListenerCacheKey implements Comparable<ListenerCacheKey> {
-
+		//通过sourceType+eventType确定唯一listener
 		private final ResolvableType eventType;
 
 		@Nullable

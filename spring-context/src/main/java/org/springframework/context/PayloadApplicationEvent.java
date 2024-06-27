@@ -36,8 +36,8 @@ import org.springframework.util.Assert;
  */
 @SuppressWarnings("serial")
 public class PayloadApplicationEvent<T> extends ApplicationEvent implements ResolvableTypeProvider {
-
-	private final T payload;
+	//带负载的event ->publishEvent(Object event) 将event->PayLoadApplicationEvent 在publish(ApplicationEvent)
+	private final T payload;//当前负载
 
 	private final ResolvableType payloadType;
 
@@ -67,7 +67,7 @@ public class PayloadApplicationEvent<T> extends ApplicationEvent implements Reso
 		this.payloadType = (payloadType != null ? payloadType : ResolvableType.forInstance(payload));
 	}
 
-
+	//返回当前ApplicationEvent的resolvableType
 	@Override
 	public ResolvableType getResolvableType() {
 		return ResolvableType.forClassWithGenerics(getClass(), this.payloadType);

@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  * @see <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">List of HTTP status codes - Wikipedia</a>
  */
 public sealed interface HttpStatusCode extends Serializable permits DefaultHttpStatusCode, HttpStatus {
-
+	//代表response状态码
 	/**
 	 * Return the integer value of this status code.
 	 */

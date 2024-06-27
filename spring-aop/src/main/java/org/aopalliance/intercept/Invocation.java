@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 public interface Invocation extends Joinpoint {
 
 	/**
+	 * 比如当前staticPart method的动态参数
 	 * Get the arguments as an array object.
 	 * It is possible to change element values within this
 	 * array to change the arguments.

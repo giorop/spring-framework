@@ -34,7 +34,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.transaction.annotation.AnnotationTransactionAttributeSource
  */
 public interface TransactionAttributeSource {
-
+	//filter class; class+method=>metadata about transactionAttribute
 	/**
 	 * Determine whether the given class is a candidate for transaction attributes
 	 * in the metadata format of this {@code TransactionAttributeSource}.

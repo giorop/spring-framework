@@ -33,7 +33,7 @@ package org.springframework.context;
  */
 @FunctionalInterface
 public interface ApplicationEventPublisher {
-
+	//ApplicationContext的event发布器 通常代理给multicast
 	/**
 	 * Notify all <strong>matching</strong> listeners registered with this
 	 * application of an application event. Events may be framework events

@@ -82,7 +82,7 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 	private BeanFactory beanFactory;
 
 	@Nullable
-	private StringValueResolver embeddedValueResolver;
+	private StringValueResolver embeddedValueResolver;//配置 占位符解析 ${} #{}
 
 	private final Map<Method, AsyncTaskExecutor> executors = new ConcurrentHashMap<>(16);
 
@@ -164,6 +164,7 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 
 
 	/**
+	 * 查找method上的executor  注解通常可以单独显示
 	 * Determine the specific executor to use when executing the given method.
 	 * @return the executor to use (or {@code null}, but just if no default executor is available)
 	 */
@@ -180,19 +181,21 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 				targetExecutor = findQualifiedExecutor(this.beanFactory, qualifier);
 			}
 			else {
-				targetExecutor = this.defaultExecutor.get();
+				targetExecutor = this.defaultExecutor.get();//一般default
 			}
 			if (targetExecutor == null) {
 				return null;
 			}
+			//通常也可以在该方法上添加周期执行的注解
 			executor = (targetExecutor instanceof AsyncTaskExecutor asyncTaskExecutor ?
-					asyncTaskExecutor : new TaskExecutorAdapter(targetExecutor));
+					asyncTaskExecutor : new TaskExecutorAdapter(targetExecutor));//包装成 周期执行
 			this.executors.put(method, executor);
 		}
 		return executor;
 	}
 
 	/**
+	 * 比如@Async 可以配置executor
 	 * Return the qualifier or bean name of the executor to be used when executing the
 	 * given async method, typically specified in the form of an annotation attribute.
 	 * <p>Returning an empty string or {@code null} indicates that no specific executor has
@@ -275,6 +278,7 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 
 
 	/**
+	 * 工具方法 提交任务
 	 * Delegate for actually executing the given task with the chosen executor.
 	 * @param task the task to execute
 	 * @param executor the chosen executor

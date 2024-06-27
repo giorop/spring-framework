@@ -84,6 +84,6 @@ public interface TransactionManagementConfigurer {
 	 * @return a {@link org.springframework.transaction.PlatformTransactionManager} or
 	 * {@link org.springframework.transaction.ReactiveTransactionManager} implementation
 	 */
-	TransactionManager annotationDrivenTransactionManager();
+	TransactionManager annotationDrivenTransactionManager();//使用该方法配置全局tx
 
 }

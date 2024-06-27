@@ -203,5 +203,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Import(SchedulingConfiguration.class)
 @Documented
 public @interface EnableScheduling {
+	//开启 周期执行功能
 
 }

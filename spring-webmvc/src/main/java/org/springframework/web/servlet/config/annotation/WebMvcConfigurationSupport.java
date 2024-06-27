@@ -123,7 +123,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * <ul>
  * <li>{@link RouterFunctionMapping}
  * ordered at -1 to map {@linkplain org.springframework.web.servlet.function.RouterFunction router functions}.
- * <li>{@link RequestMappingHandlerMapping}
+ * <li>{@link RequestMappingHandlerMapping} :@Controller
  * ordered at 0 for mapping requests to annotated controller methods.
  * <li>{@link HandlerMapping}
  * ordered at 1 to map URL paths directly to view names.
@@ -586,7 +586,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 		ResourceHandlerRegistry registry = new ResourceHandlerRegistry(this.applicationContext,
 				this.servletContext, contentNegotiationManager, pathConfig.getUrlPathHelper());
 		addResourceHandlers(registry);
-
+		//优先于defaultMapping 这里手动注册url->ResourceHttpRequestHandler 拦截某些url
 		AbstractHandlerMapping mapping = registry.getHandlerMapping();
 		initHandlerMapping(mapping, conversionService, resourceUrlProvider);
 		return mapping;
@@ -630,6 +630,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * @see DefaultServletHandlerConfigurer
 	 */
 	protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		//使用容器本身自带的defaultServlet用于forward 在springMvc中dispatcherServlet覆盖了/的映射 如果enable则开启 这里最后映射
 	}
 
 	/**

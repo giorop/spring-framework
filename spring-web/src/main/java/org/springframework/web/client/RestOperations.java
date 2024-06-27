@@ -40,7 +40,7 @@ import org.springframework.lang.Nullable;
  * @see RestTemplate
  */
 public interface RestOperations {
-
+	//一些请求操作
 	// GET
 
 	/**
@@ -486,7 +486,7 @@ public interface RestOperations {
 	Set<HttpMethod> optionsForAllow(URI url) throws RestClientException;
 
 
-	// exchange
+	// exchange 其它几个方法从方法名中声明了请求类型  这里需要在参数中声明请求方法
 
 	/**
 	 * Execute the HTTP method to the given URI template, writing the given request entity to the request,

@@ -105,11 +105,11 @@ public class ResourceHttpRequestHandler extends WebContentGenerator
 	private static final String URL_RESOURCE_CHARSET_PREFIX = "[charset=";
 
 
-	private final List<String> locationValues = new ArrayList<>(4);
+	private final List<String> locationValues = new ArrayList<>(4);//基础映射位置
 
 	private final List<Resource> locationResources = new ArrayList<>(4);
 
-	private final List<Resource> locationsToUse = new ArrayList<>(4);
+	private final List<Resource> locationsToUse = new ArrayList<>(4);//locationValues解析 +locationResources
 
 	private final Map<Resource, Charset> locationCharsets = new HashMap<>(4);
 
@@ -579,7 +579,7 @@ public class ResourceHttpRequestHandler extends WebContentGenerator
 			throws ServletException, IOException {
 
 		// For very general mappings (e.g. "/") we need to check 404 first
-		Resource resource = getResource(request);
+		Resource resource = getResource(request);//需要通过request进一步解析
 		if (resource == null) {
 			logger.debug("Resource not found");
 			throw new NoResourceFoundException(HttpMethod.valueOf(request.getMethod()), getPath(request));

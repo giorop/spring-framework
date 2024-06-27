@@ -39,7 +39,7 @@ import org.springframework.http.client.ClientHttpRequest;
  */
 @FunctionalInterface
 public interface RequestCallback {
-
+	//一些其它操作
 	/**
 	 * Gets called by {@link RestTemplate#execute} with an opened {@code ClientHttpRequest}.
 	 * Does not need to care about closing the request or about handling errors:

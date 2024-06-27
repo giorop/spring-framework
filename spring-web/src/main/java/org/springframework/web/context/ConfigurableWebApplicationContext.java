@@ -61,6 +61,7 @@ public interface ConfigurableWebApplicationContext extends WebApplicationContext
 	void setServletContext(@Nullable ServletContext servletContext);
 
 	/**
+	 * 如果当前context专门为某个servlet后门的话 比如dispatcherServlet
 	 * Set the ServletConfig for this web application context.
 	 * Only called for a WebApplicationContext that belongs to a specific Servlet.
 	 * @see #refresh()
@@ -88,6 +89,7 @@ public interface ConfigurableWebApplicationContext extends WebApplicationContext
 	String getNamespace();
 
 	/**
+	 * 配置文件地址
 	 * Set the config locations for this web application context in init-param style,
 	 * i.e. with distinct locations separated by commas, semicolons or whitespace.
 	 * <p>If not set, the implementation is supposed to use a default for the

@@ -38,14 +38,14 @@ import org.springframework.context.annotation.Role;
 @Configuration(proxyBeanMethods = false)
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class ProxyCachingConfiguration extends AbstractCachingConfiguration {
-
+	//AbstractCachingConfiguration 可以通过容器中的CachingConfigurer 配置几个属性
 	@Bean(name = CacheManagementConfigUtils.CACHE_ADVISOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public BeanFactoryCacheOperationSourceAdvisor cacheAdvisor(
 			CacheOperationSource cacheOperationSource, CacheInterceptor cacheInterceptor) {
 
 		BeanFactoryCacheOperationSourceAdvisor advisor = new BeanFactoryCacheOperationSourceAdvisor();
-		advisor.setCacheOperationSource(cacheOperationSource);
+		advisor.setCacheOperationSource(cacheOperationSource);//cacheOperationSource代理filter class+method功能
 		advisor.setAdvice(cacheInterceptor);
 		if (this.enableCaching != null) {
 			advisor.setOrder(this.enableCaching.<Integer>getNumber("order"));
@@ -57,6 +57,7 @@ public class ProxyCachingConfiguration extends AbstractCachingConfiguration {
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public CacheOperationSource cacheOperationSource() {//class method=>提取cacheOps即解析@Cacheable等注解 并包装成
 		// Accept protected @Cacheable etc methods on CGLIB proxies, as of 6.0.
+		//class+method=>Collection<CacheOperation> 提供缓存操作信息
 		return new AnnotationCacheOperationSource(false);
 	}
 
@@ -65,7 +66,7 @@ public class ProxyCachingConfiguration extends AbstractCachingConfiguration {
 	public CacheInterceptor cacheInterceptor(CacheOperationSource cacheOperationSource) {
 		CacheInterceptor interceptor = new CacheInterceptor();
 		interceptor.configure(this.errorHandler, this.keyGenerator, this.cacheResolver, this.cacheManager);
-		interceptor.setCacheOperationSource(cacheOperationSource);
+		interceptor.setCacheOperationSource(cacheOperationSource);//方法增强的时候 cacheOperationSource：提供缓存操作相关信息
 		return interceptor;
 	}
 

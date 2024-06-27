@@ -68,6 +68,7 @@ public class AnnotationAsyncExecutionInterceptor extends AsyncExecutionIntercept
 
 
 	/**
+	 * 通过注解 尝试得到 方法执行 对应的 executor
 	 * Return the qualifier or bean name of the executor to be used when executing the
 	 * given method, specified via {@link Async#value} at the method or declaring
 	 * class level. If {@code @Async} is specified at both the method and class level, the

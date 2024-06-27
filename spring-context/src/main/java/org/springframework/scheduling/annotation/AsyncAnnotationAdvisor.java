@@ -61,6 +61,7 @@ public class AsyncAnnotationAdvisor extends AbstractPointcutAdvisor implements B
 
 
 	/**
+	 * 默认executor and errorHandler为 null 可以通过asyConfig配置
 	 * Create a new {@code AsyncAnnotationAdvisor} for bean-style configuration.
 	 */
 	public AsyncAnnotationAdvisor() {
@@ -95,6 +96,7 @@ public class AsyncAnnotationAdvisor extends AbstractPointcutAdvisor implements B
 			@Nullable Supplier<Executor> executor, @Nullable Supplier<AsyncUncaughtExceptionHandler> exceptionHandler) {
 
 		Set<Class<? extends Annotation>> asyncAnnotationTypes = CollectionUtils.newLinkedHashSet(2);
+		//默认添加 其两个能识别的注解 @Async @Asynchronous @Asynchronous
 		asyncAnnotationTypes.add(Async.class);
 
 		ClassLoader classLoader = AsyncAnnotationAdvisor.class.getClassLoader();
@@ -112,7 +114,7 @@ public class AsyncAnnotationAdvisor extends AbstractPointcutAdvisor implements B
 		catch (ClassNotFoundException ex) {
 			// If Jakarta Concurrent API not present, simply ignore.
 		}
-
+		//配置advice and  pointcut
 		this.advice = buildAdvice(executor, exceptionHandler);
 		this.pointcut = buildPointcut(asyncAnnotationTypes);
 	}
@@ -165,6 +167,7 @@ public class AsyncAnnotationAdvisor extends AbstractPointcutAdvisor implements B
 	}
 
 	/**
+	 * 通过注解识别
 	 * Calculate a pointcut for the given async annotation types, if any.
 	 * @param asyncAnnotationTypes the async annotation types to introspect
 	 * @return the applicable Pointcut object, or {@code null} if none

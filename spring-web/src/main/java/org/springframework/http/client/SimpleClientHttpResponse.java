@@ -36,7 +36,7 @@ import org.springframework.util.StringUtils;
  */
 final class SimpleClientHttpResponse implements ClientHttpResponse {
 
-	private final HttpURLConnection connection;
+	private final HttpURLConnection connection;//代理请求
 
 	@Nullable
 	private HttpHeaders headers;
@@ -62,7 +62,7 @@ final class SimpleClientHttpResponse implements ClientHttpResponse {
 	}
 
 	@Override
-	public HttpHeaders getHeaders() {
+	public HttpHeaders getHeaders() {//从connection中获取header
 		if (this.headers == null) {
 			this.headers = new HttpHeaders();
 			// Header field 0 is the status line for most HttpURLConnections, but not on GAE
@@ -84,7 +84,7 @@ final class SimpleClientHttpResponse implements ClientHttpResponse {
 	}
 
 	@Override
-	public InputStream getBody() throws IOException {
+	public InputStream getBody() throws IOException {//errorStream or inputStream
 		InputStream errorStream = this.connection.getErrorStream();
 		this.responseStream = (errorStream != null ? errorStream : this.connection.getInputStream());
 		return this.responseStream;
@@ -96,8 +96,8 @@ final class SimpleClientHttpResponse implements ClientHttpResponse {
 			if (this.responseStream == null) {
 				getBody();
 			}
-			StreamUtils.drain(this.responseStream);
-			this.responseStream.close();
+			StreamUtils.drain(this.responseStream);//把stream中的内容清空
+			this.responseStream.close();//关闭流
 		}
 		catch (Exception ex) {
 			// ignore

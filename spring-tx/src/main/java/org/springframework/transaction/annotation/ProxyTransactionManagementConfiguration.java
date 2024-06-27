@@ -43,7 +43,7 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 
 	@Bean(name = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor(
+	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor(//advisor
 			TransactionAttributeSource transactionAttributeSource, TransactionInterceptor transactionInterceptor) {
 
 		BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
@@ -57,11 +57,11 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public TransactionAttributeSource transactionAttributeSource() {
+	public TransactionAttributeSource transactionAttributeSource() {//将目标方法的@Transactional内容提取为TransactionAttributeSource
 		// Accept protected @Transactional methods on CGLIB proxies, as of 6.0.
 		return new AnnotationTransactionAttributeSource(false);
 	}
-
+	//interceptor
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionInterceptor transactionInterceptor(TransactionAttributeSource transactionAttributeSource) {

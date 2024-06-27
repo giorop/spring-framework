@@ -31,10 +31,10 @@ import org.springframework.util.Assert;
  * @since 3.0
  */
 public abstract class AbstractClientHttpRequest implements ClientHttpRequest {
-
+	//表示一个请求
 	private final HttpHeaders headers = new HttpHeaders();
 
-	private boolean executed = false;
+	private boolean executed = false;//是否已经执行 请求本身就是一个线程维护的，不存在多线程环境
 
 	@Nullable
 	private HttpHeaders readOnlyHeaders;
@@ -56,7 +56,7 @@ public abstract class AbstractClientHttpRequest implements ClientHttpRequest {
 
 	@Override
 	public final OutputStream getBody() throws IOException {
-		assertNotExecuted();
+		assertNotExecuted();//避免执行请求后 暴露Body
 		return getBodyInternal(this.headers);
 	}
 

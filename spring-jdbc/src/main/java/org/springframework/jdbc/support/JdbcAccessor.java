@@ -44,10 +44,10 @@ public abstract class JdbcAccessor implements InitializingBean {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Nullable
-	private DataSource dataSource;
+	private DataSource dataSource;//用于获取connection
 
 	@Nullable
-	private volatile SQLExceptionTranslator exceptionTranslator;
+	private volatile SQLExceptionTranslator exceptionTranslator;//sqlException=>spring data exception
 
 	private boolean lazyInit = true;
 

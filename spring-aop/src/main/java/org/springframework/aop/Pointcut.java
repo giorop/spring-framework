@@ -31,7 +31,7 @@ package org.springframework.aop;
  * @see org.springframework.aop.support.MethodMatchers
  */
 public interface Pointcut {
-
+	//通过classFilter methodFilter 筛选连接点
 	/**
 	 * Return the ClassFilter for this pointcut.
 	 * @return the ClassFilter (never {@code null})

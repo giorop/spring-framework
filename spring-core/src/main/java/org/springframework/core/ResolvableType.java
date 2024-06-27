@@ -99,7 +99,7 @@ public class ResolvableType implements Serializable {
 
 
 	/**
-	 * The underlying Java type being managed. 这个type是被包装过的，可以序列化
+	 * The underlying Java type being managed.
 	 */
 	private final Type type;
 
@@ -141,6 +141,7 @@ public class ResolvableType implements Serializable {
 
 
 	/**
+	 * 主要用于hash 快速构建
 	 * Private constructor used to create a new {@code ResolvableType} for cache key purposes,
 	 * with no upfront resolution.
 	 */
@@ -156,6 +157,7 @@ public class ResolvableType implements Serializable {
 	}
 
 	/**
+	 * 通用构建 需要计算resolved 此过程会递归构建
 	 * Private constructor used to create a new {@code ResolvableType} for cache value purposes,
 	 * with upfront resolution and a pre-calculated hash.
 	 * @since 4.2
@@ -172,6 +174,7 @@ public class ResolvableType implements Serializable {
 	}
 
 	/**
+	 * 带数组信息
 	 * Private constructor used to create a new {@code ResolvableType} for uncached purposes,
 	 * with upfront resolution but lazily calculated hash.
 	 */
@@ -623,6 +626,8 @@ public class ResolvableType implements Serializable {
 		Class<?> resolved = resolve();
 		if (resolved != null) {
 			try {
+				//比如 implement List  此时这个interface就是一个class List 中的E 无法被解析
+				//对应的 implement List<E> List<String>都可以处理 前者E在当前类被hold  后者能直接解析
 				for (Type genericInterface : resolved.getGenericInterfaces()) {
 					if (genericInterface instanceof Class<?> clazz) {
 						if (clazz.getTypeParameters().length > 0) {
@@ -755,7 +760,7 @@ public class ResolvableType implements Serializable {
 			return (generics.length == 0 ? NONE : generics[0]);
 		}
 		ResolvableType generic = this;
-		for (int index : indexes) {
+		for (int index : indexes) {//递归
 			generics = generic.getGenerics();
 			if (index < 0 || index >= generics.length) {
 				return NONE;
@@ -778,7 +783,7 @@ public class ResolvableType implements Serializable {
 	 * @see #resolveGeneric(int...)
 	 * @see #resolveGenerics()
 	 */
-	public ResolvableType[] getGenerics() {
+	public ResolvableType[] getGenerics() {//只是得到该type中声明的typeVariable
 		if (this == NONE) {
 			return EMPTY_TYPES_ARRAY;
 		}
@@ -889,7 +894,7 @@ public class ResolvableType implements Serializable {
 	}
 
 	@Nullable
-	private Class<?> resolveClass() {
+	private Class<?> resolveClass() {//该函数被构造调用 在构造完成前 resolve()方法并不能直接使用，当构造完成后 其resolve()就能确定resolved
 		if (this.type == EmptyType.INSTANCE) {
 			return null;
 		}
@@ -940,10 +945,14 @@ public class ResolvableType implements Serializable {
 		}
 		return bounds[0];
 	}
-
+	/*
+	这里只是单独的解析了TypeVariable 至于其解析出的类型具体是是什么 不需要考虑 可能是class 也可能是ParameterizedType
+	可以尝试继续解析
+	*/
 	@Nullable
-	private ResolvableType resolveVariable(TypeVariable<?> variable) {
-		//比如List<String> asList->List<E>  其解析泛型E的时候要调用 owner List<String>解析
+	private ResolvableType resolveVariable(TypeVariable<?> variable) {//
+		//原始ResolvableType 有解析variableType的最终解释权
+		//List<List<String>> as List  此时要解析这个String 需要先解析出E: List<String> 再解析出String
 		if (this.type instanceof TypeVariable) {
 			return resolveType().resolveVariable(variable);
 		}
@@ -952,6 +961,8 @@ public class ResolvableType implements Serializable {
 			if (resolved == null) {
 				return null;
 			}
+			//当前ParameterizedType 比如List<String> 可以解析出E->String
+			//比如某个类型List<String> asInterface(List<E>) 得到的resolvableType 其本身没有E的信息，需要解析，需借助ResolveVariable参数(List<String>)协助解析E
 			TypeVariable<?>[] variables = resolved.getTypeParameters();
 			for (int i = 0; i < variables.length; i++) {
 				if (ObjectUtils.nullSafeEquals(variables[i].getName(), variable.getName())) {
@@ -970,6 +981,8 @@ public class ResolvableType implements Serializable {
 				return resolved;
 			}
 		}
+		//以上通过type本身携带的信息解析T 当其无法直接解析的时候 则使用其携带的variableResolver解析
+		//比如List<List<String>> :List<E<T>>  asList之后 type只能解析到E本身 这个T需要variableResolver解析
 		if (this.variableResolver != null) {
 			return this.variableResolver.resolveVariable(variable);
 		}
@@ -1525,6 +1538,7 @@ public class ResolvableType implements Serializable {
 		cache.purgeUnreferencedEntries();
 
 		// Check the cache - we may have a ResolvableType which has been resolved before...
+		// ResolvableType 的equals并不需要resolved来确定 只要前几项是一致的 那么resolved计算后都是一致的
 		ResolvableType resultType = new ResolvableType(type, typeProvider, variableResolver);
 		ResolvableType cachedType = cache.get(resultType);
 		if (cachedType == null) {//这里会递归 解析泛型信息 并缓存所有涉及到的type类型

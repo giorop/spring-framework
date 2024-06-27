@@ -71,6 +71,7 @@ public abstract class AbstractValueAdaptingCache implements Cache {
 	}
 
 	/**
+	 * 底层具体实现 存储策略
 	 * Perform an actual lookup in the underlying store.
 	 * @param key the key whose associated value is to be returned
 	 * @return the raw store value for the key, or {@code null} if none
@@ -80,6 +81,7 @@ public abstract class AbstractValueAdaptingCache implements Cache {
 
 
 	/**
+	 * 在cache->store之间 摆一层  避免null值的存放
 	 * Convert the given value from the internal store to a user value
 	 * returned from the get method (adapting {@code null}).
 	 * @param storeValue the store value

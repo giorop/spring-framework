@@ -61,7 +61,7 @@ class ProxyFactoryTests {
 		Advisor advisor = new DefaultPointcutAdvisor(new CountingBeforeAdvice());
 		Advised advised = (Advised) pf.getProxy();
 		// Can use advised and ProxyFactory interchangeably
-		advised.addAdvice(nop);
+		advised.addAdvice(nop);//默认拦截所有 DefaultPointcutAdvisor
 		pf.addAdvisor(advisor);
 		assertThat(pf.indexOf(new NopInterceptor())).isEqualTo(-1);
 		assertThat(pf.indexOf(nop)).isEqualTo(0);

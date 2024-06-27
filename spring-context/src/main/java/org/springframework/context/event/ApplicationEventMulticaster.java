@@ -37,7 +37,7 @@ import org.springframework.lang.Nullable;
  * @see ApplicationListener
  */
 public interface ApplicationEventMulticaster {
-
+	//注册listener  并发布event
 	/**
 	 * Add a listener to be notified of all events.
 	 * @param listener the listener to add

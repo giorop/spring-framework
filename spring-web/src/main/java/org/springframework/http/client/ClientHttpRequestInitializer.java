@@ -35,7 +35,7 @@ import org.springframework.http.client.support.HttpAccessor;
  */
 @FunctionalInterface
 public interface ClientHttpRequestInitializer {
-
+	//介入初始化clientHttpRequest
 	/**
 	 * Initialize the given client HTTP request.
 	 * @param request the request to configure

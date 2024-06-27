@@ -32,7 +32,7 @@ import org.springframework.aop.support.AbstractBeanFactoryPointcutAdvisor;
  */
 @SuppressWarnings("serial")
 public class BeanFactoryCacheOperationSourceAdvisor extends AbstractBeanFactoryPointcutAdvisor {
-	//用于filter advice到关键方法
+	//setAdvice( or adviceName) +pointcut=>代理给CacheOperationSourcePointcut
 	private final CacheOperationSourcePointcut pointcut = new CacheOperationSourcePointcut();
 
 

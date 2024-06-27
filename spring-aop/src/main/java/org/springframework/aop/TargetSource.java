@@ -34,7 +34,7 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  */
 public interface TargetSource extends TargetClassAware {
-
+	//proxy的一种实现 维护target对象本身
 	/**
 	 * Return the type of targets returned by this {@link TargetSource}.
 	 * <p>Can return {@code null}, although certain usages of a {@code TargetSource}
@@ -46,6 +46,7 @@ public interface TargetSource extends TargetClassAware {
 	Class<?> getTargetClass();
 
 	/**
+	 * 背后维护的target是否是静态的，比如其背后维护的target由其它scope管理，会发生改变
 	 * Will all calls to {@link #getTarget()} return the same object?
 	 * <p>In that case, there will be no need to invoke {@link #releaseTarget(Object)},
 	 * and the AOP framework can cache the return value of {@link #getTarget()}.

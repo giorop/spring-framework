@@ -44,7 +44,7 @@ import org.springframework.util.function.SingletonSupplier;
  */
 @Configuration(proxyBeanMethods = false)
 public abstract class AbstractAsyncConfiguration implements ImportAware {
-
+	//通过AsyncConfigurer 自定义配置executor + exceptionHandler 当然也可以没有
 	@Nullable
 	protected AnnotationAttributes enableAsync;
 
@@ -56,7 +56,7 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 
 
 	@Override
-	public void setImportMetadata(AnnotationMetadata importMetadata) {
+	public void setImportMetadata(AnnotationMetadata importMetadata) {//一般其实现为注入声明@Import引入该场景的类
 		this.enableAsync = AnnotationAttributes.fromMap(
 				importMetadata.getAnnotationAttributes(EnableAsync.class.getName()));
 		if (this.enableAsync == null) {
@@ -67,9 +67,10 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 
 	/**
 	 * Collect any {@link AsyncConfigurer} beans through autowiring.
+	 * 从容器中找AsyncConfigurer bean
 	 */
 	@Autowired
-	void setConfigurers(ObjectProvider<AsyncConfigurer> configurers) {
+	void setConfigurers(ObjectProvider<AsyncConfigurer> configurers) {//这样的实现可以懒加载
 		Supplier<AsyncConfigurer> configurer = SingletonSupplier.of(() -> {
 			List<AsyncConfigurer> candidates = configurers.stream().toList();
 			if (CollectionUtils.isEmpty(candidates)) {

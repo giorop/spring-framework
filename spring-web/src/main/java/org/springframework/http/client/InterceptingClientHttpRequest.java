@@ -39,7 +39,7 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 
 	private final ClientHttpRequestFactory requestFactory;
 
-	private final List<ClientHttpRequestInterceptor> interceptors;
+	private final List<ClientHttpRequestInterceptor> interceptors;//request execute被拦截增强
 
 	private final HttpMethod method;
 
@@ -89,6 +89,7 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 			}
 			else {
 				HttpMethod method = request.getMethod();
+				//本身execute 代理给factory创建的实际request
 				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), method);
 				request.getHeaders().forEach((key, value) -> delegate.getHeaders().addAll(key, value));
 				if (body.length > 0) {

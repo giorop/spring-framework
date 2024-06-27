@@ -34,7 +34,7 @@ public class ProxyConfig implements Serializable {
 	private static final long serialVersionUID = -8409359707199703185L;
 
 
-	private boolean proxyTargetClass = false;
+	private boolean proxyTargetClass = false;//不具备强制性 根据实际的情况来判断具体使用哪种
 
 	private boolean optimize = false;
 

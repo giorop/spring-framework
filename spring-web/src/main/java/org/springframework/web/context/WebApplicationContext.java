@@ -43,7 +43,7 @@ import org.springframework.lang.Nullable;
  * @see ServletContextAware#setServletContext
  */
 public interface WebApplicationContext extends ApplicationContext {
-
+	//关联servletContext
 	/**
 	 * Context attribute to bind root WebApplicationContext to on successful startup.
 	 * <p>Note: If the startup of the root context fails, this attribute can contain

@@ -153,7 +153,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.util.MultiValueMap
  */
 public class FormHttpMessageConverter implements HttpMessageConverter<MultiValueMap<String, ?>> {
-
+	//读写post相关
 	/** The default charset used by the converter. */
 	public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
@@ -169,14 +169,14 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 
 	//post  或者 multipart
 	public FormHttpMessageConverter() {
-		this.supportedMediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);
-		this.supportedMediaTypes.add(MediaType.MULTIPART_FORM_DATA);
-		this.supportedMediaTypes.add(MediaType.MULTIPART_MIXED);
-		this.supportedMediaTypes.add(MediaType.MULTIPART_RELATED);
+		this.supportedMediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);//普通post
+		this.supportedMediaTypes.add(MediaType.MULTIPART_FORM_DATA);//multipart/from-data
+		this.supportedMediaTypes.add(MediaType.MULTIPART_MIXED);//multipart/mix
+		this.supportedMediaTypes.add(MediaType.MULTIPART_RELATED);//multipart/related
 
-		this.partConverters.add(new ByteArrayHttpMessageConverter());
-		this.partConverters.add(new StringHttpMessageConverter());
-		this.partConverters.add(new ResourceHttpMessageConverter());
+		this.partConverters.add(new ByteArrayHttpMessageConverter());//支持将byte[]
+		this.partConverters.add(new StringHttpMessageConverter());//String
+		this.partConverters.add(new ResourceHttpMessageConverter());//resource
 
 		applyDefaultCharset();
 	}
@@ -292,7 +292,7 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 		this.multipartCharset = charset;
 	}
 
-
+	//将请求中的数据->MultiValueMap
 	@Override
 	public boolean canRead(Class<?> clazz, @Nullable MediaType mediaType) {
 		if (!MultiValueMap.class.isAssignableFrom(clazz)) {
@@ -306,13 +306,13 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 				// We can't read multipart, so skip this supported media type.
 				continue;
 			}
-			if (supportedMediaType.includes(mediaType)) {
+			if (supportedMediaType.includes(mediaType)) {//这里通常post请求
 				return true;
 			}
 		}
 		return false;
 	}
-
+	//MultiValueMap->写入
 	@Override
 	public boolean canWrite(Class<?> clazz, @Nullable MediaType mediaType) {
 		if (!MultiValueMap.class.isAssignableFrom(clazz)) {
@@ -336,7 +336,7 @@ public class FormHttpMessageConverter implements HttpMessageConverter<MultiValue
 		MediaType contentType = inputMessage.getHeaders().getContentType();
 		Charset charset = (contentType != null && contentType.getCharset() != null ?
 				contentType.getCharset() : this.charset);
-		String body = StreamUtils.copyToString(inputMessage.getBody(), charset);
+		String body = StreamUtils.copyToString(inputMessage.getBody(), charset);//读取body内容
 
 		String[] pairs = StringUtils.tokenizeToStringArray(body, "&");
 		MultiValueMap<String, String> result = new LinkedMultiValueMap<>(pairs.length);

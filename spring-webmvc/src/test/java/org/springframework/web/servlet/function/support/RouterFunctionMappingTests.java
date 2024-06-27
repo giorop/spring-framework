@@ -51,7 +51,7 @@ class RouterFunctionMappingTests {
 	private final List<HttpMessageConverter<?>> messageConverters = Collections.emptyList();
 
 	@Test
-	void normal() throws Exception {
+	void normal() throws Exception {//routerMapping->routerFunction(此时handlerAdapter调用)->HandlerFunction->serverResponse->response
 		HandlerFunction<ServerResponse> handlerFunction = request -> ServerResponse.ok().build();
 		RouterFunction<ServerResponse> routerFunction = request -> Optional.of(handlerFunction);
 

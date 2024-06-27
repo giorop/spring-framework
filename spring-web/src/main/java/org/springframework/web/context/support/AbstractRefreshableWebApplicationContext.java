@@ -81,7 +81,7 @@ import org.springframework.web.context.ServletContextAware;
 @SuppressWarnings("deprecation")
 public abstract class AbstractRefreshableWebApplicationContext extends AbstractRefreshableConfigApplicationContext
 		implements ConfigurableWebApplicationContext, ThemeSource {
-
+	//web通常是可刷新的
 	/** Servlet context that this context runs in. */
 	@Nullable
 	private ServletContext servletContext;

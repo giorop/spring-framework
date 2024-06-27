@@ -118,6 +118,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			"io.vavr.control.Try", TransactionAspectSupport.class.getClassLoader());
 
 	/**
+	 * 用于维护当前事务
 	 * Holder to support the {@code currentTransactionStatus()} method,
 	 * and to support communication between different cooperating advices
 	 * (e.g. before and after advice) if the aspect involves more than a
@@ -347,7 +348,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			final InvocationCallback invocation) throws Throwable {
 
 		// If the transaction attribute is null, the method is non-transactional.
-		TransactionAttributeSource tas = getTransactionAttributeSource();
+		TransactionAttributeSource tas = getTransactionAttributeSource();//用于解析@Transactional
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
 		final TransactionManager tm = determineTransactionManager(txAttr);
 
@@ -379,7 +380,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		}
 
 		PlatformTransactionManager ptm = asPlatformTransactionManager(tm);
-		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
+		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);//生成key 用于标记开启点
 
 		if (txAttr == null || !(ptm instanceof CallbackPreferringPlatformTransactionManager cpptm)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
@@ -393,7 +394,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			}
 			catch (Throwable ex) {
 				// target invocation exception
-				completeTransactionAfterThrowing(txInfo, ex);
+				completeTransactionAfterThrowing(txInfo, ex);//异常处理
 				throw ex;
 			}
 			finally {
@@ -504,17 +505,17 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	protected TransactionManager determineTransactionManager(@Nullable TransactionAttribute txAttr) {
 		// Do not attempt to lookup tx manager if no tx attributes are set
 		if (txAttr == null || this.beanFactory == null) {
-			return getTransactionManager();
+			return getTransactionManager();//default设置使用
 		}
 
 		String qualifier = txAttr.getQualifier();
-		if (StringUtils.hasText(qualifier)) {
+		if (StringUtils.hasText(qualifier)) {//qualifier是关于txManager的
 			return determineQualifiedTransactionManager(this.beanFactory, qualifier);
 		}
 		else if (StringUtils.hasText(this.transactionManagerBeanName)) {
 			return determineQualifiedTransactionManager(this.beanFactory, this.transactionManagerBeanName);
 		}
-		else {
+		else {//直接找容器中声明的txManager
 			TransactionManager defaultTransactionManager = getTransactionManager();
 			if (defaultTransactionManager == null) {
 				defaultTransactionManager = this.transactionManagerCache.get(DEFAULT_TRANSACTION_MANAGER_KEY);

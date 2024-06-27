@@ -37,11 +37,11 @@ import org.springframework.util.StringUtils;
  */
 final class SimpleClientHttpRequest extends AbstractStreamingClientHttpRequest {
 
-	private final HttpURLConnection connection;
+	private final HttpURLConnection connection;//代理请求发送和获得响应
 
 	private final int chunkSize;
 
-
+	//requestFactory.createRequest(URI uri, HttpMethod httpMethod)
 	SimpleClientHttpRequest(HttpURLConnection connection, int chunkSize) {
 		this.connection = connection;
 		this.chunkSize = chunkSize;
@@ -64,7 +64,7 @@ final class SimpleClientHttpRequest extends AbstractStreamingClientHttpRequest {
 
 	@Override
 	protected ClientHttpResponse executeInternal(HttpHeaders headers, @Nullable Body body) throws IOException {
-		if (this.connection.getDoOutput()) {
+		if (this.connection.getDoOutput()) {//post等 才有写入body的必要 get只需要请求头
 			long contentLength = headers.getContentLength();
 			if (contentLength >= 0) {
 				this.connection.setFixedLengthStreamingMode(contentLength);
@@ -74,17 +74,18 @@ final class SimpleClientHttpRequest extends AbstractStreamingClientHttpRequest {
 			}
 		}
 
-		addHeaders(this.connection, headers);
+		addHeaders(this.connection, headers);//connection中写入头
 
-		this.connection.connect();
+		this.connection.connect();//建立连接
 
 		if (this.connection.getDoOutput() && body != null) {
 			try (OutputStream os = this.connection.getOutputStream()) {
-				body.writeTo(os);
+				body.writeTo(os);//写入Body
 			}
 		}
 		else {
 			// Immediately trigger the request in a no-output scenario as well
+			// 快速查看是否建立连接
 			this.connection.getResponseCode();
 		}
 		return new SimpleClientHttpResponse(this.connection);
@@ -92,6 +93,7 @@ final class SimpleClientHttpRequest extends AbstractStreamingClientHttpRequest {
 
 
 	/**
+	 * connection中写入请求头
 	 * Add the given headers to the given HTTP connection.
 	 * @param connection the connection to add the headers to
 	 * @param headers the headers to add

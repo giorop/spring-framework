@@ -30,7 +30,7 @@ import org.springframework.util.function.SingletonSupplier;
  * @see org.springframework.cache.interceptor.CacheErrorHandler
  */
 public abstract class AbstractCacheInvoker {
-
+	//配置默认errorHandler(原样抛出) 并声明基础缓存操作
 	protected SingletonSupplier<CacheErrorHandler> errorHandler;
 
 

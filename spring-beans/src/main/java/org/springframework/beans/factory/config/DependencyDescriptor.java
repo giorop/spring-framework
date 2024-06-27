@@ -63,7 +63,7 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 	@Nullable
 	private String fieldName;
 
-	private final boolean required;
+	private final boolean required;//当无法完成注入时是否报错
 
 	private final boolean eager;
 

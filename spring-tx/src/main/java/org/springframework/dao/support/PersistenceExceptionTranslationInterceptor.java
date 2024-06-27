@@ -136,20 +136,20 @@ public class PersistenceExceptionTranslationInterceptor
 		try {
 			return mi.proceed();
 		}
-		catch (RuntimeException ex) {
+		catch (RuntimeException ex) {//拦截runtime异常
 			// Let it throw raw if the type of the exception is on the throws clause of the method.
 			if (!this.alwaysTranslate && ReflectionUtils.declaresException(mi.getMethod(), ex.getClass())) {
-				throw ex;
+				throw ex;//显示runtime默认不拦截
 			}
 			else {
 				PersistenceExceptionTranslator translator = this.persistenceExceptionTranslator;
 				if (translator == null) {
 					Assert.state(this.beanFactory != null,
 							"Cannot use PersistenceExceptionTranslator autodetection without ListableBeanFactory");
-					translator = detectPersistenceExceptionTranslators(this.beanFactory);
+					translator = detectPersistenceExceptionTranslators(this.beanFactory);//factory中找
 					this.persistenceExceptionTranslator = translator;
 				}
-				throw DataAccessUtils.translateIfNecessary(ex, translator);
+				throw DataAccessUtils.translateIfNecessary(ex, translator);//尝试拦截
 			}
 		}
 	}

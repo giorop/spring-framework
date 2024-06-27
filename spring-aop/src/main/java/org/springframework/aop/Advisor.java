@@ -34,7 +34,10 @@ import org.aopalliance.aop.Advice;
  * @author Juergen Hoeller
  */
 public interface Advisor {
-
+	//携带advice:具体增强逻辑
+	//通常两大子类实现逻辑
+		//pointcutAdvisor 用pointcut 去筛选匹配的连接点(切点)并 advice
+		//IntroductionAdvisor ClassFilter 删选类，引入额外功能
 	/**
 	 * Common placeholder for an empty {@code Advice} to be returned from
 	 * {@link #getAdvice()} if no proper advice has been configured (yet).
@@ -44,6 +47,7 @@ public interface Advisor {
 
 
 	/**
+	 * 具体增强逻辑
 	 * Return the advice part of this aspect. An advice may be an
 	 * interceptor, a before advice, a throws advice, etc.
 	 * @return the advice that should apply if the pointcut matches
@@ -55,6 +59,7 @@ public interface Advisor {
 	Advice getAdvice();
 
 	/**
+	 * 是否是target独享的
 	 * Return whether this advice is associated with a particular instance
 	 * (for example, creating a mixin) or shared with all instances of
 	 * the advised class obtained from the same Spring bean factory.

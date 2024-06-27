@@ -26,7 +26,7 @@ package org.springframework.web.util;
  * @see DefaultUriBuilderFactory
  */
 public interface UriBuilderFactory extends UriTemplateHandler {
-
+	//String->uriBuilder->uri
 	/**
 	 * Initialize a builder with the given URI template.
 	 * @param uriTemplate the URI template to use

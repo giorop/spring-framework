@@ -65,16 +65,17 @@ public abstract class AdviceModeImportSelector<A extends Annotation> implements 
 	 */
 	@Override
 	public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
+		//比如 @Import(AsyncConfigurationSelector.class) @interface EnableAsync 引入
 		Class<?> annType = GenericTypeResolver.resolveTypeArgument(getClass(), AdviceModeImportSelector.class);
 		Assert.state(annType != null, "Unresolvable type argument for AdviceModeImportSelector");
-		//获取@Enable**上的信息
+		//获取获取@EnableAsync 本身 用于获取mode信息 区分代理模式
 		AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);
 		if (attributes == null) {
 			throw new IllegalArgumentException(String.format(
 					"@%s is not present on importing class '%s' as expected",
 					annType.getSimpleName(), importingClassMetadata.getClassName()));
 		}
-
+		//mode默认都是proxy 即普通代理模式
 		AdviceMode adviceMode = attributes.getEnum(getAdviceModeAttributeName());
 		String[] imports = selectImports(adviceMode);
 		if (imports == null) {

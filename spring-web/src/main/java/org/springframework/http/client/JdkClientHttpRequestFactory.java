@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
  */
 public class JdkClientHttpRequestFactory implements ClientHttpRequestFactory {
 
-	private final HttpClient httpClient;
+	private final HttpClient httpClient;//通过jdk中的httpClient实现
 
 	private final Executor executor;
 

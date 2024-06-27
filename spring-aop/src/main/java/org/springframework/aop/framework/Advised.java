@@ -36,7 +36,7 @@ import org.springframework.aop.TargetSource;
  * @see org.springframework.aop.framework.AdvisedSupport
  */
 public interface Advised extends TargetClassAware {
-
+	//被增强的类 + config==>可以用于生成具体的proxy
 	/**
 	 * Return whether the Advised configuration is frozen,
 	 * in which case no advice changes can be made.
@@ -44,6 +44,7 @@ public interface Advised extends TargetClassAware {
 	boolean isFrozen();
 
 	/**
+	 * 被增强的主体目标 是一个类还是 几个具体的接口
 	 * Are we proxying the full target class instead of specified interfaces?
 	 */
 	boolean isProxyTargetClass();

@@ -61,7 +61,7 @@ import org.springframework.web.util.pattern.PathPattern;
  * @see DefaultServletHandlerConfigurer
  */
 public class ResourceHandlerRegistry {
-
+	//用于注册 静态资源映射 通过注册 string[]->registration->handler
 	private final ServletContext servletContext;
 
 	private final ApplicationContext applicationContext;
@@ -170,7 +170,7 @@ public class ResourceHandlerRegistry {
 				urlMap.put(pathPattern, handler);
 			}
 		}
-		return new SimpleUrlHandlerMapping(urlMap, this.order);
+		return new SimpleUrlHandlerMapping(urlMap, this.order);//创建mapping
 	}
 
 	@SuppressWarnings("deprecation")

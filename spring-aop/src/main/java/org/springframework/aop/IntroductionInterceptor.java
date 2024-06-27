@@ -30,5 +30,6 @@ import org.aopalliance.intercept.MethodInterceptor;
  * @see DynamicIntroductionAdvice
  */
 public interface IntroductionInterceptor extends MethodInterceptor, DynamicIntroductionAdvice {
+	//一个interceptor  额外实现 织入功能
 
 }

@@ -67,7 +67,7 @@ public class BasicAuthenticationInterceptor implements ClientHttpRequestIntercep
 		this.encodedCredentials = HttpHeaders.encodeBasicAuth(username, password, charset);
 	}
 
-
+	//发送请求 并携带 basic 请求信息(name,password)
 	@Override
 	public ClientHttpResponse intercept(
 			HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {

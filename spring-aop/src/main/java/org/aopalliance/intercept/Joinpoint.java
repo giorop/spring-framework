@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 public interface Joinpoint {
 
 	/**
+	 * 比如target.doSomeThing  此时target为getThis()  doSomeThing() 为staticPart()
 	 * Proceed to the next interceptor in the chain.
 	 * <p>The implementation and the semantics of this method depends
 	 * on the actual joinpoint type (see the children interfaces).
@@ -53,6 +54,7 @@ public interface Joinpoint {
 	Object proceed() throws Throwable;
 
 	/**
+	 *通常是当前需要执行staticPart的那个对象 比如target 对象 target.doSomeThing
 	 * Return the object that holds the current joinpoint's static part.
 	 * <p>For instance, the target object for an invocation.
 	 * @return the object (can be null if the accessible object is static)
@@ -61,6 +63,7 @@ public interface Joinpoint {
 	Object getThis();
 
 	/**
+	 * 比如某个method
 	 * Return the static part of this joinpoint.
 	 * <p>The static part is an accessible object on which a chain of
 	 * interceptors is installed.

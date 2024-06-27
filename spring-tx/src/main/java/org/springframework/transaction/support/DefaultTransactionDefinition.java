@@ -76,10 +76,10 @@ public class DefaultTransactionDefinition implements TransactionDefinition, Seri
 			"ISOLATION_REPEATABLE_READ", TransactionDefinition.ISOLATION_REPEATABLE_READ,
 			"ISOLATION_SERIALIZABLE", TransactionDefinition.ISOLATION_SERIALIZABLE
 		);
+	//以下默认
+	private int propagationBehavior = PROPAGATION_REQUIRED;//如有则跟随 否则创建
 
-	private int propagationBehavior = PROPAGATION_REQUIRED;
-
-	private int isolationLevel = ISOLATION_DEFAULT;
+	private int isolationLevel = ISOLATION_DEFAULT;//跟随数据库本身默认隔离级别
 
 	private int timeout = TIMEOUT_DEFAULT;
 

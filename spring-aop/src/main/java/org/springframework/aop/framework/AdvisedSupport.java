@@ -78,19 +78,19 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/** Package-protected to allow direct access for efficiency. */
-	TargetSource targetSource = EMPTY_TARGET_SOURCE;
+	TargetSource targetSource = EMPTY_TARGET_SOURCE;//用于维护target对象
 
 	/** Whether the Advisors are already filtered for the specific target class. */
 	private boolean preFiltered = false;
 
 	/** The AdvisorChainFactory to use. */
-	private AdvisorChainFactory advisorChainFactory = DefaultAdvisorChainFactory.INSTANCE;
+	private AdvisorChainFactory advisorChainFactory = DefaultAdvisorChainFactory.INSTANCE;//当前维护的advisor->filter->class+method
 
 	/**
 	 * Interfaces to be implemented by the proxy. Held in List to keep the order
 	 * of registration, to create JDK proxy with specified order of interfaces.
 	 */
-	private List<Class<?>> interfaces = new ArrayList<>();
+	private List<Class<?>> interfaces = new ArrayList<>();//当前proxy需要实现的方法
 
 	/**
 	 * List of Advisors. If an Advice is added, it will be wrapped
@@ -277,7 +277,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 		int pos = this.advisors.size();
 		addAdvisor(pos, advisor);
 	}
-
+	//统一接口 IntroductionAdvisor 引入了额外接口 需要验证和添加
 	@Override
 	public void addAdvisor(int pos, Advisor advisor) throws AopConfigException {
 		if (advisor instanceof IntroductionAdvisor introductionAdvisor) {
@@ -365,7 +365,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 			adviceChanged();
 		}
 	}
-
+	//为引入功能提供的方法 如果当前被代理对象 引入了额外方法 ，则这些接口也是需要被实现的
 	private void validateIntroductionAdvisor(IntroductionAdvisor advisor) {
 		advisor.validateInterfaces();
 		// If the advisor passed validation, we can make the change.

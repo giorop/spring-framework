@@ -50,7 +50,7 @@ import org.springframework.lang.Nullable;
  */
 @FunctionalInterface
 public interface ResultSetExtractor<T> {
-
+	//resultSet->T
 	/**
 	 * Implementations must implement this method to process the entire ResultSet.
 	 * @param rs the ResultSet to extract data from. Implementations should

@@ -71,6 +71,7 @@ public interface AsyncWebRequest extends NativeWebRequest {
 	boolean isAsyncStarted();
 
 	/**
+	 * 异步执行完任务后将 通知 asyContext执行后续
 	 * Dispatch the request to the container in order to resume processing after
 	 * concurrent execution in an application thread.
 	 */

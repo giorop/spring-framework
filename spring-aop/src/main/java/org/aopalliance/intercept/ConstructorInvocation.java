@@ -33,6 +33,7 @@ import javax.annotation.Nonnull;
 public interface ConstructorInvocation extends Invocation {
 
 	/**
+	 * 获取当前构造
 	 * Get the constructor being called.
 	 * <p>This method is a friendly implementation of the
 	 * {@link Joinpoint#getStaticPart()} method (same result).

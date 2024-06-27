@@ -89,6 +89,7 @@ public abstract class DataSourceUtils {
 	}
 
 	/**
+	 * 介入一层
 	 * Actually obtain a JDBC Connection from the given DataSource.
 	 * Same as {@link #getConnection}, but throwing the original SQLException.
 	 * <p>Is aware of a corresponding Connection bound to the current thread, for example

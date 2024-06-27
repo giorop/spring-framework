@@ -128,7 +128,7 @@ public class DefaultServletHttpRequestHandler implements HttpRequestHandler, Ser
 					this.defaultServletName + "'");
 		}
 		if (request.getDispatcherType() != DispatcherType.INCLUDE) {
-			rd.forward(request, response);
+			rd.forward(request, response);//使用容器本身自带的defaultServlet用于forward 在springMvc中dispatcherServlet覆盖了/的映射
 		}
 		else {
 			rd.include(request, response);

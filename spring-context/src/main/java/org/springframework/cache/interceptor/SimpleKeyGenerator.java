@@ -39,7 +39,7 @@ import org.springframework.core.KotlinDetector;
  * @see org.springframework.cache.annotation.CachingConfigurer
  */
 public class SimpleKeyGenerator implements KeyGenerator {
-
+	//通过参数确定唯一性
 	@Override
 	public Object generate(Object target, Method method, Object... params) {
 		return generateKey((KotlinDetector.isSuspendingFunction(method) ?

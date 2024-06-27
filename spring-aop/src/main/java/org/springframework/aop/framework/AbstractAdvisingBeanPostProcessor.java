@@ -38,9 +38,9 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 		implements SmartInstantiationAwareBeanPostProcessor {
 
 	@Nullable
-	protected Advisor advisor;
+	protected Advisor advisor;//设置advisor
 
-	protected boolean beforeExistingAdvisors = false;
+	protected boolean beforeExistingAdvisors = false;//设置当前advisor位置 默认在最后
 
 	private final Map<Class<?>, Boolean> eligibleBeans = new ConcurrentHashMap<>(256);
 
@@ -70,7 +70,7 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 			proxyFactory.addAdvisor(this.advisor);
-			customizeProxyFactory(proxyFactory);
+			customizeProxyFactory(proxyFactory);//钩子配置
 
 			// Use original ClassLoader if bean class not locally loaded in overriding class loader
 			ClassLoader classLoader = getProxyClassLoader();
@@ -95,7 +95,7 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 			if (!advised.isFrozen() && isEligible(AopUtils.getTargetClass(bean))) {
 				// Add our local Advisor to the existing proxy's Advisor chain.
 				if (this.beforeExistingAdvisors) {
-					advised.addAdvisor(0, this.advisor);
+					advised.addAdvisor(0, this.advisor);//挡在最前面 最先执行 比如@Async
 				}
 				else if (advised.getTargetSource() == AdvisedSupport.EMPTY_TARGET_SOURCE &&
 						advised.getAdvisorCount() > 0) {
@@ -111,11 +111,11 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 		}
 
 		if (isEligible(bean, beanName)) {
-			ProxyFactory proxyFactory = prepareProxyFactory(bean, beanName);
+			ProxyFactory proxyFactory = prepareProxyFactory(bean, beanName);//将config注入
 			if (!proxyFactory.isProxyTargetClass()) {
-				evaluateProxyInterfaces(bean.getClass(), proxyFactory);
+				evaluateProxyInterfaces(bean.getClass(), proxyFactory);//提取interface 注入
 			}
-			proxyFactory.addAdvisor(this.advisor);
+			proxyFactory.addAdvisor(this.advisor);//添加advisor
 			customizeProxyFactory(proxyFactory);
 
 			// Use original ClassLoader if bean class not locally loaded in overriding class loader
@@ -132,6 +132,7 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 	}
 
 	/**
+	 * 通过isEligible筛选
 	 * Check whether the given bean is eligible for advising with this
 	 * post-processor's {@link Advisor}.
 	 * <p>Delegates to {@link #isEligible(Class)} for target class checking.
@@ -165,6 +166,7 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 		if (this.advisor == null) {
 			return false;
 		}
+		//代理给advisor本身 通常是pointcut
 		eligible = AopUtils.canApply(this.advisor, targetClass);
 		this.eligibleBeans.put(targetClass, eligible);
 		return eligible;

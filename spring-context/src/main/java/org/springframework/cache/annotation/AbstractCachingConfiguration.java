@@ -48,16 +48,16 @@ import org.springframework.util.function.SingletonSupplier;
 public abstract class AbstractCachingConfiguration implements ImportAware {
 
 	@Nullable
-	protected AnnotationAttributes enableCaching;
+	protected AnnotationAttributes enableCaching;//@EnableCaching中的属性
 
 	@Nullable
-	protected Supplier<CacheManager> cacheManager;
+	protected Supplier<CacheManager> cacheManager;//key->cache
 
 	@Nullable
-	protected Supplier<CacheResolver> cacheResolver;
+	protected Supplier<CacheResolver> cacheResolver;//目标方法-cache
 
 	@Nullable
-	protected Supplier<KeyGenerator> keyGenerator;
+	protected Supplier<KeyGenerator> keyGenerator;//目标方法->keyId 静态
 
 	@Nullable
 	protected Supplier<CacheErrorHandler> errorHandler;
@@ -72,7 +72,7 @@ public abstract class AbstractCachingConfiguration implements ImportAware {
 					"@EnableCaching is not present on importing class " + importMetadata.getClassName());
 		}
 	}
-	//通过这里配置一些其它bean
+	//可以给容器中配置CachingConfigurer 从而配置 几大属性
 	@Autowired
 	void setConfigurers(ObjectProvider<CachingConfigurer> configurers) {
 		Supplier<CachingConfigurer> configurer = () -> {

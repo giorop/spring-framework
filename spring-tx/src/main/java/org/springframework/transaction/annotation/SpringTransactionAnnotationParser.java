@@ -69,11 +69,11 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute();
 
 		Propagation propagation = attributes.getEnum("propagation");
-		rbta.setPropagationBehavior(propagation.value());
+		rbta.setPropagationBehavior(propagation.value());//传播行为
 		Isolation isolation = attributes.getEnum("isolation");
-		rbta.setIsolationLevel(isolation.value());
+		rbta.setIsolationLevel(isolation.value());//隔离级别
 
-		rbta.setTimeout(attributes.getNumber("timeout").intValue());
+		rbta.setTimeout(attributes.getNumber("timeout").intValue());//timeout
 		String timeoutString = attributes.getString("timeoutString");
 		Assert.isTrue(!StringUtils.hasText(timeoutString) || rbta.getTimeout() < 0,
 				"Specify 'timeout' or 'timeoutString', not both");
@@ -82,15 +82,15 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 		rbta.setReadOnly(attributes.getBoolean("readOnly"));
 		rbta.setQualifier(attributes.getString("value"));
 		rbta.setLabels(Set.of(attributes.getStringArray("label")));
-
+		//对于异常 runtimeException会被默认捕获
 		List<RollbackRuleAttribute> rollbackRules = new ArrayList<>();
-		for (Class<?> rbRule : attributes.getClassArray("rollbackFor")) {
+		for (Class<?> rbRule : attributes.getClassArray("rollbackFor")) {//添加捕获行为
 			rollbackRules.add(new RollbackRuleAttribute(rbRule));
 		}
 		for (String rbRule : attributes.getStringArray("rollbackForClassName")) {
 			rollbackRules.add(new RollbackRuleAttribute(rbRule));
 		}
-		for (Class<?> rbRule : attributes.getClassArray("noRollbackFor")) {
+		for (Class<?> rbRule : attributes.getClassArray("noRollbackFor")) {//忽略某些默认捕获的异常
 			rollbackRules.add(new NoRollbackRuleAttribute(rbRule));
 		}
 		for (String rbRule : attributes.getStringArray("noRollbackForClassName")) {

@@ -34,7 +34,8 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.aop.support.DelegatingIntroductionInterceptor
  */
 public interface ProxyMethodInvocation extends MethodInvocation {
-
+	//methodInvocation 获取的是target 相关
+	//这里额外 引入proxy相关信息
 	/**
 	 * Return the proxy that this method invocation was made through.
 	 * @return the original proxy object

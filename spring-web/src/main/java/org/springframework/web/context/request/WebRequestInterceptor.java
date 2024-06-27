@@ -47,7 +47,7 @@ import org.springframework.ui.ModelMap;
  * @see org.springframework.web.servlet.HandlerInterceptor
  */
 public interface WebRequestInterceptor {
-
+	//webRequest拦截器 处理request实际核心内容的拦截处理
 	/**
 	 * Intercept the execution of a request handler <i>before</i> its invocation.
 	 * <p>Allows for preparing context resources (such as a Hibernate Session)

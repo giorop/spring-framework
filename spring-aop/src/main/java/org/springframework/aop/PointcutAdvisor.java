@@ -24,7 +24,7 @@ package org.springframework.aop;
  * @author Rod Johnson
  */
 public interface PointcutAdvisor extends Advisor {
-
+	//pointcut用于给advisor筛选合适的方法
 	/**
 	 * Get the Pointcut that drives this advisor.
 	 */

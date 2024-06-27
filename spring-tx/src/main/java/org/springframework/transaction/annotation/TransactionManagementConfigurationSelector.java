@@ -46,7 +46,7 @@ public class TransactionManagementConfigurationSelector extends AdviceModeImport
 	@Override
 	protected String[] selectImports(AdviceMode adviceMode) {
 		return switch (adviceMode) {
-			case PROXY -> new String[] {AutoProxyRegistrar.class.getName(),
+			case PROXY -> new String[] {AutoProxyRegistrar.class.getName(),//用于代理增强 拦截class 选择容器中的advisor 并创建代理
 					ProxyTransactionManagementConfiguration.class.getName()};
 			case ASPECTJ -> new String[] {determineTransactionAspectClass()};
 		};

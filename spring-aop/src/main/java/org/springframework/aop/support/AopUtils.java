@@ -318,13 +318,13 @@ public abstract class AopUtils {
 				eligibleAdvisors.add(candidate);
 			}
 		}
-		boolean hasIntroductions = !eligibleAdvisors.isEmpty();
+		boolean hasIntroductions = !eligibleAdvisors.isEmpty();//表示有引入
 		for (Advisor candidate : candidateAdvisors) {
 			if (candidate instanceof IntroductionAdvisor) {
 				// already processed
 				continue;
 			}
-			if (canApply(candidate, clazz, hasIntroductions)) {
+			if (canApply(candidate, clazz, hasIntroductions)) {//通过是否有引入 执行两种逻辑
 				eligibleAdvisors.add(candidate);
 			}
 		}

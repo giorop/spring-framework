@@ -25,7 +25,7 @@ import java.util.Set;
  * @since 4.1
  */
 public interface BasicOperation {
-
+	//当前操作关联的缓存 一个方法可能关联多个缓存
 	/**
 	 * Return the cache name(s) associated with the operation.
 	 */

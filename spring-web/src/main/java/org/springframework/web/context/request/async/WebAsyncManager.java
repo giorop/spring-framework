@@ -39,6 +39,9 @@ import org.springframework.web.util.DisconnectedClientHelper;
  * The central class for managing asynchronous request processing, mainly intended
  * as an SPI and not typically used directly by application classes.
  *
+ * T1 : 当前线程 原始线程 开启t2之前会先request.startAsync 开启T3 由容器管理
+ * T2 : 执行callable的线程 通常有当前类声明的executor决定
+ * T3 : callable执行完成后 会dispatcher 到t3
  * <p>An async scenario starts with request processing as usual in a thread (T1).
  * Concurrent request handling can be initiated by calling
  * {@link #startCallableProcessing(Callable, Object...) startCallableProcessing} or
@@ -311,7 +314,7 @@ public final class WebAsyncManager {
 
 		final Callable<?> callable = webAsyncTask.getCallable();
 		final CallableInterceptorChain interceptorChain = new CallableInterceptorChain(interceptors);
-		//asyncWebRequest startAsy  然后执行任务 最后dispatch 通过执行任务的结果 发布通知 之后监听做出响应
+		//asyncWebRequest startAsy 如果设置了超时 则超时执行 默认不会超时
 		this.asyncWebRequest.addTimeoutHandler(() -> {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Async request timeout for " + formatUri(this.asyncWebRequest));
@@ -321,7 +324,7 @@ public final class WebAsyncManager {
 				setConcurrentResultAndDispatch(result);//超时 并放入结果
 			}
 		});
-
+		//如果由异常 则触发
 		this.asyncWebRequest.addErrorHandler(ex -> {
 			if (!this.errorHandlingInProgress) {
 				if (logger.isDebugEnabled()) {
@@ -332,18 +335,18 @@ public final class WebAsyncManager {
 				setConcurrentResultAndDispatch(result);
 			}
 		});
-
+		//complete 触发
 		this.asyncWebRequest.addCompletionHandler(() ->
 				interceptorChain.triggerAfterCompletion(this.asyncWebRequest, callable));
 		//任务前
 		interceptorChain.applyBeforeConcurrentHandling(this.asyncWebRequest, callable);
-		startAsyncProcessing(processingContext);//开启异步
+		startAsyncProcessing(processingContext);//开启异步 开辟T3线程
 		try {
-			Future<?> future = this.taskExecutor.submit(() -> {//提交任务 用时很短
+			Future<?> future = this.taskExecutor.submit(() -> {//提交任务 用时很短 T1呼唤T2去执行 callable任务
 				Object result = null;
 				try {
-					interceptorChain.applyPreProcess(this.asyncWebRequest, callable);
-					result = callable.call();
+					interceptorChain.applyPreProcess(this.asyncWebRequest, callable);//前置拦截
+					result = callable.call();//callable任务
 				}
 				catch (Throwable ex) {
 					result = ex;
@@ -351,25 +354,25 @@ public final class WebAsyncManager {
 				finally {
 					result = interceptorChain.applyPostProcess(this.asyncWebRequest, callable, result);
 				}
-				setConcurrentResultAndDispatch(result);
+				setConcurrentResultAndDispatch(result);//任务执行完毕 T2
 			});
-			interceptorChain.setTaskFuture(future);//设置future 用于超时取消等
+			interceptorChain.setTaskFuture(future);//设置future 提供cancel功能
 		}
-		catch (Throwable ex) {
+		catch (Throwable ex) {//submit异常 比如reject等
 			Object result = interceptorChain.applyPostProcess(this.asyncWebRequest, callable, ex);
-			setConcurrentResultAndDispatch(result);
+			setConcurrentResultAndDispatch(result);//T1
 		}
 	}
 
 	private void setConcurrentResultAndDispatch(@Nullable Object result) {
-		synchronized (WebAsyncManager.this) {
+		synchronized (WebAsyncManager.this) {//正常callable执行流程(正常结果 或者callable执行异常等)
 			if (this.concurrentResult != RESULT_NONE) {
 				return;
 			}
 			this.concurrentResult = result;
 			this.errorHandlingInProgress = (result instanceof Throwable);
 		}
-
+		//比如被拒绝 cancel等
 		Assert.state(this.asyncWebRequest != null, "AsyncWebRequest must not be null");
 		if (this.asyncWebRequest.isAsyncComplete()) {
 			if (logger.isDebugEnabled()) {
@@ -377,7 +380,7 @@ public final class WebAsyncManager {
 			}
 			return;
 		}
-		//链接直接断开 那就没必要继续处理
+		//链接直接断开l
 		if (result instanceof Exception ex && disconnectedClientHelper.checkAndLogClientDisconnectedException(ex)) {
 			return;
 		}
@@ -386,7 +389,7 @@ public final class WebAsyncManager {
 			logger.debug("Async " + (this.errorHandlingInProgress ? "error" : "result set") +
 					", dispatch to " + formatUri(this.asyncWebRequest));
 		}
-		this.asyncWebRequest.dispatch();//结束任务
+		this.asyncWebRequest.dispatch();//返回到T3 结束异步状态
 	}
 
 	/**

@@ -80,11 +80,11 @@ public abstract class AbstractCacheResolver implements CacheResolver, Initializi
 
 	@Override
 	public Collection<? extends Cache> resolveCaches(CacheOperationInvocationContext<?> context) {
-		Collection<String> cacheNames = getCacheNames(context);
+		Collection<String> cacheNames = getCacheNames(context);//获取关联的name context其本身就包含method中的相关信息，比如构造的时候就解析了上面的缓存注解等
 		if (cacheNames == null) {
 			return Collections.emptyList();
 		}
-		Collection<Cache> result = new ArrayList<>(cacheNames.size());
+		Collection<Cache> result = new ArrayList<>(cacheNames.size());//通过name获取实际的cache
 		for (String cacheName : cacheNames) {
 			Cache cache = getCacheManager().getCache(cacheName);
 			if (cache == null) {
@@ -97,6 +97,7 @@ public abstract class AbstractCacheResolver implements CacheResolver, Initializi
 	}
 
 	/**
+	 * 通过当前上下文获得cache names
 	 * Provide the name of the cache(s) to resolve against the current cache manager.
 	 * <p>It is acceptable to return {@code null} to indicate that no cache could
 	 * be resolved for this invocation.

@@ -31,7 +31,7 @@ import org.springframework.http.HttpRequest;
  */
 @FunctionalInterface
 public interface ClientHttpRequestInterceptor {
-
+	//增强 clientHttpRequest执行 拦截器 比如鉴权等
 	/**
 	 * Intercept the given request, and return a response. The given
 	 * {@link ClientHttpRequestExecution} allows the interceptor to pass on the

@@ -30,7 +30,7 @@ import org.springframework.http.HttpMethod;
  */
 @FunctionalInterface
 public interface ClientHttpRequestFactory {
-
+	//通过uri+method=>httpRequest
 	/**
 	 * Create a new {@link ClientHttpRequest} for the specified URI and HTTP method.
 	 * <p>The returned request can be written to, and then executed by calling

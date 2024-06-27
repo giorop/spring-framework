@@ -30,7 +30,7 @@ import org.springframework.util.FastByteArrayOutputStream;
  * @since 3.0.6
  */
 abstract class AbstractBufferingClientHttpRequest extends AbstractClientHttpRequest {
-
+	//当前类中 建立一个缓冲区 缓存body
 	private final FastByteArrayOutputStream bufferedOutput = new FastByteArrayOutputStream(1024);
 
 
@@ -51,6 +51,7 @@ abstract class AbstractBufferingClientHttpRequest extends AbstractClientHttpRequ
 	}
 
 	/**
+	 * 和实际的 连接沟通
 	 * Abstract template method that writes the given headers and content to the HTTP request.
 	 * @param headers the HTTP headers
 	 * @param bufferedOutput the body content

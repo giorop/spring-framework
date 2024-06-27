@@ -48,7 +48,7 @@ public class DefaultUriBuilderFactory implements UriBuilderFactory {
 	private EncodingMode encodingMode = EncodingMode.TEMPLATE_AND_VALUES;
 
 	@Nullable
-	private Map<String, Object> defaultUriVariables;
+	private Map<String, Object> defaultUriVariables;//用于占位符填充
 
 	private boolean parsePath = true;
 

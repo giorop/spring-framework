@@ -52,7 +52,7 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 	/** Logger available to subclasses. */
 	protected final Log logger = HttpLogging.forLogName(getClass());
 
-	private List<MediaType> supportedMediaTypes = Collections.emptyList();
+	private List<MediaType> supportedMediaTypes = Collections.emptyList();//有些converter 不要求class type 比如json
 
 	@Nullable
 	private Charset defaultCharset;//默认charSet用于读取和写入 流中字符集
@@ -126,6 +126,7 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 
 
 	/**
+	 * 分解
 	 * This implementation checks if the given class is {@linkplain #supports(Class) supported},
 	 * and if the {@linkplain #getSupportedMediaTypes() supported media types}
 	 * {@linkplain MediaType#includes(MediaType) include} the given media type.
@@ -234,7 +235,7 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 		}
 		else {
 			writeInternal(t, outputMessage);
-			outputMessage.getBody().flush();
+			outputMessage.getBody().flush();//如果有缓存等 先刷入实体stream
 		}
 	}
 
@@ -263,13 +264,13 @@ public abstract class AbstractHttpMessageConverter<T> implements HttpMessageConv
 						contentTypeToUse = new MediaType(contentTypeToUse, defaultCharset);
 					}
 				}
-				headers.setContentType(contentTypeToUse);
+				headers.setContentType(contentTypeToUse);//根据t优先 设置 contentType
 			}
 		}
 		if (headers.getContentLength() < 0 && !headers.containsKey(HttpHeaders.TRANSFER_ENCODING)) {
 			Long contentLength = getContentLength(t, headers.getContentType());
 			if (contentLength != null) {
-				headers.setContentLength(contentLength);
+				headers.setContentLength(contentLength);//设置contentLength
 			}
 		}
 	}

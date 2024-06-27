@@ -33,7 +33,7 @@ import org.springframework.util.StreamUtils;
  */
 final class BufferingClientHttpRequestWrapper extends AbstractBufferingClientHttpRequest {
 
-	private final ClientHttpRequest request;
+	private final ClientHttpRequest request;//被包装的实际请求
 
 
 	BufferingClientHttpRequestWrapper(ClientHttpRequest request) {
@@ -51,6 +51,7 @@ final class BufferingClientHttpRequestWrapper extends AbstractBufferingClientHtt
 		return this.request.getURI();
 	}
 
+	//将缓存去的内容->实际的request发送请求
 	@Override
 	protected ClientHttpResponse executeInternal(HttpHeaders headers, byte[] bufferedOutput) throws IOException {
 		this.request.getHeaders().putAll(headers);

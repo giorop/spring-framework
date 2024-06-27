@@ -34,8 +34,9 @@ import org.springframework.http.HttpRequest;
  * @see ClientHttpRequestFactory#createRequest(java.net.URI, HttpMethod)
  */
 public interface ClientHttpRequest extends HttpRequest, HttpOutputMessage {
-
+	//客户端请求 HttpRequest:代表是一个请求 HttpOutputMessage:需要写入信息
 	/**
+	 * 发送请求 得到响应
 	 * Execute this request, resulting in a {@link ClientHttpResponse} that can be read.
 	 * @return the response result of the execution
 	 * @throws IOException in case of I/O errors

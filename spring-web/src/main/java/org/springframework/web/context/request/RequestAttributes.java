@@ -32,7 +32,7 @@ import org.springframework.lang.Nullable;
  * @see ServletRequestAttributes
  */
 public interface RequestAttributes {
-
+	//代表一个请求 这里可以给这个请求添加额外的attribute 供执行链中交换数据
 	/**
 	 * Constant that indicates request scope.
 	 */
@@ -131,6 +131,7 @@ public interface RequestAttributes {
 	Object resolveReference(String key);
 
 	/**
+	 * 当前request关联的sessionId
 	 * Return an id for the current underlying session.
 	 * @return the session id as String (never {@code null})
 	 */

@@ -112,7 +112,8 @@ public abstract class ConfigurationClassUtils {
 			return false;
 		}
 
-		AnnotationMetadata metadata;
+		AnnotationMetadata metadata;//需要annotatedBeanDefinition
+		//beanDef->class->className
 		if (beanDef instanceof AnnotatedBeanDefinition annotatedBd &&
 				className.equals(annotatedBd.getMetadata().getClassName())) {
 			// Can reuse the pre-parsed metadata from the given BeanDefinition...

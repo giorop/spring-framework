@@ -26,7 +26,7 @@ import java.net.URI;
  * @since 3.1
  */
 public interface HttpRequest extends HttpMessage {
-	//代表一个请求 客户端或者服务端 和HttpInputMessage/HttpOutputMessage 两个维度
+	//代表一个http请求 发送一个请求需要包含 http方法和具体uri
 	/**
 	 * Return the HTTP method of the request.
 	 * @return the HTTP method as an HttpMethod value

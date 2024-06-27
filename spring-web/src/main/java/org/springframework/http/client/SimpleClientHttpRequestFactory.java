@@ -194,9 +194,9 @@ public class SimpleClientHttpRequestFactory implements ClientHttpRequestFactory 
 				("POST".equals(httpMethod) || "PUT".equals(httpMethod) ||
 						"PATCH".equals(httpMethod) || "DELETE".equals(httpMethod));
 
-		connection.setDoInput(true);
+		connection.setDoInput(true);//
 		connection.setInstanceFollowRedirects("GET".equals(httpMethod));
-		connection.setDoOutput(mayWrite);
+		connection.setDoOutput(mayWrite);//
 		connection.setRequestMethod(httpMethod);
 	}
 

@@ -48,7 +48,7 @@ import org.springframework.util.StringUtils;
  * 容器shutdown时触发 DisposableBean 自定义的销毁
  * <p>Also supports registration of
  * {@link org.springframework.beans.factory.DisposableBean} instances,
- * (which might or might not correspond to registered singletons),
+ * (which might or might not correspond to registered singletons 和singleton 不需要相关 ),
  * to be destroyed on shutdown of the registry. Dependencies between
  * beans can be registered to enforce an appropriate shutdown order.
  *

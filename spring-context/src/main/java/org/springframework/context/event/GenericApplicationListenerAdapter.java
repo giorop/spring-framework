@@ -48,6 +48,7 @@ public class GenericApplicationListenerAdapter implements GenericApplicationList
 
 
 	/**
+	 * 包装一个普通的applicationListener=>genericApplicationListenerAdapter
 	 * Create a new GenericApplicationListener for the given delegate.
 	 * @param delegate the delegate listener to be invoked
 	 */

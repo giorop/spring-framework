@@ -37,7 +37,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * @see org.springframework.transaction.annotation.EnableTransactionManagement
  */
 public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
-
+	//注入autoProxy相关的类 这里是
 	private final Log logger = LogFactory.getLog(getClass());
 
 	/**

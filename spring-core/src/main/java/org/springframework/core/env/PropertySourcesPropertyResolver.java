@@ -32,7 +32,7 @@ import org.springframework.lang.Nullable;
 public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 	@Nullable
-	private final PropertySources propertySources;
+	private final PropertySources propertySources;//提供数据源
 
 
 	/**

@@ -31,7 +31,7 @@ import org.springframework.dao.support.PersistenceExceptionTranslator;
  * Spring AOP exception translation aspect for use at Repository or DAO layer level.
  * Translates native persistence exceptions into Spring's DataAccessException hierarchy,
  * based on a given PersistenceExceptionTranslator.
- *
+ * 用于拦截dao层方法执行抛出的异常 并处理 比如回滚等 故持久层使用的时候不需要特地捕捉异常
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @since 2.0
@@ -49,7 +49,7 @@ public class PersistenceExceptionTranslationAdvisor extends AbstractPointcutAdvi
 	/**
 	 * Create a new PersistenceExceptionTranslationAdvisor.
 	 * @param persistenceExceptionTranslator the PersistenceExceptionTranslator to use
-	 * @param repositoryAnnotationType the annotation type to check for
+	 * @param repositoryAnnotationType the annotation type to check for.用于拦截特定的注解
 	 */
 	public PersistenceExceptionTranslationAdvisor(
 			PersistenceExceptionTranslator persistenceExceptionTranslator,

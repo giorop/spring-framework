@@ -66,7 +66,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.scheduling.annotation.AnnotationAsyncExecutionInterceptor
  */
 public class AsyncExecutionInterceptor extends AsyncExecutionAspectSupport implements MethodInterceptor, Ordered {
-
+	//实现 MethodInterceptor 将任务提交给线程 异步执行
 	/**
 	 * Create a new instance with a default {@link AsyncUncaughtExceptionHandler}.
 	 * @param defaultExecutor the {@link Executor} (typically a Spring {@link AsyncTaskExecutor}
@@ -107,7 +107,7 @@ public class AsyncExecutionInterceptor extends AsyncExecutionAspectSupport imple
 			throw new IllegalStateException(
 					"No executor specified and no default executor set on AsyncExecutionInterceptor either");
 		}
-
+		//将invocation=>callable  并处理异常 包装 future
 		Callable<Object> task = () -> {
 			try {
 				Object result = invocation.proceed();
@@ -123,7 +123,7 @@ public class AsyncExecutionInterceptor extends AsyncExecutionAspectSupport imple
 			}
 			return null;
 		};
-
+		//提交任务 方法声明的返回值需要为future  或者void
 		return doSubmit(task, executor, invocation.getMethod().getReturnType());
 	}
 
@@ -156,7 +156,7 @@ public class AsyncExecutionInterceptor extends AsyncExecutionAspectSupport imple
 	@Nullable
 	protected Executor getDefaultExecutor(@Nullable BeanFactory beanFactory) {
 		Executor defaultExecutor = super.getDefaultExecutor(beanFactory);
-		return (defaultExecutor != null ? defaultExecutor : new SimpleAsyncTaskExecutor());
+		return (defaultExecutor != null ? defaultExecutor : new SimpleAsyncTaskExecutor());//默认 开辟新线程 执行任务
 	}
 
 	@Override

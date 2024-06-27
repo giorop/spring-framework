@@ -53,7 +53,7 @@ public abstract class HttpAccessor {
 	/** Logger available to subclasses. */
 	protected final Log logger = HttpLogging.forLogName(getClass());
 
-	private ClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+	private ClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();//底层为HttpConnection
 
 	private final List<ClientHttpRequestInitializer> clientHttpRequestInitializers = new ArrayList<>();
 
@@ -112,6 +112,9 @@ public abstract class HttpAccessor {
 	}
 
 	/**
+	 * requestFactory
+	 * clientHttpRequestInitializers
+	 * 创建和配置 clientHttpRequest
 	 * Create a new {@link ClientHttpRequest} via this template's {@link ClientHttpRequestFactory}.
 	 * @param url the URL to connect to
 	 * @param method the HTTP method to execute (GET, POST, etc)

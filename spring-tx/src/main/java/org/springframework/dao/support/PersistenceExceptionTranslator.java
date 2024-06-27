@@ -33,7 +33,7 @@ import org.springframework.lang.Nullable;
  */
 @FunctionalInterface
 public interface PersistenceExceptionTranslator {
-
+	//将runtimeException 翻译成特定的dataAccessException
 	/**
 	 * Translate the given runtime exception thrown by a persistence framework to a
 	 * corresponding exception from Spring's generic

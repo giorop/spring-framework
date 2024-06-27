@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.scheduling.support.CronTrigger
  */
 public interface Trigger {
-
+	//通过context 返回下一次执行的时间
 	/**
 	 * Determine the next execution time according to the given trigger context.
 	 * <p>The default implementation delegates to {@link #nextExecution(TriggerContext)}.
